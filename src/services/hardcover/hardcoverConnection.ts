@@ -1,4 +1,5 @@
 import logger from '../logger';
+import { extractErrorMessage } from '../../utils/errors';
 import { Users } from '../../generated/graphql';
 import { HardcoverClient } from '../../types';
 
@@ -42,10 +43,11 @@ export async function validateHardcoverConnection(client: HardcoverClient): Prom
     }
     return false;
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorMessage = extractErrorMessage(error);
 
-    logger.error(`Failed to connect to Hardcover at ${client.getBaseURL()}`, {
+    logger.error('Failed to connect to Hardcover', {
       error: errorMessage,
+      baseURL: client.getBaseURL(),
     });
 
     if (
@@ -54,23 +56,25 @@ export async function validateHardcoverConnection(client: HardcoverClient): Prom
       errorMessage.includes('authentication') ||
       errorMessage.includes('unauthorized')
     ) {
-      logger.error(`
-        Authentication failed with Hardcover. Please check:
-        1. Your HARDCOVER_API_KEY in .env file
-        2. Make sure the API key is valid and not expired
-        3. Verify that your user has the correct permissions
-      `);
+      logger.error('Authentication failed with Hardcover', {
+        suggestions: [
+          'Check HARDCOVER_API_KEY in .env file',
+          'Verify API key is valid and not expired',
+          'Verify user has correct permissions',
+        ],
+      });
     } else if (
       errorMessage.includes('ENOTFOUND') ||
       errorMessage.includes('ECONNREFUSED') ||
       errorMessage.includes('404')
     ) {
-      logger.error(`
-        Could not reach Hardcover API. Please check:
-        1. Your HARDCOVER_API_URL setting in .env file
-        2. Your internet connection
-        3. The Hardcover service status
-      `);
+      logger.error('Could not reach Hardcover API', {
+        suggestions: [
+          'Check HARDCOVER_API_URL in .env file',
+          'Verify internet connection',
+          'Check Hardcover service status',
+        ],
+      });
     }
 
     return false;

@@ -26,7 +26,7 @@ export function createAudiobookshelfClient() {
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
-    timeout: 10000,
+    timeout: config.apiTimeout,
   });
 
   return {

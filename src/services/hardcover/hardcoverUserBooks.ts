@@ -1,4 +1,5 @@
 import logger from '../logger';
+import { logError } from '../../utils/errors';
 import { HardcoverAudiobook } from '../../hardcoverTypes';
 import { User_Books, Users } from '../../generated/graphql';
 import { HardcoverClient } from '../../types';
@@ -39,8 +40,7 @@ async function getUserId(client: HardcoverClient): Promise<string> {
     logger.warn('Failed to get user ID from Hardcover, response data is invalid');
     throw new Error('Invalid response data when getting user ID');
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error(`Error getting Hardcover user ID: ${errorMessage}`);
+    logError('Error getting Hardcover user ID', error);
     throw error;
   }
 }
@@ -90,8 +90,9 @@ export async function getCurrentlyReadingBooks(
       return [];
     }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error(`Error fetching currently reading books: ${errorMessage}`);
+    logError('Error fetching currently reading books', error, {
+      userId,
+    });
     return [];
   }
 }
@@ -155,8 +156,9 @@ export async function getCurrentlyReadingAudiobooks(
 
     return audiobooks;
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error(`Error processing currently reading audiobooks: ${errorMessage}`);
+    logError('Error processing currently reading audiobooks', error, {
+      userId,
+    });
     return [];
   }
 }

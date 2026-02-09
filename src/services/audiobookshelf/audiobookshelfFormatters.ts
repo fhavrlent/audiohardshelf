@@ -1,4 +1,5 @@
 import logger from '../logger';
+import { logError } from '../../utils/errors';
 import { getAudiobookDetails } from './audiobookshelfBooks';
 import { AudiobookshelfClient, FormattedBook } from '../../types';
 import {
@@ -60,10 +61,8 @@ export async function formatAudiobookForHardcover(
       },
     };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error(`Error formatting audiobook for Hardcover`, {
-      error: errorMessage,
-      bookId: mediaProgress.libraryItemId,
+    logError('Error formatting audiobook for Hardcover', error, {
+      libraryItemId: mediaProgress.libraryItemId,
     });
 
     return {

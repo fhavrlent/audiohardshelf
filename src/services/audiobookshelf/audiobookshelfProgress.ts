@@ -1,5 +1,6 @@
 import axios from 'axios';
 import logger from '../logger';
+import { logError } from '../../utils/errors';
 import { validateAudiobookshelfConnection } from './audiobookshelfConnection';
 import {
   InProgressLibraryItem,
@@ -90,13 +91,11 @@ export async function getCurrentlyListeningBooks(
 
     return progressResults.filter(Boolean) as MediaProgress[];
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     const statusCode =
       axios.isAxiosError(error) && error.response ? error.response.status : 'unknown';
     const errorDetails = axios.isAxiosError(error) && error.response ? error.response.data : {};
 
-    logger.error('Error fetching currently listening books', {
-      error: errorMessage,
+    logError('Error fetching currently listening books', error, {
       statusCode,
       details: JSON.stringify(errorDetails),
       endpoint: '/api/me/items-in-progress',

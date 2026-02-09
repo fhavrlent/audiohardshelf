@@ -2,6 +2,7 @@ import cron from 'node-cron';
 import config from './config/config';
 import { createSyncService } from './services/sync';
 import logger from './services/logger';
+import { logError, extractErrorMessage } from './utils/errors';
 import fs from 'fs';
 
 let syncService: ReturnType<typeof createSyncService>;
@@ -41,32 +42,21 @@ export async function runBookSearch(): Promise<void> {
     await syncService.findBooksInHardcover();
     logger.info('Manual sync completed');
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error('Error during manual sync', { error: errorMessage });
+    logError('Error during manual sync', error);
 
+    const errorMessage = extractErrorMessage(error);
     if (errorMessage.includes('404')) {
-      logger.error(`
-===========================================
-API ENDPOINT NOT FOUND (404 ERROR)
-===========================================
-The server returned a 404 error, which means the API endpoint was not found.
-This could be due to:
-
-1. Incorrect Audiobookshelf URL in your .env file
-   - Current URL: ${config.audiobookshelf.url}
-   - Make sure to include http:// or https:// and the correct port
-
-2. Audiobookshelf server version mismatch
-   - Different versions may use different API endpoints
-   - The application will try alternative endpoints automatically
-
-3. Audiobookshelf server is not running or unreachable
-   - Check if your server is running
-   - Check network connectivity
-
-For more details, see the full error logs in the 'logs' directory.
-===========================================
-      `);
+      logger.error('API endpoint not found (404)', {
+        statusCode: 404,
+        currentUrl: config.audiobookshelf.url,
+        suggestions: [
+          'Verify ABS_URL in .env includes http:// or https:// and correct port',
+          'Check if Audiobookshelf server is running',
+          'Verify server version compatibility',
+          'Check network connectivity',
+        ],
+        helpDocs: 'See logs directory for full error details',
+      });
     }
   }
 }
@@ -94,10 +84,7 @@ function scheduleSearch(): void {
             await syncService.findBooksInHardcover();
             logger.info('Interval-based sync job completed successfully');
           } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-            logger.error('Error during interval-based sync job', {
-              error: errorMessage,
-            });
+            logError('Error during interval-based sync job', error);
           }
         },
         intervalMinutes * 60 * 1000
@@ -115,18 +102,14 @@ function scheduleSearch(): void {
           await syncService.findBooksInHardcover();
           logger.info('Scheduled sync job completed successfully');
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-          logger.error('Error during scheduled sync job', {
-            error: errorMessage,
-          });
+          logError('Error during scheduled sync job', error);
         }
       });
     }
 
     logger.info('Automatic sync scheduled successfully');
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error('Failed to schedule automatic sync', { error: errorMessage });
+    logError('Failed to schedule automatic sync', error);
     throw error;
   }
 }
@@ -152,13 +135,11 @@ if (require.main === module) {
 
         logger.info('AudioHardShelf is running. Press Ctrl+C to exit');
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        logger.error('Error during startup', { error: errorMessage });
+        logError('Error during startup', error);
         process.exit(1);
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      logger.error('Error starting AudioHardShelf', { error: errorMessage });
+      logError('Error starting AudioHardShelf', error);
       process.exit(1);
     }
   })();

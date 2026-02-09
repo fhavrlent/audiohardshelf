@@ -35,7 +35,7 @@ export function createHardcoverClient() {
         'Content-Type': 'application/json',
         'User-Agent': 'AudioHardShelf/0.1 - Audiobook Sync Tool',
       },
-      timeout: 10000,
+      timeout: config.apiTimeout,
     });
   }
 

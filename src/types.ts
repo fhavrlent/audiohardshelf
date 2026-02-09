@@ -14,6 +14,7 @@ export interface AppConfig {
   };
   syncInterval: string;
   logDir: string;
+  apiTimeout: number;
 }
 
 export interface FormattedBook {

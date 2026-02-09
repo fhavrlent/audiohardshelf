@@ -1,4 +1,5 @@
 import logger from '../logger';
+import { logError } from '../../utils/errors';
 import { FormattedBook, SyncCache } from '../../types';
 import { createAudiobookshelfService } from '../audiobookshelf';
 import { createHardcoverService } from '../hardcover';
@@ -46,8 +47,9 @@ export async function syncAudiobookProgress({
         }
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      logger.error(`Failed to format book data for progress sync: ${errorMessage}`);
+      logError('Failed to format book data for progress sync', error, {
+        libraryItemId: bookProgress.libraryItemId,
+      });
       return ProgressSyncResult.ERROR;
     }
 
@@ -97,8 +99,9 @@ export async function syncAudiobookProgress({
       return ProgressSyncResult.ERROR;
     }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error(`Error syncing audiobook progress: ${errorMessage}`);
+    logError('Error syncing audiobook progress', error, {
+      libraryItemId: bookProgress.libraryItemId,
+    });
     return ProgressSyncResult.ERROR;
   }
 }
@@ -206,8 +209,9 @@ async function updateHardcoverProgress({
 
     return result;
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error(`Error updating Hardcover progress: ${errorMessage}`);
+    logError('Error updating Hardcover progress', error, {
+      editionId,
+    });
     return false;
   }
 }

@@ -1,4 +1,5 @@
 import logger from '../logger';
+import { logError } from '../../utils/errors';
 import { FormattedBook, SyncCache } from '../../types';
 import { createAudiobookshelfService } from '../audiobookshelf';
 import { createHardcoverService } from '../hardcover';
@@ -78,11 +79,10 @@ export async function findBookInHardcover({
         }
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      logger.error(`Failed to format book data for ID: ${bookProgress.libraryItemId}`, {
-        error: errorMessage,
+      logError(`Failed to format book data for ID: ${bookProgress.libraryItemId}`, error, {
+        libraryItemId: bookProgress.libraryItemId,
       });
-      throw new Error(`Failed to format book data: ${errorMessage}`);
+      throw error;
     }
 
     if (!formattedBook) {
@@ -121,11 +121,10 @@ export async function findBookInHardcover({
 
       return true;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      logger.error(`Failed to find book "${formattedBook.book.title}" in Hardcover`, {
-        error: errorMessage,
+      logError(`Failed to find book "${formattedBook.book.title}" in Hardcover`, error, {
+        bookTitle: formattedBook.book.title,
       });
-      throw new Error(`Failed to find book: ${errorMessage}`);
+      throw error;
     }
   } catch (error) {
     throw error;

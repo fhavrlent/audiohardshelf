@@ -1,4 +1,5 @@
 import logger from '../logger';
+import { logError } from '../../utils/errors';
 import { HardcoverBook, HardcoverClient } from '../../types';
 import { Maybe, SearchOutput } from '../../generated/graphql';
 
@@ -44,9 +45,7 @@ export async function searchHardcoverBooks(
       return [];
     }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error(`Error searching Hardcover for "${query}"`, {
-      error: errorMessage,
+    logError(`Error searching Hardcover for "${query}"`, error, {
       query,
       queryType,
     });

@@ -1,4 +1,5 @@
 import logger from '../logger';
+import { logError } from '../../utils/errors';
 import { createAudiobookshelfService } from '../audiobookshelf';
 import { createHardcoverService } from '../hardcover';
 import { findBookInHardcover } from './matcher';
@@ -53,8 +54,7 @@ export async function syncBooksToHardcover(
         `Errors: ${results.errorCount}`
     );
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error('Error during book sync process', { error: errorMessage });
+    logError('Error during book sync process', error);
     throw error;
   }
 }
@@ -66,8 +66,7 @@ async function getCurrentlyListening(absService: AudiobookshelfService): Promise
     logger.info(`Found ${currentlyListening.length} books currently in progress on Audiobookshelf`);
     return currentlyListening;
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error(`Failed to get currently listening books: ${errorMessage}`);
+    logError('Failed to get currently listening books', error);
     return [];
   }
 }
@@ -94,8 +93,7 @@ async function processBooksSync({
       const hardcoverAudiobooks = await hardcoverService.getCurrentlyReadingAudiobooks();
       cache.hardcoverAudiobooks = hardcoverAudiobooks;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      logger.error(`Error pre-fetching Hardcover data: ${errorMessage}`);
+      logError('Error pre-fetching Hardcover data', error);
     }
   }
 
@@ -144,8 +142,9 @@ async function processBooksSync({
       }
     } catch (error) {
       errorCount++;
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      logger.error(`Error syncing book: ${errorMessage}`);
+      logError('Error syncing book', error, {
+        libraryItemId: bookProgress.libraryItemId,
+      });
     }
   }
 

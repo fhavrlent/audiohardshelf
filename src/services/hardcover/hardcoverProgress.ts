@@ -1,5 +1,6 @@
 import { validateHardcoverConnection } from './hardcoverConnection';
 import logger from '../logger';
+import { logError } from '../../utils/errors';
 import { User_Book_Reads } from '../../generated/graphql';
 import { FormattedBook, HardcoverClient } from '../../types';
 
@@ -83,8 +84,7 @@ export async function updateAudiobookProgress(
     );
     return true;
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error(`Failed to update audiobook progress: ${errorMessage}`, {
+    logError('Failed to update audiobook progress', error, {
       editionId: input.editionId,
       progressSeconds: input.progressSeconds,
     });
@@ -157,8 +157,7 @@ export async function getBookReadInfo({
       finishedAt: bookRead.finished_at,
     };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error(`Failed to fetch book read info: ${errorMessage}`, {
+    logError('Failed to fetch book read info', error, {
       editionId,
     });
     return null;
@@ -221,8 +220,7 @@ export async function updateAudiobookProgressByEditionId({
       finishedAt: formattedBook.progress.finishedAt ?? undefined,
     });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error(`Failed to update audiobook progress by edition ID: ${errorMessage}`, {
+    logError('Failed to update audiobook progress by edition ID', error, {
       editionId,
       progressSeconds,
     });
@@ -297,8 +295,7 @@ export async function updateBookStatus({
     );
     return true;
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error(`Failed to update book status: ${errorMessage}`, {
+    logError('Failed to update book status', error, {
       userBookId,
       editionId,
       statusId,

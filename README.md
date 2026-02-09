@@ -39,6 +39,11 @@ The recommended way to run AudioHardShelf is using Docker or Podman, which handl
             - SYNC_INTERVAL=${SYNC_INTERVAL:-0 */1 * * *}
             - ABS_API_KEY=${ABS_API_KEY}
             - HARDCOVER_API_KEY=${HARDCOVER_API_KEY}
+            # Optional:
+            # - LOG_LEVEL=${LOG_LEVEL:-info}
+            # - LOG_MAX_FILES=${LOG_MAX_FILES:-14d}
+            # - LOG_MAX_SIZE=${LOG_MAX_SIZE:-20m}
+            # - API_TIMEOUT_MS=${API_TIMEOUT_MS:-10000}
 
    volumes:
       logs-data:
@@ -134,21 +139,54 @@ If you prefer not to use containers, you can run AudioHardShelf using PM2, a pro
 
 You can adjust the following settings in your `.env` file:
 
-- `SYNC_INTERVAL`: Two formats supported:
-  - Cron pattern (e.g. `0 */1 * * *`): Runs at specific clock times (default: every hour on the hour)
-  - Number of minutes (e.g. `60`): Runs every X minutes from when the service starts
+### Required Settings
 - `ABS_URL`: Your Audiobookshelf server URL
 - `ABS_API_KEY`: Your Audiobookshelf API key (found in Settings > Users > [Your User] > API Token)
 - `ABS_USER_ID`: Your Audiobookshelf user ID (found in the URL when viewing your profile)
 - `HARDCOVER_API_KEY`: Your Hardcover API key (found in your account settings)
 
+### Optional Settings
+- `SYNC_INTERVAL`: Two formats supported (default: `0 */1 * * *`):
+  - Cron pattern (e.g. `0 */1 * * *`): Runs at specific clock times (every hour on the hour)
+  - Number of minutes (e.g. `60`): Runs every X minutes from when the service starts
+
+- `API_TIMEOUT_MS`: API request timeout in milliseconds (default: `10000` = 10 seconds)
+  - Increase if you have slow network or the servers are slow to respond
+
+- `LOG_LEVEL`: Logging verbosity (default: `debug`)
+  - Options: `error`, `warn`, `info`, `debug`
+  - Use `error` or `warn` for production to reduce log volume
+
+- `LOG_MAX_FILES`: How long to keep log files (default: `14d`)
+  - Examples: `7d` (7 days), `30d` (30 days), `60d` (60 days)
+  - Older logs are automatically deleted
+
+- `LOG_MAX_SIZE`: Maximum size per log file before rotation (default: `20m`)
+  - Examples: `10m` (10 megabytes), `50m` (50 megabytes)
+  - Files exceeding this size are rotated immediately
+
 ## Logs
 
-Logs are stored in the `logs` directory:
-- `combined.log`: Contains all logs
-- `error.log`: Contains only error logs
+Logs are stored in the `logs` directory with automatic rotation and cleanup:
 
-When running with Docker, the logs directory is mounted as a volume to persist logs outside the container.
+- **Log Files:**
+  - `combined-YYYY-MM-DD.log`: All logs for a specific date
+  - `error-YYYY-MM-DD.log`: Only error logs for a specific date
+  - Older log files are compressed (`.gz`) to save space
+
+- **Automatic Cleanup:**
+  - Logs older than the retention period (default: 14 days) are automatically deleted
+  - Maximum file size is enforced (default: 20MB per file)
+  - This prevents unlimited log growth and saves disk space
+
+- **Docker/Podman:**
+  - The logs directory is mounted as a volume to persist logs outside the container
+  - Compressed logs take ~70-90% less space
+
+- **Customization:**
+  - Use `LOG_MAX_FILES` to change retention period
+  - Use `LOG_MAX_SIZE` to change file size limits
+  - Use `LOG_LEVEL` to control verbosity (less verbose = smaller logs)
 
 ## How It Works
 

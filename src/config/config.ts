@@ -29,6 +29,7 @@ const config: AppConfig = {
   },
   syncInterval: process.env.SYNC_INTERVAL || '0 */1 * * *',
   logDir: path.join(__dirname, '../../logs'),
+  apiTimeout: parseInt(process.env.API_TIMEOUT_MS || '10000', 10),
 };
 
 export default config;

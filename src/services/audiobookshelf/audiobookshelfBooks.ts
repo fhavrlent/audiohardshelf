@@ -1,5 +1,6 @@
 import axios from 'axios';
 import logger from '../logger';
+import { logError } from '../../utils/errors';
 import { BookExpanded, LibraryItemExpanded } from '../../audiobookshelfTypes';
 import { AudiobookshelfClient } from '../../types';
 
@@ -19,14 +20,13 @@ export async function getAudiobookDetails(
       return createAudiobookFallbackData(libraryItemId);
     }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     const statusCode =
       axios.isAxiosError(error) && error.response ? error.response.status : 'unknown';
 
-    logger.error(`Error fetching audiobook details for ${libraryItemId}`, {
-      error: errorMessage,
+    logError(`Error fetching audiobook details for ${libraryItemId}`, error, {
       statusCode,
       endpoint: `/api/items/${libraryItemId}`,
+      libraryItemId,
     });
 
     return createAudiobookFallbackData(libraryItemId);

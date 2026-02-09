@@ -11,10 +11,8 @@ import {
 import { FormattedBook, HardcoverBook } from '../types';
 import { HardcoverAudiobook } from '../hardcoverTypes';
 
-const clientInstance = createHardcoverClient();
-
 export function createHardcoverService() {
-  const client = clientInstance;
+  const client = createHardcoverClient();
 
   return {
     validateConnection: async (): Promise<boolean> => {
@@ -64,6 +62,3 @@ export function createHardcoverService() {
     ): Promise<boolean> => updateBookStatus({ client, userBookId, editionId, statusId }),
   };
 }
-
-const HardcoverService = createHardcoverService();
-export default HardcoverService;
