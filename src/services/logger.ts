@@ -12,9 +12,8 @@ if (!fs.existsSync(config.logDir)) {
 
 const logLevel = process.env.LOG_LEVEL || 'debug';
 
-// Log retention configuration (configurable via env vars)
-const maxLogFiles = process.env.LOG_MAX_FILES || '14d'; // Keep logs for 14 days by default
-const maxLogSize = process.env.LOG_MAX_SIZE || '20m'; // Max 20MB per file by default
+const maxLogFiles = process.env.LOG_MAX_FILES || '14d';
+const maxLogSize = process.env.LOG_MAX_SIZE || '20m';
 
 const logger = winston.createLogger({
   level: logLevel,
@@ -36,22 +35,20 @@ const logger = winston.createLogger({
         })
       ),
     }),
-    // Rotating file transport for error logs
     new DailyRotateFile({
       filename: path.join(config.logDir, 'error-%DATE%.log'),
       datePattern: 'YYYY-MM-DD',
       level: 'error',
       maxSize: maxLogSize,
       maxFiles: maxLogFiles,
-      zippedArchive: true, // Compress old logs
+      zippedArchive: true,
     }),
-    // Rotating file transport for all logs
     new DailyRotateFile({
       filename: path.join(config.logDir, 'combined-%DATE%.log'),
       datePattern: 'YYYY-MM-DD',
       maxSize: maxLogSize,
       maxFiles: maxLogFiles,
-      zippedArchive: true, // Compress old logs
+      zippedArchive: true,
     }),
   ],
 });

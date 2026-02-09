@@ -86,27 +86,22 @@ export async function formatAudiobookForHardcover(
 function extractAudiobookAuthors(
   metadata: BookMetadataExpanded | PodcastMetadataExpanded
 ): string[] {
-  // Check if it's BookMetadataExpanded which has authors property
   if ('authors' in metadata && metadata.authors && Array.isArray(metadata.authors)) {
     return metadata.authors
       .filter(author => author && typeof author.name === 'string')
       .map(author => author.name);
   }
 
-  // Check for authorName which exists in BookMetadataExpanded
   if ('authorName' in metadata && metadata.authorName) {
     return [metadata.authorName];
   }
 
-  // Check for author which exists in PodcastMetadataExpanded
   if ('author' in metadata && metadata.author) {
     if (typeof metadata.author === 'string') {
       return [metadata.author];
     }
 
-    // Need to explicitly check if it's an array to satisfy TypeScript
     if (Array.isArray(metadata.author)) {
-      // Cast to string[] to allow filtering
       const authorArray = metadata.author as string[];
       return authorArray.filter(a => typeof a === 'string');
     }

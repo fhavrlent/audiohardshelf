@@ -50,7 +50,6 @@ export class ApiError extends Error {
   ) {
     super(message);
     this.name = 'ApiError';
-    // Maintains proper stack trace for where error was thrown (V8 only)
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, ApiError);
     }
