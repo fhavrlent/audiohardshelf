@@ -4,30 +4,26 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = {
-  [_ in K]?: never;
-};
-export type Incremental<T> =
-  | T
-  | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string };
-  String: { input: string; output: string };
-  Boolean: { input: boolean; output: boolean };
-  Int: { input: number; output: number };
-  Float: { input: number; output: number };
-  bigint: { input: any; output: any };
-  citext: { input: any; output: any };
-  date: { input: any; output: any };
-  float8: { input: any; output: any };
-  json: { input: any; output: any };
-  jsonb: { input: any; output: any };
-  numeric: { input: any; output: any };
-  smallint: { input: any; output: any };
-  timestamp: { input: any; output: any };
-  timestamptz: { input: any; output: any };
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  bigint: { input: any; output: any; }
+  citext: { input: any; output: any; }
+  date: { input: any; output: any; }
+  float8: { input: any; output: any; }
+  json: { input: any; output: any; }
+  jsonb: { input: any; output: any; }
+  numeric: { input: any; output: any; }
+  smallint: { input: any; output: any; }
+  timestamp: { input: any; output: any; }
+  timestamptz: { input: any; output: any; }
 };
 
 export type AuthorIdType = {
@@ -42,6 +38,7 @@ export type AuthorInputType = {
   bio?: InputMaybe<Scalars['String']['input']>;
   born_date?: InputMaybe<Scalars['date']['input']>;
   born_year?: InputMaybe<Scalars['Int']['input']>;
+  curation_status?: InputMaybe<Scalars['String']['input']>;
   death_date?: InputMaybe<Scalars['date']['input']>;
   death_year?: InputMaybe<Scalars['Int']['input']>;
   gender_id?: InputMaybe<Scalars['Int']['input']>;
@@ -114,6 +111,7 @@ export type BookIdType = {
 export type BookInput = {
   book_status_id?: InputMaybe<Scalars['Int']['input']>;
   canonical_id?: InputMaybe<Scalars['Int']['input']>;
+  curation_status?: InputMaybe<Scalars['String']['input']>;
   default_audio_edition_id?: InputMaybe<Scalars['Int']['input']>;
   default_cover_edition_id?: InputMaybe<Scalars['Int']['input']>;
   default_ebook_edition_id?: InputMaybe<Scalars['Int']['input']>;
@@ -121,7 +119,6 @@ export type BookInput = {
   dto?: InputMaybe<BookDtoType>;
   locked?: InputMaybe<Scalars['Boolean']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
-  user_added?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type BookMappingIdType = {
@@ -175,6 +172,7 @@ export type CharacterIdType = {
 
 export type CharacterInput = {
   biography?: InputMaybe<Scalars['String']['input']>;
+  curation_status?: InputMaybe<Scalars['String']['input']>;
   gender_id?: InputMaybe<Scalars['Int']['input']>;
   has_disability?: InputMaybe<Scalars['Boolean']['input']>;
   image_id?: InputMaybe<Scalars['Int']['input']>;
@@ -232,7 +230,6 @@ export type DatesReadInput = {
   id?: InputMaybe<Scalars['Int']['input']>;
   progress_pages?: InputMaybe<Scalars['Int']['input']>;
   progress_seconds?: InputMaybe<Scalars['Int']['input']>;
-  reading_format_id?: InputMaybe<Scalars['Int']['input']>;
   started_at?: InputMaybe<Scalars['date']['input']>;
 };
 
@@ -271,8 +268,24 @@ export type EditionIdType = {
 
 export type EditionInput = {
   book_id?: InputMaybe<Scalars['Int']['input']>;
+  curation_status?: InputMaybe<Scalars['String']['input']>;
   dto?: InputMaybe<BookDtoInput>;
   locked?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type FollowDeleteType = {
+  __typename?: 'FollowDeleteType';
+  error?: Maybe<Scalars['String']['output']>;
+  success: Scalars['Boolean']['output'];
+};
+
+export type FollowType = {
+  __typename?: 'FollowType';
+  error?: Maybe<Scalars['String']['output']>;
+  follow?: Maybe<Follows>;
+  followable_id?: Maybe<Scalars['Int']['output']>;
+  followable_type?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['Int']['output']>;
 };
 
 export type FollowedListType = {
@@ -370,6 +383,10 @@ export type LikeType = {
   likes_count: Scalars['Int']['output'];
 };
 
+export type LinkInput = {
+  url: Scalars['String']['input'];
+};
+
 export type ListBookDeleteType = {
   __typename?: 'ListBookDeleteType';
   id?: Maybe<Scalars['Int']['output']>;
@@ -465,8 +482,10 @@ export type PublisherIdType = {
 
 export type PublisherInputType = {
   canonical_id?: InputMaybe<Scalars['Int']['input']>;
+  curation_status?: InputMaybe<Scalars['String']['input']>;
   locked?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  parent_id?: InputMaybe<Scalars['Int']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   state?: InputMaybe<Scalars['String']['input']>;
 };
@@ -545,6 +564,7 @@ export type SeriesInput = {
 
 export type SeriesInputType = {
   author_id?: InputMaybe<Scalars['Int']['input']>;
+  curation_status?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['Int']['input']>;
   is_completed?: InputMaybe<Scalars['Boolean']['input']>;
@@ -639,7 +659,6 @@ export type UserBookCreateInput = {
   private_notes?: InputMaybe<Scalars['String']['input']>;
   rating?: InputMaybe<Scalars['numeric']['input']>;
   read_count?: InputMaybe<Scalars['Int']['input']>;
-  reading_format_id?: InputMaybe<Scalars['Int']['input']>;
   recommended_by?: InputMaybe<Scalars['String']['input']>;
   recommended_for?: InputMaybe<Scalars['String']['input']>;
   referrer_user_id?: InputMaybe<Scalars['Int']['input']>;
@@ -649,6 +668,7 @@ export type UserBookCreateInput = {
   sponsored_review?: InputMaybe<Scalars['Boolean']['input']>;
   status_id?: InputMaybe<Scalars['Int']['input']>;
   url?: InputMaybe<Scalars['String']['input']>;
+  user_date?: InputMaybe<Scalars['date']['input']>;
 };
 
 export type UserBookDeleteType = {
@@ -683,7 +703,6 @@ export type UserBookUpdateInput = {
   private_notes?: InputMaybe<Scalars['String']['input']>;
   rating?: InputMaybe<Scalars['numeric']['input']>;
   read_count?: InputMaybe<Scalars['Int']['input']>;
-  reading_format_id?: InputMaybe<Scalars['Int']['input']>;
   recommended_by?: InputMaybe<Scalars['String']['input']>;
   recommended_for?: InputMaybe<Scalars['String']['input']>;
   referrer_user_id?: InputMaybe<Scalars['Int']['input']>;
@@ -693,6 +712,7 @@ export type UserBookUpdateInput = {
   sponsored_review?: InputMaybe<Scalars['Boolean']['input']>;
   status_id?: InputMaybe<Scalars['Int']['input']>;
   url?: InputMaybe<Scalars['String']['input']>;
+  user_date?: InputMaybe<Scalars['date']['input']>;
 };
 
 export type UserBooksReadUpsertType = {
@@ -753,10 +773,12 @@ export type Activities = {
   user_id: Scalars['Int']['output'];
 };
 
+
 /** columns and relationships of "activities" */
 export type ActivitiesDataArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** columns and relationships of "activities" */
 export type ActivitiesFollowersArgs = {
@@ -766,6 +788,7 @@ export type ActivitiesFollowersArgs = {
   order_by?: InputMaybe<Array<Followed_Users_Order_By>>;
   where?: InputMaybe<Followed_Users_Bool_Exp>;
 };
+
 
 /** columns and relationships of "activities" */
 export type ActivitiesLikesArgs = {
@@ -904,7 +927,7 @@ export enum Activities_Select_Column {
   /** column name */
   Uid = 'uid',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** order by stddev() on columns of table "activities" */
@@ -1046,12 +1069,14 @@ export type Authors = {
   locked: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   name_personal?: Maybe<Scalars['String']['output']>;
+  object_type: Scalars['String']['output'];
   slug?: Maybe<Scalars['String']['output']>;
   state: Scalars['String']['output'];
   title?: Maybe<Scalars['String']['output']>;
   user_id?: Maybe<Scalars['Int']['output']>;
   users_count: Scalars['Int']['output'];
 };
+
 
 /** columns and relationships of "authors" */
 export type AuthorsAliasArgs = {
@@ -1062,15 +1087,18 @@ export type AuthorsAliasArgs = {
   where?: InputMaybe<Authors_Bool_Exp>;
 };
 
+
 /** columns and relationships of "authors" */
 export type AuthorsAlternate_NamesArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
 
+
 /** columns and relationships of "authors" */
 export type AuthorsCached_ImageArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** columns and relationships of "authors" */
 export type AuthorsContributionsArgs = {
@@ -1081,6 +1109,7 @@ export type AuthorsContributionsArgs = {
   where?: InputMaybe<Contributions_Bool_Exp>;
 };
 
+
 /** columns and relationships of "authors" */
 export type AuthorsContributions_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Contributions_Select_Column>>;
@@ -1090,10 +1119,12 @@ export type AuthorsContributions_AggregateArgs = {
   where?: InputMaybe<Contributions_Bool_Exp>;
 };
 
+
 /** columns and relationships of "authors" */
 export type AuthorsIdentifiersArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** columns and relationships of "authors" */
 export type AuthorsLinksArgs = {
@@ -1161,6 +1192,7 @@ export type Authors_Bool_Exp = {
   locked?: InputMaybe<Boolean_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
   name_personal?: InputMaybe<String_Comparison_Exp>;
+  object_type?: InputMaybe<String_Comparison_Exp>;
   slug?: InputMaybe<String_Comparison_Exp>;
   state?: InputMaybe<String_Comparison_Exp>;
   title?: InputMaybe<String_Comparison_Exp>;
@@ -1184,6 +1216,7 @@ export type Authors_Max_Order_By = {
   location?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   name_personal?: InputMaybe<Order_By>;
+  object_type?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
   state?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
@@ -1207,6 +1240,7 @@ export type Authors_Min_Order_By = {
   location?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   name_personal?: InputMaybe<Order_By>;
+  object_type?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
   state?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
@@ -1242,6 +1276,7 @@ export type Authors_Order_By = {
   locked?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   name_personal?: InputMaybe<Order_By>;
+  object_type?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
   state?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
@@ -1294,6 +1329,8 @@ export enum Authors_Select_Column {
   /** column name */
   NamePersonal = 'name_personal',
   /** column name */
+  ObjectType = 'object_type',
+  /** column name */
   Slug = 'slug',
   /** column name */
   State = 'state',
@@ -1302,7 +1339,7 @@ export enum Authors_Select_Column {
   /** column name */
   UserId = 'user_id',
   /** column name */
-  UsersCount = 'users_count',
+  UsersCount = 'users_count'
 }
 
 /** order by stddev() on columns of table "authors" */
@@ -1378,6 +1415,7 @@ export type Authors_Stream_Cursor_Value_Input = {
   locked?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   name_personal?: InputMaybe<Scalars['String']['input']>;
+  object_type?: InputMaybe<Scalars['String']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   state?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
@@ -1481,7 +1519,7 @@ export enum Book_Categories_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  Name = 'name',
+  Name = 'name'
 }
 
 /** Streaming cursor of the table "book_categories" */
@@ -1592,7 +1630,7 @@ export enum Book_Characters_Select_Column {
   /** column name */
   Position = 'position',
   /** column name */
-  Spoiler = 'spoiler',
+  Spoiler = 'spoiler'
 }
 
 /** order by stddev() on columns of table "book_characters" */
@@ -1706,7 +1744,7 @@ export enum Book_Collections_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  Position = 'position',
+  Position = 'position'
 }
 
 /** Streaming cursor of the table "book_collections" */
@@ -1733,7 +1771,6 @@ export type Book_Mappings = {
   book: Books;
   book_id: Scalars['Int']['output'];
   created_at?: Maybe<Scalars['timestamptz']['output']>;
-  dto_external: Scalars['json']['output'];
   /** An object relationship */
   edition?: Maybe<Editions>;
   edition_id?: Maybe<Scalars['Int']['output']>;
@@ -1751,11 +1788,6 @@ export type Book_Mappings = {
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
   verified?: Maybe<Scalars['Boolean']['output']>;
   verified_at?: Maybe<Scalars['timestamp']['output']>;
-};
-
-/** columns and relationships of "book_mappings" */
-export type Book_MappingsDto_ExternalArgs = {
-  path?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** order by aggregate values of table "book_mappings" */
@@ -1793,7 +1825,6 @@ export type Book_Mappings_Bool_Exp = {
   book?: InputMaybe<Books_Bool_Exp>;
   book_id?: InputMaybe<Int_Comparison_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-  dto_external?: InputMaybe<Json_Comparison_Exp>;
   edition?: InputMaybe<Editions_Bool_Exp>;
   edition_id?: InputMaybe<Int_Comparison_Exp>;
   external_data_id?: InputMaybe<Int_Comparison_Exp>;
@@ -1853,7 +1884,6 @@ export type Book_Mappings_Order_By = {
   book?: InputMaybe<Books_Order_By>;
   book_id?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
-  dto_external?: InputMaybe<Order_By>;
   edition?: InputMaybe<Editions_Order_By>;
   edition_id?: InputMaybe<Order_By>;
   external_data_id?: InputMaybe<Order_By>;
@@ -1880,8 +1910,6 @@ export enum Book_Mappings_Select_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
-  DtoExternal = 'dto_external',
-  /** column name */
   EditionId = 'edition_id',
   /** column name */
   ExternalDataId = 'external_data_id',
@@ -1906,7 +1934,7 @@ export enum Book_Mappings_Select_Column {
   /** column name */
   Verified = 'verified',
   /** column name */
-  VerifiedAt = 'verified_at',
+  VerifiedAt = 'verified_at'
 }
 
 /** order by stddev() on columns of table "book_mappings" */
@@ -1955,7 +1983,6 @@ export type Book_Mappings_Stream_Cursor_Value_Input = {
   attempts?: InputMaybe<Scalars['Int']['input']>;
   book_id?: InputMaybe<Scalars['Int']['input']>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
-  dto_external?: InputMaybe<Scalars['json']['input']>;
   edition_id?: InputMaybe<Scalars['Int']['input']>;
   external_data_id?: InputMaybe<Scalars['Int']['input']>;
   external_id?: InputMaybe<Scalars['String']['input']>;
@@ -2021,6 +2048,7 @@ export type Book_Series = {
   /** An object relationship */
   book?: Maybe<Books>;
   book_id: Scalars['Int']['output'];
+  compilation: Scalars['Boolean']['output'];
   created_at: Scalars['timestamp']['output'];
   details?: Maybe<Scalars['String']['output']>;
   featured: Scalars['Boolean']['output'];
@@ -2156,6 +2184,7 @@ export type Book_Series_Aggregate_Fields = {
   variance?: Maybe<Book_Series_Variance_Fields>;
 };
 
+
 /** aggregate fields of "book_series" */
 export type Book_Series_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Book_Series_Select_Column>>;
@@ -2201,6 +2230,7 @@ export type Book_Series_Bool_Exp = {
   _or?: InputMaybe<Array<Book_Series_Bool_Exp>>;
   book?: InputMaybe<Books_Bool_Exp>;
   book_id?: InputMaybe<Int_Comparison_Exp>;
+  compilation?: InputMaybe<Boolean_Comparison_Exp>;
   created_at?: InputMaybe<Timestamp_Comparison_Exp>;
   details?: InputMaybe<String_Comparison_Exp>;
   featured?: InputMaybe<Boolean_Comparison_Exp>;
@@ -2261,6 +2291,7 @@ export type Book_Series_Min_Order_By = {
 export type Book_Series_Order_By = {
   book?: InputMaybe<Books_Order_By>;
   book_id?: InputMaybe<Order_By>;
+  compilation?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   details?: InputMaybe<Order_By>;
   featured?: InputMaybe<Order_By>;
@@ -2276,6 +2307,8 @@ export enum Book_Series_Select_Column {
   /** column name */
   BookId = 'book_id',
   /** column name */
+  Compilation = 'compilation',
+  /** column name */
   CreatedAt = 'created_at',
   /** column name */
   Details = 'details',
@@ -2288,67 +2321,71 @@ export enum Book_Series_Select_Column {
   /** column name */
   SeriesId = 'series_id',
   /** column name */
-  UpdatedAt = 'updated_at',
+  UpdatedAt = 'updated_at'
 }
 
 /** select "book_series_aggregate_bool_exp_avg_arguments_columns" columns of table "book_series" */
 export enum Book_Series_Select_Column_Book_Series_Aggregate_Bool_Exp_Avg_Arguments_Columns {
   /** column name */
-  Position = 'position',
+  Position = 'position'
 }
 
 /** select "book_series_aggregate_bool_exp_bool_and_arguments_columns" columns of table "book_series" */
 export enum Book_Series_Select_Column_Book_Series_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
   /** column name */
-  Featured = 'featured',
+  Compilation = 'compilation',
+  /** column name */
+  Featured = 'featured'
 }
 
 /** select "book_series_aggregate_bool_exp_bool_or_arguments_columns" columns of table "book_series" */
 export enum Book_Series_Select_Column_Book_Series_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
   /** column name */
-  Featured = 'featured',
+  Compilation = 'compilation',
+  /** column name */
+  Featured = 'featured'
 }
 
 /** select "book_series_aggregate_bool_exp_corr_arguments_columns" columns of table "book_series" */
 export enum Book_Series_Select_Column_Book_Series_Aggregate_Bool_Exp_Corr_Arguments_Columns {
   /** column name */
-  Position = 'position',
+  Position = 'position'
 }
 
 /** select "book_series_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "book_series" */
 export enum Book_Series_Select_Column_Book_Series_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
   /** column name */
-  Position = 'position',
+  Position = 'position'
 }
 
 /** select "book_series_aggregate_bool_exp_max_arguments_columns" columns of table "book_series" */
 export enum Book_Series_Select_Column_Book_Series_Aggregate_Bool_Exp_Max_Arguments_Columns {
   /** column name */
-  Position = 'position',
+  Position = 'position'
 }
 
 /** select "book_series_aggregate_bool_exp_min_arguments_columns" columns of table "book_series" */
 export enum Book_Series_Select_Column_Book_Series_Aggregate_Bool_Exp_Min_Arguments_Columns {
   /** column name */
-  Position = 'position',
+  Position = 'position'
 }
 
 /** select "book_series_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "book_series" */
 export enum Book_Series_Select_Column_Book_Series_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
   /** column name */
-  Position = 'position',
+  Position = 'position'
 }
 
 /** select "book_series_aggregate_bool_exp_sum_arguments_columns" columns of table "book_series" */
 export enum Book_Series_Select_Column_Book_Series_Aggregate_Bool_Exp_Sum_Arguments_Columns {
   /** column name */
-  Position = 'position',
+  Position = 'position'
 }
 
 /** select "book_series_aggregate_bool_exp_var_samp_arguments_columns" columns of table "book_series" */
 export enum Book_Series_Select_Column_Book_Series_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
   /** column name */
-  Position = 'position',
+  Position = 'position'
 }
 
 /** aggregate stddev on columns */
@@ -2413,6 +2450,7 @@ export type Book_Series_Stream_Cursor_Input = {
 /** Initial value of the column from where the streaming should start */
 export type Book_Series_Stream_Cursor_Value_Input = {
   book_id?: InputMaybe<Scalars['Int']['input']>;
+  compilation?: InputMaybe<Scalars['Boolean']['input']>;
   created_at?: InputMaybe<Scalars['timestamp']['input']>;
   details?: InputMaybe<Scalars['String']['input']>;
   featured?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2501,6 +2539,7 @@ export type Book_Statuses = {
   name: Scalars['String']['output'];
 };
 
+
 /** columns and relationships of "book_statuses" */
 export type Book_StatusesBooksArgs = {
   distinct_on?: InputMaybe<Array<Books_Select_Column>>;
@@ -2509,6 +2548,7 @@ export type Book_StatusesBooksArgs = {
   order_by?: InputMaybe<Array<Books_Order_By>>;
   where?: InputMaybe<Books_Bool_Exp>;
 };
+
 
 /** columns and relationships of "book_statuses" */
 export type Book_StatusesBooks_AggregateArgs = {
@@ -2542,7 +2582,7 @@ export enum Book_Statuses_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  Name = 'name',
+  Name = 'name'
 }
 
 /** Streaming cursor of the table "book_statuses" */
@@ -2600,7 +2640,7 @@ export enum Bookles_Select_Column {
   /** column name */
   Date = 'date',
   /** column name */
-  Id = 'id',
+  Id = 'id'
 }
 
 /** Streaming cursor of the table "bookles" */
@@ -2654,6 +2694,7 @@ export type Books = {
   contributions_aggregate: Contributions_Aggregate;
   created_at: Scalars['timestamp']['output'];
   created_by_user_id?: Maybe<Scalars['Int']['output']>;
+  curation_status: Scalars['Int']['output'];
   /** An object relationship */
   default_audio_edition?: Maybe<Editions>;
   default_audio_edition_id?: Maybe<Scalars['Int']['output']>;
@@ -2667,9 +2708,6 @@ export type Books = {
   default_physical_edition?: Maybe<Editions>;
   default_physical_edition_id?: Maybe<Scalars['Int']['output']>;
   description?: Maybe<Scalars['String']['output']>;
-  dto?: Maybe<Scalars['json']['output']>;
-  dto_combined?: Maybe<Scalars['json']['output']>;
-  dto_external?: Maybe<Scalars['json']['output']>;
   /** An array relationship */
   editions: Array<Editions>;
   editions_count: Scalars['Int']['output'];
@@ -2705,8 +2743,6 @@ export type Books = {
   rating?: Maybe<Scalars['numeric']['output']>;
   ratings_count: Scalars['Int']['output'];
   ratings_distribution: Scalars['jsonb']['output'];
-  /** An array relationship */
-  recommendations: Array<Recommendations>;
   release_date?: Maybe<Scalars['date']['output']>;
   release_year?: Maybe<Scalars['Int']['output']>;
   reviews_count: Scalars['Int']['output'];
@@ -2721,7 +2757,6 @@ export type Books = {
   taggings_aggregate: Taggings_Aggregate;
   title?: Maybe<Scalars['String']['output']>;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
-  user_added: Scalars['Boolean']['output'];
   /** An array relationship */
   user_books: Array<User_Books>;
   /** An aggregate relationship */
@@ -2730,10 +2765,12 @@ export type Books = {
   users_read_count: Scalars['Int']['output'];
 };
 
+
 /** columns and relationships of "books" */
 export type BooksAlternative_TitlesArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** columns and relationships of "books" */
 export type BooksBook_CharactersArgs = {
@@ -2744,6 +2781,7 @@ export type BooksBook_CharactersArgs = {
   where?: InputMaybe<Book_Characters_Bool_Exp>;
 };
 
+
 /** columns and relationships of "books" */
 export type BooksBook_MappingsArgs = {
   distinct_on?: InputMaybe<Array<Book_Mappings_Select_Column>>;
@@ -2752,6 +2790,7 @@ export type BooksBook_MappingsArgs = {
   order_by?: InputMaybe<Array<Book_Mappings_Order_By>>;
   where?: InputMaybe<Book_Mappings_Bool_Exp>;
 };
+
 
 /** columns and relationships of "books" */
 export type BooksBook_SeriesArgs = {
@@ -2762,6 +2801,7 @@ export type BooksBook_SeriesArgs = {
   where?: InputMaybe<Book_Series_Bool_Exp>;
 };
 
+
 /** columns and relationships of "books" */
 export type BooksBook_Series_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Book_Series_Select_Column>>;
@@ -2771,30 +2811,36 @@ export type BooksBook_Series_AggregateArgs = {
   where?: InputMaybe<Book_Series_Bool_Exp>;
 };
 
+
 /** columns and relationships of "books" */
 export type BooksCached_ContributorsArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** columns and relationships of "books" */
 export type BooksCached_Featured_SeriesArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
 
+
 /** columns and relationships of "books" */
 export type BooksCached_Header_ImageArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** columns and relationships of "books" */
 export type BooksCached_ImageArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
 
+
 /** columns and relationships of "books" */
 export type BooksCached_TagsArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** columns and relationships of "books" */
 export type BooksCollection_Import_ResultsArgs = {
@@ -2805,6 +2851,7 @@ export type BooksCollection_Import_ResultsArgs = {
   where?: InputMaybe<Collection_Import_Results_Bool_Exp>;
 };
 
+
 /** columns and relationships of "books" */
 export type BooksContributionsArgs = {
   distinct_on?: InputMaybe<Array<Contributions_Select_Column>>;
@@ -2813,6 +2860,7 @@ export type BooksContributionsArgs = {
   order_by?: InputMaybe<Array<Contributions_Order_By>>;
   where?: InputMaybe<Contributions_Bool_Exp>;
 };
+
 
 /** columns and relationships of "books" */
 export type BooksContributions_AggregateArgs = {
@@ -2823,20 +2871,6 @@ export type BooksContributions_AggregateArgs = {
   where?: InputMaybe<Contributions_Bool_Exp>;
 };
 
-/** columns and relationships of "books" */
-export type BooksDtoArgs = {
-  path?: InputMaybe<Scalars['String']['input']>;
-};
-
-/** columns and relationships of "books" */
-export type BooksDto_CombinedArgs = {
-  path?: InputMaybe<Scalars['String']['input']>;
-};
-
-/** columns and relationships of "books" */
-export type BooksDto_ExternalArgs = {
-  path?: InputMaybe<Scalars['String']['input']>;
-};
 
 /** columns and relationships of "books" */
 export type BooksEditionsArgs = {
@@ -2847,6 +2881,7 @@ export type BooksEditionsArgs = {
   where?: InputMaybe<Editions_Bool_Exp>;
 };
 
+
 /** columns and relationships of "books" */
 export type BooksImagesArgs = {
   distinct_on?: InputMaybe<Array<Images_Select_Column>>;
@@ -2856,10 +2891,12 @@ export type BooksImagesArgs = {
   where?: InputMaybe<Images_Bool_Exp>;
 };
 
+
 /** columns and relationships of "books" */
 export type BooksLinksArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** columns and relationships of "books" */
 export type BooksList_BooksArgs = {
@@ -2870,6 +2907,7 @@ export type BooksList_BooksArgs = {
   where?: InputMaybe<List_Books_Bool_Exp>;
 };
 
+
 /** columns and relationships of "books" */
 export type BooksList_Books_AggregateArgs = {
   distinct_on?: InputMaybe<Array<List_Books_Select_Column>>;
@@ -2878,6 +2916,7 @@ export type BooksList_Books_AggregateArgs = {
   order_by?: InputMaybe<Array<List_Books_Order_By>>;
   where?: InputMaybe<List_Books_Bool_Exp>;
 };
+
 
 /** columns and relationships of "books" */
 export type BooksPrompt_AnswersArgs = {
@@ -2888,6 +2927,7 @@ export type BooksPrompt_AnswersArgs = {
   where?: InputMaybe<Prompt_Answers_Bool_Exp>;
 };
 
+
 /** columns and relationships of "books" */
 export type BooksPrompt_Answers_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Prompt_Answers_Select_Column>>;
@@ -2896,6 +2936,7 @@ export type BooksPrompt_Answers_AggregateArgs = {
   order_by?: InputMaybe<Array<Prompt_Answers_Order_By>>;
   where?: InputMaybe<Prompt_Answers_Bool_Exp>;
 };
+
 
 /** columns and relationships of "books" */
 export type BooksPrompt_SummariesArgs = {
@@ -2906,19 +2947,12 @@ export type BooksPrompt_SummariesArgs = {
   where?: InputMaybe<Prompt_Books_Summary_Bool_Exp>;
 };
 
+
 /** columns and relationships of "books" */
 export type BooksRatings_DistributionArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
 
-/** columns and relationships of "books" */
-export type BooksRecommendationsArgs = {
-  distinct_on?: InputMaybe<Array<Recommendations_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Recommendations_Order_By>>;
-  where?: InputMaybe<Recommendations_Bool_Exp>;
-};
 
 /** columns and relationships of "books" */
 export type BooksTaggable_CountsArgs = {
@@ -2929,6 +2963,7 @@ export type BooksTaggable_CountsArgs = {
   where?: InputMaybe<Taggable_Counts_Bool_Exp>;
 };
 
+
 /** columns and relationships of "books" */
 export type BooksTaggingsArgs = {
   distinct_on?: InputMaybe<Array<Taggings_Select_Column>>;
@@ -2937,6 +2972,7 @@ export type BooksTaggingsArgs = {
   order_by?: InputMaybe<Array<Taggings_Order_By>>;
   where?: InputMaybe<Taggings_Bool_Exp>;
 };
+
 
 /** columns and relationships of "books" */
 export type BooksTaggings_AggregateArgs = {
@@ -2947,6 +2983,7 @@ export type BooksTaggings_AggregateArgs = {
   where?: InputMaybe<Taggings_Bool_Exp>;
 };
 
+
 /** columns and relationships of "books" */
 export type BooksUser_BooksArgs = {
   distinct_on?: InputMaybe<Array<User_Books_Select_Column>>;
@@ -2955,6 +2992,7 @@ export type BooksUser_BooksArgs = {
   order_by?: InputMaybe<Array<User_Books_Order_By>>;
   where?: InputMaybe<User_Books_Bool_Exp>;
 };
+
 
 /** columns and relationships of "books" */
 export type BooksUser_Books_AggregateArgs = {
@@ -3015,6 +3053,7 @@ export type Books_Aggregate_Fields = {
   variance?: Maybe<Books_Variance_Fields>;
 };
 
+
 /** aggregate fields of "books" */
 export type Books_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Books_Select_Column>>;
@@ -3045,6 +3084,7 @@ export type Books_Avg_Fields = {
   book_status_id?: Maybe<Scalars['Float']['output']>;
   canonical_id?: Maybe<Scalars['Float']['output']>;
   created_by_user_id?: Maybe<Scalars['Float']['output']>;
+  curation_status?: Maybe<Scalars['Float']['output']>;
   default_audio_edition_id?: Maybe<Scalars['Float']['output']>;
   default_cover_edition_id?: Maybe<Scalars['Float']['output']>;
   default_ebook_edition_id?: Maybe<Scalars['Float']['output']>;
@@ -3076,6 +3116,7 @@ export type Books_Avg_Order_By = {
   book_status_id?: InputMaybe<Order_By>;
   canonical_id?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   default_audio_edition_id?: InputMaybe<Order_By>;
   default_cover_edition_id?: InputMaybe<Order_By>;
   default_ebook_edition_id?: InputMaybe<Order_By>;
@@ -3127,6 +3168,7 @@ export type Books_Bool_Exp = {
   contributions_aggregate?: InputMaybe<Contributions_Aggregate_Bool_Exp>;
   created_at?: InputMaybe<Timestamp_Comparison_Exp>;
   created_by_user_id?: InputMaybe<Int_Comparison_Exp>;
+  curation_status?: InputMaybe<Int_Comparison_Exp>;
   default_audio_edition?: InputMaybe<Editions_Bool_Exp>;
   default_audio_edition_id?: InputMaybe<Int_Comparison_Exp>;
   default_cover_edition?: InputMaybe<Editions_Bool_Exp>;
@@ -3136,9 +3178,6 @@ export type Books_Bool_Exp = {
   default_physical_edition?: InputMaybe<Editions_Bool_Exp>;
   default_physical_edition_id?: InputMaybe<Int_Comparison_Exp>;
   description?: InputMaybe<String_Comparison_Exp>;
-  dto?: InputMaybe<Json_Comparison_Exp>;
-  dto_combined?: InputMaybe<Json_Comparison_Exp>;
-  dto_external?: InputMaybe<Json_Comparison_Exp>;
   editions?: InputMaybe<Editions_Bool_Exp>;
   editions_count?: InputMaybe<Int_Comparison_Exp>;
   featured_book_series?: InputMaybe<Book_Series_Bool_Exp>;
@@ -3165,7 +3204,6 @@ export type Books_Bool_Exp = {
   rating?: InputMaybe<Numeric_Comparison_Exp>;
   ratings_count?: InputMaybe<Int_Comparison_Exp>;
   ratings_distribution?: InputMaybe<Jsonb_Comparison_Exp>;
-  recommendations?: InputMaybe<Recommendations_Bool_Exp>;
   release_date?: InputMaybe<Date_Comparison_Exp>;
   release_year?: InputMaybe<Int_Comparison_Exp>;
   reviews_count?: InputMaybe<Int_Comparison_Exp>;
@@ -3177,7 +3215,6 @@ export type Books_Bool_Exp = {
   taggings_aggregate?: InputMaybe<Taggings_Aggregate_Bool_Exp>;
   title?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-  user_added?: InputMaybe<Boolean_Comparison_Exp>;
   user_books?: InputMaybe<User_Books_Bool_Exp>;
   user_books_aggregate?: InputMaybe<User_Books_Aggregate_Bool_Exp>;
   users_count?: InputMaybe<Int_Comparison_Exp>;
@@ -3194,6 +3231,7 @@ export type Books_Max_Fields = {
   canonical_id?: Maybe<Scalars['Int']['output']>;
   created_at?: Maybe<Scalars['timestamp']['output']>;
   created_by_user_id?: Maybe<Scalars['Int']['output']>;
+  curation_status?: Maybe<Scalars['Int']['output']>;
   default_audio_edition_id?: Maybe<Scalars['Int']['output']>;
   default_cover_edition_id?: Maybe<Scalars['Int']['output']>;
   default_ebook_edition_id?: Maybe<Scalars['Int']['output']>;
@@ -3234,6 +3272,7 @@ export type Books_Max_Order_By = {
   canonical_id?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   default_audio_edition_id?: InputMaybe<Order_By>;
   default_cover_edition_id?: InputMaybe<Order_By>;
   default_ebook_edition_id?: InputMaybe<Order_By>;
@@ -3275,6 +3314,7 @@ export type Books_Min_Fields = {
   canonical_id?: Maybe<Scalars['Int']['output']>;
   created_at?: Maybe<Scalars['timestamp']['output']>;
   created_by_user_id?: Maybe<Scalars['Int']['output']>;
+  curation_status?: Maybe<Scalars['Int']['output']>;
   default_audio_edition_id?: Maybe<Scalars['Int']['output']>;
   default_cover_edition_id?: Maybe<Scalars['Int']['output']>;
   default_ebook_edition_id?: Maybe<Scalars['Int']['output']>;
@@ -3315,6 +3355,7 @@ export type Books_Min_Order_By = {
   canonical_id?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   default_audio_edition_id?: InputMaybe<Order_By>;
   default_cover_edition_id?: InputMaybe<Order_By>;
   default_ebook_edition_id?: InputMaybe<Order_By>;
@@ -3369,6 +3410,7 @@ export type Books_Order_By = {
   contributions_aggregate?: InputMaybe<Contributions_Aggregate_Order_By>;
   created_at?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   default_audio_edition?: InputMaybe<Editions_Order_By>;
   default_audio_edition_id?: InputMaybe<Order_By>;
   default_cover_edition?: InputMaybe<Editions_Order_By>;
@@ -3378,9 +3420,6 @@ export type Books_Order_By = {
   default_physical_edition?: InputMaybe<Editions_Order_By>;
   default_physical_edition_id?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
-  dto?: InputMaybe<Order_By>;
-  dto_combined?: InputMaybe<Order_By>;
-  dto_external?: InputMaybe<Order_By>;
   editions_aggregate?: InputMaybe<Editions_Aggregate_Order_By>;
   editions_count?: InputMaybe<Order_By>;
   featured_book_series?: InputMaybe<Book_Series_Order_By>;
@@ -3405,7 +3444,6 @@ export type Books_Order_By = {
   rating?: InputMaybe<Order_By>;
   ratings_count?: InputMaybe<Order_By>;
   ratings_distribution?: InputMaybe<Order_By>;
-  recommendations_aggregate?: InputMaybe<Recommendations_Aggregate_Order_By>;
   release_date?: InputMaybe<Order_By>;
   release_year?: InputMaybe<Order_By>;
   reviews_count?: InputMaybe<Order_By>;
@@ -3416,7 +3454,6 @@ export type Books_Order_By = {
   taggings_aggregate?: InputMaybe<Taggings_Aggregate_Order_By>;
   title?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
-  user_added?: InputMaybe<Order_By>;
   user_books_aggregate?: InputMaybe<User_Books_Aggregate_Order_By>;
   users_count?: InputMaybe<Order_By>;
   users_read_count?: InputMaybe<Order_By>;
@@ -3453,6 +3490,8 @@ export enum Books_Select_Column {
   /** column name */
   CreatedByUserId = 'created_by_user_id',
   /** column name */
+  CurationStatus = 'curation_status',
+  /** column name */
   DefaultAudioEditionId = 'default_audio_edition_id',
   /** column name */
   DefaultCoverEditionId = 'default_cover_edition_id',
@@ -3462,12 +3501,6 @@ export enum Books_Select_Column {
   DefaultPhysicalEditionId = 'default_physical_edition_id',
   /** column name */
   Description = 'description',
-  /** column name */
-  Dto = 'dto',
-  /** column name */
-  DtoCombined = 'dto_combined',
-  /** column name */
-  DtoExternal = 'dto_external',
   /** column name */
   EditionsCount = 'editions_count',
   /** column name */
@@ -3519,11 +3552,9 @@ export enum Books_Select_Column {
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
-  UserAdded = 'user_added',
-  /** column name */
   UsersCount = 'users_count',
   /** column name */
-  UsersReadCount = 'users_read_count',
+  UsersReadCount = 'users_read_count'
 }
 
 /** select "books_aggregate_bool_exp_bool_and_arguments_columns" columns of table "books" */
@@ -3531,9 +3562,7 @@ export enum Books_Select_Column_Books_Aggregate_Bool_Exp_Bool_And_Arguments_Colu
   /** column name */
   Compilation = 'compilation',
   /** column name */
-  Locked = 'locked',
-  /** column name */
-  UserAdded = 'user_added',
+  Locked = 'locked'
 }
 
 /** select "books_aggregate_bool_exp_bool_or_arguments_columns" columns of table "books" */
@@ -3541,9 +3570,7 @@ export enum Books_Select_Column_Books_Aggregate_Bool_Exp_Bool_Or_Arguments_Colum
   /** column name */
   Compilation = 'compilation',
   /** column name */
-  Locked = 'locked',
-  /** column name */
-  UserAdded = 'user_added',
+  Locked = 'locked'
 }
 
 /** aggregate stddev on columns */
@@ -3555,6 +3582,7 @@ export type Books_Stddev_Fields = {
   book_status_id?: Maybe<Scalars['Float']['output']>;
   canonical_id?: Maybe<Scalars['Float']['output']>;
   created_by_user_id?: Maybe<Scalars['Float']['output']>;
+  curation_status?: Maybe<Scalars['Float']['output']>;
   default_audio_edition_id?: Maybe<Scalars['Float']['output']>;
   default_cover_edition_id?: Maybe<Scalars['Float']['output']>;
   default_ebook_edition_id?: Maybe<Scalars['Float']['output']>;
@@ -3586,6 +3614,7 @@ export type Books_Stddev_Order_By = {
   book_status_id?: InputMaybe<Order_By>;
   canonical_id?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   default_audio_edition_id?: InputMaybe<Order_By>;
   default_cover_edition_id?: InputMaybe<Order_By>;
   default_ebook_edition_id?: InputMaybe<Order_By>;
@@ -3618,6 +3647,7 @@ export type Books_Stddev_Pop_Fields = {
   book_status_id?: Maybe<Scalars['Float']['output']>;
   canonical_id?: Maybe<Scalars['Float']['output']>;
   created_by_user_id?: Maybe<Scalars['Float']['output']>;
+  curation_status?: Maybe<Scalars['Float']['output']>;
   default_audio_edition_id?: Maybe<Scalars['Float']['output']>;
   default_cover_edition_id?: Maybe<Scalars['Float']['output']>;
   default_ebook_edition_id?: Maybe<Scalars['Float']['output']>;
@@ -3649,6 +3679,7 @@ export type Books_Stddev_Pop_Order_By = {
   book_status_id?: InputMaybe<Order_By>;
   canonical_id?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   default_audio_edition_id?: InputMaybe<Order_By>;
   default_cover_edition_id?: InputMaybe<Order_By>;
   default_ebook_edition_id?: InputMaybe<Order_By>;
@@ -3681,6 +3712,7 @@ export type Books_Stddev_Samp_Fields = {
   book_status_id?: Maybe<Scalars['Float']['output']>;
   canonical_id?: Maybe<Scalars['Float']['output']>;
   created_by_user_id?: Maybe<Scalars['Float']['output']>;
+  curation_status?: Maybe<Scalars['Float']['output']>;
   default_audio_edition_id?: Maybe<Scalars['Float']['output']>;
   default_cover_edition_id?: Maybe<Scalars['Float']['output']>;
   default_ebook_edition_id?: Maybe<Scalars['Float']['output']>;
@@ -3712,6 +3744,7 @@ export type Books_Stddev_Samp_Order_By = {
   book_status_id?: InputMaybe<Order_By>;
   canonical_id?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   default_audio_edition_id?: InputMaybe<Order_By>;
   default_cover_edition_id?: InputMaybe<Order_By>;
   default_ebook_edition_id?: InputMaybe<Order_By>;
@@ -3759,14 +3792,12 @@ export type Books_Stream_Cursor_Value_Input = {
   compilation?: InputMaybe<Scalars['Boolean']['input']>;
   created_at?: InputMaybe<Scalars['timestamp']['input']>;
   created_by_user_id?: InputMaybe<Scalars['Int']['input']>;
+  curation_status?: InputMaybe<Scalars['Int']['input']>;
   default_audio_edition_id?: InputMaybe<Scalars['Int']['input']>;
   default_cover_edition_id?: InputMaybe<Scalars['Int']['input']>;
   default_ebook_edition_id?: InputMaybe<Scalars['Int']['input']>;
   default_physical_edition_id?: InputMaybe<Scalars['Int']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
-  dto?: InputMaybe<Scalars['json']['input']>;
-  dto_combined?: InputMaybe<Scalars['json']['input']>;
-  dto_external?: InputMaybe<Scalars['json']['input']>;
   editions_count?: InputMaybe<Scalars['Int']['input']>;
   featured_book_series_id?: InputMaybe<Scalars['Int']['input']>;
   header_image_id?: InputMaybe<Scalars['Int']['input']>;
@@ -3792,7 +3823,6 @@ export type Books_Stream_Cursor_Value_Input = {
   subtitle?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
-  user_added?: InputMaybe<Scalars['Boolean']['input']>;
   users_count?: InputMaybe<Scalars['Int']['input']>;
   users_read_count?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -3806,6 +3836,7 @@ export type Books_Sum_Fields = {
   book_status_id?: Maybe<Scalars['smallint']['output']>;
   canonical_id?: Maybe<Scalars['Int']['output']>;
   created_by_user_id?: Maybe<Scalars['Int']['output']>;
+  curation_status?: Maybe<Scalars['Int']['output']>;
   default_audio_edition_id?: Maybe<Scalars['Int']['output']>;
   default_cover_edition_id?: Maybe<Scalars['Int']['output']>;
   default_ebook_edition_id?: Maybe<Scalars['Int']['output']>;
@@ -3837,6 +3868,7 @@ export type Books_Sum_Order_By = {
   book_status_id?: InputMaybe<Order_By>;
   canonical_id?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   default_audio_edition_id?: InputMaybe<Order_By>;
   default_cover_edition_id?: InputMaybe<Order_By>;
   default_ebook_edition_id?: InputMaybe<Order_By>;
@@ -3869,6 +3901,7 @@ export type Books_Var_Pop_Fields = {
   book_status_id?: Maybe<Scalars['Float']['output']>;
   canonical_id?: Maybe<Scalars['Float']['output']>;
   created_by_user_id?: Maybe<Scalars['Float']['output']>;
+  curation_status?: Maybe<Scalars['Float']['output']>;
   default_audio_edition_id?: Maybe<Scalars['Float']['output']>;
   default_cover_edition_id?: Maybe<Scalars['Float']['output']>;
   default_ebook_edition_id?: Maybe<Scalars['Float']['output']>;
@@ -3900,6 +3933,7 @@ export type Books_Var_Pop_Order_By = {
   book_status_id?: InputMaybe<Order_By>;
   canonical_id?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   default_audio_edition_id?: InputMaybe<Order_By>;
   default_cover_edition_id?: InputMaybe<Order_By>;
   default_ebook_edition_id?: InputMaybe<Order_By>;
@@ -3932,6 +3966,7 @@ export type Books_Var_Samp_Fields = {
   book_status_id?: Maybe<Scalars['Float']['output']>;
   canonical_id?: Maybe<Scalars['Float']['output']>;
   created_by_user_id?: Maybe<Scalars['Float']['output']>;
+  curation_status?: Maybe<Scalars['Float']['output']>;
   default_audio_edition_id?: Maybe<Scalars['Float']['output']>;
   default_cover_edition_id?: Maybe<Scalars['Float']['output']>;
   default_ebook_edition_id?: Maybe<Scalars['Float']['output']>;
@@ -3963,6 +3998,7 @@ export type Books_Var_Samp_Order_By = {
   book_status_id?: InputMaybe<Order_By>;
   canonical_id?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   default_audio_edition_id?: InputMaybe<Order_By>;
   default_cover_edition_id?: InputMaybe<Order_By>;
   default_ebook_edition_id?: InputMaybe<Order_By>;
@@ -3995,6 +4031,7 @@ export type Books_Variance_Fields = {
   book_status_id?: Maybe<Scalars['Float']['output']>;
   canonical_id?: Maybe<Scalars['Float']['output']>;
   created_by_user_id?: Maybe<Scalars['Float']['output']>;
+  curation_status?: Maybe<Scalars['Float']['output']>;
   default_audio_edition_id?: Maybe<Scalars['Float']['output']>;
   default_cover_edition_id?: Maybe<Scalars['Float']['output']>;
   default_ebook_edition_id?: Maybe<Scalars['Float']['output']>;
@@ -4026,6 +4063,7 @@ export type Books_Variance_Order_By = {
   book_status_id?: InputMaybe<Order_By>;
   canonical_id?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   default_audio_edition_id?: InputMaybe<Order_By>;
   default_cover_edition_id?: InputMaybe<Order_By>;
   default_ebook_edition_id?: InputMaybe<Order_By>;
@@ -4082,6 +4120,7 @@ export type Characters = {
   user_id?: Maybe<Scalars['Int']['output']>;
 };
 
+
 /** columns and relationships of "characters" */
 export type CharactersBook_CharactersArgs = {
   distinct_on?: InputMaybe<Array<Book_Characters_Select_Column>>;
@@ -4091,10 +4130,12 @@ export type CharactersBook_CharactersArgs = {
   where?: InputMaybe<Book_Characters_Bool_Exp>;
 };
 
+
 /** columns and relationships of "characters" */
 export type CharactersCached_TagsArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** columns and relationships of "characters" */
 export type CharactersContributionsArgs = {
@@ -4104,6 +4145,7 @@ export type CharactersContributionsArgs = {
   order_by?: InputMaybe<Array<Contributions_Order_By>>;
   where?: InputMaybe<Contributions_Bool_Exp>;
 };
+
 
 /** columns and relationships of "characters" */
 export type CharactersContributions_AggregateArgs = {
@@ -4213,7 +4255,7 @@ export enum Characters_Select_Column {
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** Streaming cursor of the table "characters" */
@@ -4299,6 +4341,7 @@ export type Collection_Import_Results = {
   state: Scalars['String']['output'];
   title: Scalars['String']['output'];
 };
+
 
 /** columns and relationships of "collection_import_results" */
 export type Collection_Import_ResultsContentsArgs = {
@@ -4429,7 +4472,7 @@ export enum Collection_Import_Results_Select_Column {
   /** column name */
   State = 'state',
   /** column name */
-  Title = 'title',
+  Title = 'title'
 }
 
 /** input type for updating data in table "collection_import_results" */
@@ -4553,6 +4596,7 @@ export type Collection_Imports = {
   user: Users;
   user_id: Scalars['Int']['output'];
 };
+
 
 /** columns and relationships of "collection_imports" */
 export type Collection_ImportsCollection_Import_ResultsArgs = {
@@ -4729,7 +4773,7 @@ export enum Collection_Imports_Select_Column {
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** order by stddev() on columns of table "collection_imports" */
@@ -4905,6 +4949,7 @@ export type Contributions_Aggregate_Fields = {
   variance?: Maybe<Contributions_Variance_Fields>;
 };
 
+
 /** aggregate fields of "contributions" */
 export type Contributions_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Contributions_Select_Column>>;
@@ -5031,7 +5076,7 @@ export enum Contributions_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  UpdatedAt = 'updated_at',
+  UpdatedAt = 'updated_at'
 }
 
 /** aggregate stddev on columns */
@@ -5179,6 +5224,7 @@ export type Countries = {
   updated_at: Scalars['timestamp']['output'];
 };
 
+
 /** columns and relationships of "countries" */
 export type CountriesEditionsArgs = {
   distinct_on?: InputMaybe<Array<Editions_Select_Column>>;
@@ -5258,7 +5304,7 @@ export enum Countries_Select_Column {
   /** column name */
   SubRegionCode = 'sub_region_code',
   /** column name */
-  UpdatedAt = 'updated_at',
+  UpdatedAt = 'updated_at'
 }
 
 /** Streaming cursor of the table "countries" */
@@ -5292,7 +5338,7 @@ export enum Cursor_Ordering {
   /** ascending ordering of the cursor */
   Asc = 'ASC',
   /** descending ordering of the cursor */
-  Desc = 'DESC',
+  Desc = 'DESC'
 }
 
 /** Boolean expression to compare columns of type "date". All fields are combined with logical 'AND'. */
@@ -5322,6 +5368,7 @@ export type Editions = {
   cached_contributors: Scalars['json']['output'];
   cached_image: Scalars['jsonb']['output'];
   cached_tags: Scalars['json']['output'];
+  canonical_id?: Maybe<Scalars['Int']['output']>;
   compilation: Scalars['Boolean']['output'];
   /** An array relationship */
   contributions: Array<Contributions>;
@@ -5332,14 +5379,10 @@ export type Editions = {
   country_id?: Maybe<Scalars['Int']['output']>;
   created_at: Scalars['timestamp']['output'];
   created_by_user_id?: Maybe<Scalars['Int']['output']>;
-  description?: Maybe<Scalars['String']['output']>;
-  dto: Scalars['json']['output'];
-  dto_combined: Scalars['json']['output'];
-  dto_external: Scalars['json']['output'];
+  curation_status: Scalars['Int']['output'];
   edition_format?: Maybe<Scalars['String']['output']>;
   edition_information?: Maybe<Scalars['String']['output']>;
   id: Scalars['Int']['output'];
-  identifiers?: Maybe<Scalars['jsonb']['output']>;
   /** An object relationship */
   image?: Maybe<Images>;
   image_id?: Maybe<Scalars['Int']['output']>;
@@ -5377,15 +5420,16 @@ export type Editions = {
   subtitle?: Maybe<Scalars['String']['output']>;
   title?: Maybe<Scalars['String']['output']>;
   updated_at: Scalars['timestamp']['output'];
-  user_added: Scalars['Boolean']['output'];
   users_count: Scalars['Int']['output'];
   users_read_count: Scalars['Int']['output'];
 };
+
 
 /** columns and relationships of "editions" */
 export type EditionsAlternative_TitlesArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** columns and relationships of "editions" */
 export type EditionsBook_MappingsArgs = {
@@ -5396,20 +5440,24 @@ export type EditionsBook_MappingsArgs = {
   where?: InputMaybe<Book_Mappings_Bool_Exp>;
 };
 
+
 /** columns and relationships of "editions" */
 export type EditionsCached_ContributorsArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** columns and relationships of "editions" */
 export type EditionsCached_ImageArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
 
+
 /** columns and relationships of "editions" */
 export type EditionsCached_TagsArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** columns and relationships of "editions" */
 export type EditionsContributionsArgs = {
@@ -5420,6 +5468,7 @@ export type EditionsContributionsArgs = {
   where?: InputMaybe<Contributions_Bool_Exp>;
 };
 
+
 /** columns and relationships of "editions" */
 export type EditionsContributions_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Contributions_Select_Column>>;
@@ -5429,25 +5478,6 @@ export type EditionsContributions_AggregateArgs = {
   where?: InputMaybe<Contributions_Bool_Exp>;
 };
 
-/** columns and relationships of "editions" */
-export type EditionsDtoArgs = {
-  path?: InputMaybe<Scalars['String']['input']>;
-};
-
-/** columns and relationships of "editions" */
-export type EditionsDto_CombinedArgs = {
-  path?: InputMaybe<Scalars['String']['input']>;
-};
-
-/** columns and relationships of "editions" */
-export type EditionsDto_ExternalArgs = {
-  path?: InputMaybe<Scalars['String']['input']>;
-};
-
-/** columns and relationships of "editions" */
-export type EditionsIdentifiersArgs = {
-  path?: InputMaybe<Scalars['String']['input']>;
-};
 
 /** columns and relationships of "editions" */
 export type EditionsImagesArgs = {
@@ -5458,6 +5488,7 @@ export type EditionsImagesArgs = {
   where?: InputMaybe<Images_Bool_Exp>;
 };
 
+
 /** columns and relationships of "editions" */
 export type EditionsList_BooksArgs = {
   distinct_on?: InputMaybe<Array<List_Books_Select_Column>>;
@@ -5466,6 +5497,7 @@ export type EditionsList_BooksArgs = {
   order_by?: InputMaybe<Array<List_Books_Order_By>>;
   where?: InputMaybe<List_Books_Bool_Exp>;
 };
+
 
 /** columns and relationships of "editions" */
 export type EditionsList_Books_AggregateArgs = {
@@ -5495,8 +5527,10 @@ export type Editions_Aggregate_Order_By = {
 export type Editions_Avg_Order_By = {
   audio_seconds?: InputMaybe<Order_By>;
   book_id?: InputMaybe<Order_By>;
+  canonical_id?: InputMaybe<Order_By>;
   country_id?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   image_id?: InputMaybe<Order_By>;
   language_id?: InputMaybe<Order_By>;
@@ -5526,6 +5560,7 @@ export type Editions_Bool_Exp = {
   cached_contributors?: InputMaybe<Json_Comparison_Exp>;
   cached_image?: InputMaybe<Jsonb_Comparison_Exp>;
   cached_tags?: InputMaybe<Json_Comparison_Exp>;
+  canonical_id?: InputMaybe<Int_Comparison_Exp>;
   compilation?: InputMaybe<Boolean_Comparison_Exp>;
   contributions?: InputMaybe<Contributions_Bool_Exp>;
   contributions_aggregate?: InputMaybe<Contributions_Aggregate_Bool_Exp>;
@@ -5533,14 +5568,10 @@ export type Editions_Bool_Exp = {
   country_id?: InputMaybe<Int_Comparison_Exp>;
   created_at?: InputMaybe<Timestamp_Comparison_Exp>;
   created_by_user_id?: InputMaybe<Int_Comparison_Exp>;
-  description?: InputMaybe<String_Comparison_Exp>;
-  dto?: InputMaybe<Json_Comparison_Exp>;
-  dto_combined?: InputMaybe<Json_Comparison_Exp>;
-  dto_external?: InputMaybe<Json_Comparison_Exp>;
+  curation_status?: InputMaybe<Int_Comparison_Exp>;
   edition_format?: InputMaybe<String_Comparison_Exp>;
   edition_information?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<Int_Comparison_Exp>;
-  identifiers?: InputMaybe<Jsonb_Comparison_Exp>;
   image?: InputMaybe<Images_Bool_Exp>;
   image_id?: InputMaybe<Int_Comparison_Exp>;
   images?: InputMaybe<Images_Bool_Exp>;
@@ -5571,7 +5602,6 @@ export type Editions_Bool_Exp = {
   subtitle?: InputMaybe<String_Comparison_Exp>;
   title?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  user_added?: InputMaybe<Boolean_Comparison_Exp>;
   users_count?: InputMaybe<Int_Comparison_Exp>;
   users_read_count?: InputMaybe<Int_Comparison_Exp>;
 };
@@ -5581,10 +5611,11 @@ export type Editions_Max_Order_By = {
   asin?: InputMaybe<Order_By>;
   audio_seconds?: InputMaybe<Order_By>;
   book_id?: InputMaybe<Order_By>;
+  canonical_id?: InputMaybe<Order_By>;
   country_id?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
-  description?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   edition_format?: InputMaybe<Order_By>;
   edition_information?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
@@ -5619,10 +5650,11 @@ export type Editions_Min_Order_By = {
   asin?: InputMaybe<Order_By>;
   audio_seconds?: InputMaybe<Order_By>;
   book_id?: InputMaybe<Order_By>;
+  canonical_id?: InputMaybe<Order_By>;
   country_id?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
-  description?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   edition_format?: InputMaybe<Order_By>;
   edition_information?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
@@ -5663,20 +5695,17 @@ export type Editions_Order_By = {
   cached_contributors?: InputMaybe<Order_By>;
   cached_image?: InputMaybe<Order_By>;
   cached_tags?: InputMaybe<Order_By>;
+  canonical_id?: InputMaybe<Order_By>;
   compilation?: InputMaybe<Order_By>;
   contributions_aggregate?: InputMaybe<Contributions_Aggregate_Order_By>;
   country?: InputMaybe<Countries_Order_By>;
   country_id?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
-  description?: InputMaybe<Order_By>;
-  dto?: InputMaybe<Order_By>;
-  dto_combined?: InputMaybe<Order_By>;
-  dto_external?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   edition_format?: InputMaybe<Order_By>;
   edition_information?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  identifiers?: InputMaybe<Order_By>;
   image?: InputMaybe<Images_Order_By>;
   image_id?: InputMaybe<Order_By>;
   images_aggregate?: InputMaybe<Images_Aggregate_Order_By>;
@@ -5706,7 +5735,6 @@ export type Editions_Order_By = {
   subtitle?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
-  user_added?: InputMaybe<Order_By>;
   users_count?: InputMaybe<Order_By>;
   users_read_count?: InputMaybe<Order_By>;
 };
@@ -5728,6 +5756,8 @@ export enum Editions_Select_Column {
   /** column name */
   CachedTags = 'cached_tags',
   /** column name */
+  CanonicalId = 'canonical_id',
+  /** column name */
   Compilation = 'compilation',
   /** column name */
   CountryId = 'country_id',
@@ -5736,21 +5766,13 @@ export enum Editions_Select_Column {
   /** column name */
   CreatedByUserId = 'created_by_user_id',
   /** column name */
-  Description = 'description',
-  /** column name */
-  Dto = 'dto',
-  /** column name */
-  DtoCombined = 'dto_combined',
-  /** column name */
-  DtoExternal = 'dto_external',
+  CurationStatus = 'curation_status',
   /** column name */
   EditionFormat = 'edition_format',
   /** column name */
   EditionInformation = 'edition_information',
   /** column name */
   Id = 'id',
-  /** column name */
-  Identifiers = 'identifiers',
   /** column name */
   ImageId = 'image_id',
   /** column name */
@@ -5798,19 +5820,19 @@ export enum Editions_Select_Column {
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
-  UserAdded = 'user_added',
-  /** column name */
   UsersCount = 'users_count',
   /** column name */
-  UsersReadCount = 'users_read_count',
+  UsersReadCount = 'users_read_count'
 }
 
 /** order by stddev() on columns of table "editions" */
 export type Editions_Stddev_Order_By = {
   audio_seconds?: InputMaybe<Order_By>;
   book_id?: InputMaybe<Order_By>;
+  canonical_id?: InputMaybe<Order_By>;
   country_id?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   image_id?: InputMaybe<Order_By>;
   language_id?: InputMaybe<Order_By>;
@@ -5830,8 +5852,10 @@ export type Editions_Stddev_Order_By = {
 export type Editions_Stddev_Pop_Order_By = {
   audio_seconds?: InputMaybe<Order_By>;
   book_id?: InputMaybe<Order_By>;
+  canonical_id?: InputMaybe<Order_By>;
   country_id?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   image_id?: InputMaybe<Order_By>;
   language_id?: InputMaybe<Order_By>;
@@ -5851,8 +5875,10 @@ export type Editions_Stddev_Pop_Order_By = {
 export type Editions_Stddev_Samp_Order_By = {
   audio_seconds?: InputMaybe<Order_By>;
   book_id?: InputMaybe<Order_By>;
+  canonical_id?: InputMaybe<Order_By>;
   country_id?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   image_id?: InputMaybe<Order_By>;
   language_id?: InputMaybe<Order_By>;
@@ -5885,18 +5911,15 @@ export type Editions_Stream_Cursor_Value_Input = {
   cached_contributors?: InputMaybe<Scalars['json']['input']>;
   cached_image?: InputMaybe<Scalars['jsonb']['input']>;
   cached_tags?: InputMaybe<Scalars['json']['input']>;
+  canonical_id?: InputMaybe<Scalars['Int']['input']>;
   compilation?: InputMaybe<Scalars['Boolean']['input']>;
   country_id?: InputMaybe<Scalars['Int']['input']>;
   created_at?: InputMaybe<Scalars['timestamp']['input']>;
   created_by_user_id?: InputMaybe<Scalars['Int']['input']>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  dto?: InputMaybe<Scalars['json']['input']>;
-  dto_combined?: InputMaybe<Scalars['json']['input']>;
-  dto_external?: InputMaybe<Scalars['json']['input']>;
+  curation_status?: InputMaybe<Scalars['Int']['input']>;
   edition_format?: InputMaybe<Scalars['String']['input']>;
   edition_information?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['Int']['input']>;
-  identifiers?: InputMaybe<Scalars['jsonb']['input']>;
   image_id?: InputMaybe<Scalars['Int']['input']>;
   isbn_10?: InputMaybe<Scalars['String']['input']>;
   isbn_13?: InputMaybe<Scalars['String']['input']>;
@@ -5920,7 +5943,6 @@ export type Editions_Stream_Cursor_Value_Input = {
   subtitle?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamp']['input']>;
-  user_added?: InputMaybe<Scalars['Boolean']['input']>;
   users_count?: InputMaybe<Scalars['Int']['input']>;
   users_read_count?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -5929,8 +5951,10 @@ export type Editions_Stream_Cursor_Value_Input = {
 export type Editions_Sum_Order_By = {
   audio_seconds?: InputMaybe<Order_By>;
   book_id?: InputMaybe<Order_By>;
+  canonical_id?: InputMaybe<Order_By>;
   country_id?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   image_id?: InputMaybe<Order_By>;
   language_id?: InputMaybe<Order_By>;
@@ -5950,8 +5974,10 @@ export type Editions_Sum_Order_By = {
 export type Editions_Var_Pop_Order_By = {
   audio_seconds?: InputMaybe<Order_By>;
   book_id?: InputMaybe<Order_By>;
+  canonical_id?: InputMaybe<Order_By>;
   country_id?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   image_id?: InputMaybe<Order_By>;
   language_id?: InputMaybe<Order_By>;
@@ -5971,8 +5997,10 @@ export type Editions_Var_Pop_Order_By = {
 export type Editions_Var_Samp_Order_By = {
   audio_seconds?: InputMaybe<Order_By>;
   book_id?: InputMaybe<Order_By>;
+  canonical_id?: InputMaybe<Order_By>;
   country_id?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   image_id?: InputMaybe<Order_By>;
   language_id?: InputMaybe<Order_By>;
@@ -5992,8 +6020,10 @@ export type Editions_Var_Samp_Order_By = {
 export type Editions_Variance_Order_By = {
   audio_seconds?: InputMaybe<Order_By>;
   book_id?: InputMaybe<Order_By>;
+  canonical_id?: InputMaybe<Order_By>;
   country_id?: InputMaybe<Order_By>;
   created_by_user_id?: InputMaybe<Order_By>;
+  curation_status?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   image_id?: InputMaybe<Order_By>;
   language_id?: InputMaybe<Order_By>;
@@ -6017,6 +6047,7 @@ export type Flag_Statuses = {
   /** An array relationship */
   user_flags: Array<User_Flags>;
 };
+
 
 /** columns and relationships of "flag_statuses" */
 export type Flag_StatusesUser_FlagsArgs = {
@@ -6049,7 +6080,7 @@ export enum Flag_Statuses_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  Status = 'status',
+  Status = 'status'
 }
 
 /** Streaming cursor of the table "flag_statuses" */
@@ -6162,7 +6193,7 @@ export enum Followed_Lists_Select_Column {
   /** column name */
   ListId = 'list_id',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** order by stddev() on columns of table "followed_lists" */
@@ -6288,7 +6319,7 @@ export enum Followed_Prompts_Constraint {
   /** unique or primary key constraint on columns "id" */
   QuestionFeaturesIdKey = 'question_features_id_key',
   /** unique or primary key constraint on columns "user_id", "prompt_id" */
-  QuestionFeaturesUserIdQuestionIdKey = 'question_features_userId_questionId_key',
+  QuestionFeaturesUserIdQuestionIdKey = 'question_features_userId_questionId_key'
 }
 
 /** input type for incrementing numeric columns in table "followed_prompts" */
@@ -6364,7 +6395,7 @@ export enum Followed_Prompts_Select_Column {
   /** column name */
   PromptId = 'prompt_id',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** input type for updating data in table "followed_prompts" */
@@ -6424,7 +6455,7 @@ export type Followed_Prompts_Sum_Order_By = {
 /** update columns of table "followed_prompts" */
 export enum Followed_Prompts_Update_Column {
   /** column name */
-  Order = 'order',
+  Order = 'order'
 }
 
 export type Followed_Prompts_Updates = {
@@ -6500,6 +6531,7 @@ export type Followed_User_Books_Aggregate_Fields = {
   variance?: Maybe<Followed_User_Books_Variance_Fields>;
 };
 
+
 /** aggregate fields of "followed_user_books" */
 export type Followed_User_Books_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Followed_User_Books_Select_Column>>;
@@ -6569,7 +6601,7 @@ export enum Followed_User_Books_Select_Column {
   /** column name */
   UserBookId = 'user_book_id',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** aggregate stddev on columns */
@@ -6743,7 +6775,7 @@ export enum Followed_Users_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** order by stddev() on columns of table "followed_users" */
@@ -6851,6 +6883,7 @@ export type Following_User_Books_Aggregate_Fields = {
   variance?: Maybe<Following_User_Books_Variance_Fields>;
 };
 
+
 /** aggregate fields of "following_user_books" */
 export type Following_User_Books_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Following_User_Books_Select_Column>>;
@@ -6920,7 +6953,7 @@ export enum Following_User_Books_Select_Column {
   /** column name */
   UserBookId = 'user_book_id',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** aggregate stddev on columns */
@@ -7002,6 +7035,324 @@ export type Following_User_Books_Variance_Fields = {
   user_id?: Maybe<Scalars['Float']['output']>;
 };
 
+/** columns and relationships of "follows" */
+export type Follows = {
+  __typename?: 'follows';
+  /** An object relationship */
+  author?: Maybe<Authors>;
+  /** An object relationship */
+  book?: Maybe<Books>;
+  /** An object relationship */
+  character?: Maybe<Characters>;
+  created_at: Scalars['timestamp']['output'];
+  /** An object relationship */
+  edition?: Maybe<Editions>;
+  followable_id: Scalars['bigint']['output'];
+  followable_type: Scalars['String']['output'];
+  id: Scalars['bigint']['output'];
+  /** An object relationship */
+  list?: Maybe<Lists>;
+  /** An object relationship */
+  publisher?: Maybe<Publishers>;
+  /** An object relationship */
+  series?: Maybe<Series>;
+  updated_at: Scalars['timestamp']['output'];
+  /** An object relationship */
+  user: Users;
+  user_id: Scalars['bigint']['output'];
+};
+
+/** aggregated selection of "follows" */
+export type Follows_Aggregate = {
+  __typename?: 'follows_aggregate';
+  aggregate?: Maybe<Follows_Aggregate_Fields>;
+  nodes: Array<Follows>;
+};
+
+export type Follows_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Follows_Aggregate_Bool_Exp_Count>;
+};
+
+export type Follows_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Follows_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Follows_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "follows" */
+export type Follows_Aggregate_Fields = {
+  __typename?: 'follows_aggregate_fields';
+  avg?: Maybe<Follows_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Follows_Max_Fields>;
+  min?: Maybe<Follows_Min_Fields>;
+  stddev?: Maybe<Follows_Stddev_Fields>;
+  stddev_pop?: Maybe<Follows_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Follows_Stddev_Samp_Fields>;
+  sum?: Maybe<Follows_Sum_Fields>;
+  var_pop?: Maybe<Follows_Var_Pop_Fields>;
+  var_samp?: Maybe<Follows_Var_Samp_Fields>;
+  variance?: Maybe<Follows_Variance_Fields>;
+};
+
+
+/** aggregate fields of "follows" */
+export type Follows_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Follows_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "follows" */
+export type Follows_Aggregate_Order_By = {
+  avg?: InputMaybe<Follows_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Follows_Max_Order_By>;
+  min?: InputMaybe<Follows_Min_Order_By>;
+  stddev?: InputMaybe<Follows_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<Follows_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<Follows_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<Follows_Sum_Order_By>;
+  var_pop?: InputMaybe<Follows_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<Follows_Var_Samp_Order_By>;
+  variance?: InputMaybe<Follows_Variance_Order_By>;
+};
+
+/** aggregate avg on columns */
+export type Follows_Avg_Fields = {
+  __typename?: 'follows_avg_fields';
+  followable_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  user_id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by avg() on columns of table "follows" */
+export type Follows_Avg_Order_By = {
+  followable_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "follows". All fields are combined with a logical 'AND'. */
+export type Follows_Bool_Exp = {
+  _and?: InputMaybe<Array<Follows_Bool_Exp>>;
+  _not?: InputMaybe<Follows_Bool_Exp>;
+  _or?: InputMaybe<Array<Follows_Bool_Exp>>;
+  author?: InputMaybe<Authors_Bool_Exp>;
+  book?: InputMaybe<Books_Bool_Exp>;
+  character?: InputMaybe<Characters_Bool_Exp>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  edition?: InputMaybe<Editions_Bool_Exp>;
+  followable_id?: InputMaybe<Bigint_Comparison_Exp>;
+  followable_type?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
+  list?: InputMaybe<Lists_Bool_Exp>;
+  publisher?: InputMaybe<Publishers_Bool_Exp>;
+  series?: InputMaybe<Series_Bool_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
+  user_id?: InputMaybe<Bigint_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Follows_Max_Fields = {
+  __typename?: 'follows_max_fields';
+  created_at?: Maybe<Scalars['timestamp']['output']>;
+  followable_id?: Maybe<Scalars['bigint']['output']>;
+  followable_type?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
+  user_id?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** order by max() on columns of table "follows" */
+export type Follows_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  followable_id?: InputMaybe<Order_By>;
+  followable_type?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Follows_Min_Fields = {
+  __typename?: 'follows_min_fields';
+  created_at?: Maybe<Scalars['timestamp']['output']>;
+  followable_id?: Maybe<Scalars['bigint']['output']>;
+  followable_type?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
+  user_id?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** order by min() on columns of table "follows" */
+export type Follows_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  followable_id?: InputMaybe<Order_By>;
+  followable_type?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** Ordering options when selecting data from "follows". */
+export type Follows_Order_By = {
+  author?: InputMaybe<Authors_Order_By>;
+  book?: InputMaybe<Books_Order_By>;
+  character?: InputMaybe<Characters_Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  edition?: InputMaybe<Editions_Order_By>;
+  followable_id?: InputMaybe<Order_By>;
+  followable_type?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  list?: InputMaybe<Lists_Order_By>;
+  publisher?: InputMaybe<Publishers_Order_By>;
+  series?: InputMaybe<Series_Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "follows" */
+export enum Follows_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  FollowableId = 'followable_id',
+  /** column name */
+  FollowableType = 'followable_type',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  UserId = 'user_id'
+}
+
+/** aggregate stddev on columns */
+export type Follows_Stddev_Fields = {
+  __typename?: 'follows_stddev_fields';
+  followable_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  user_id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev() on columns of table "follows" */
+export type Follows_Stddev_Order_By = {
+  followable_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Follows_Stddev_Pop_Fields = {
+  __typename?: 'follows_stddev_pop_fields';
+  followable_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  user_id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_pop() on columns of table "follows" */
+export type Follows_Stddev_Pop_Order_By = {
+  followable_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Follows_Stddev_Samp_Fields = {
+  __typename?: 'follows_stddev_samp_fields';
+  followable_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  user_id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_samp() on columns of table "follows" */
+export type Follows_Stddev_Samp_Order_By = {
+  followable_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** Streaming cursor of the table "follows" */
+export type Follows_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Follows_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Follows_Stream_Cursor_Value_Input = {
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  followable_id?: InputMaybe<Scalars['bigint']['input']>;
+  followable_type?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['bigint']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
+  user_id?: InputMaybe<Scalars['bigint']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Follows_Sum_Fields = {
+  __typename?: 'follows_sum_fields';
+  followable_id?: Maybe<Scalars['bigint']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  user_id?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** order by sum() on columns of table "follows" */
+export type Follows_Sum_Order_By = {
+  followable_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_pop on columns */
+export type Follows_Var_Pop_Fields = {
+  __typename?: 'follows_var_pop_fields';
+  followable_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  user_id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_pop() on columns of table "follows" */
+export type Follows_Var_Pop_Order_By = {
+  followable_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Follows_Var_Samp_Fields = {
+  __typename?: 'follows_var_samp_fields';
+  followable_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  user_id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_samp() on columns of table "follows" */
+export type Follows_Var_Samp_Order_By = {
+  followable_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Follows_Variance_Fields = {
+  __typename?: 'follows_variance_fields';
+  followable_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  user_id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by variance() on columns of table "follows" */
+export type Follows_Variance_Order_By = {
+  followable_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
 /** columns and relationships of "goals" */
 export type Goals = {
   __typename?: 'goals';
@@ -7024,10 +7375,12 @@ export type Goals = {
   user_id: Scalars['Int']['output'];
 };
 
+
 /** columns and relationships of "goals" */
 export type GoalsConditionsArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** columns and relationships of "goals" */
 export type GoalsFollowersArgs = {
@@ -7114,15 +7467,6 @@ export type Goals_Min_Order_By = {
   user_id?: InputMaybe<Order_By>;
 };
 
-/** response of any mutation on the table "goals" */
-export type Goals_Mutation_Response = {
-  __typename?: 'goals_mutation_response';
-  /** number of rows affected by the mutation */
-  affected_rows: Scalars['Int']['output'];
-  /** data from the rows affected by the mutation */
-  returning: Array<Goals>;
-};
-
 /** Ordering options when selecting data from "goals". */
 export type Goals_Order_By = {
   archived?: InputMaybe<Order_By>;
@@ -7169,7 +7513,7 @@ export enum Goals_Select_Column {
   /** column name */
   State = 'state',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** order by stddev() on columns of table "goals" */
@@ -7274,6 +7618,7 @@ export type Images = {
   width?: Maybe<Scalars['Int']['output']>;
 };
 
+
 /** columns and relationships of "images" */
 export type ImagesColorsArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
@@ -7375,7 +7720,7 @@ export enum Images_Select_Column {
   /** column name */
   Url = 'url',
   /** column name */
-  Width = 'width',
+  Width = 'width'
 }
 
 /** order by stddev() on columns of table "images" */
@@ -7540,7 +7885,7 @@ export enum Languages_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  Language = 'language',
+  Language = 'language'
 }
 
 /** Streaming cursor of the table "languages" */
@@ -7578,6 +7923,7 @@ export type Likes = {
   user_book?: Maybe<User_Books>;
   user_id: Scalars['Int']['output'];
 };
+
 
 /** columns and relationships of "likes" */
 export type LikesFollowersArgs = {
@@ -7670,7 +8016,7 @@ export enum Likes_Select_Column {
   /** column name */
   LikeableType = 'likeable_type',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** order by stddev() on columns of table "likes" */
@@ -7739,6 +8085,90 @@ export type Likes_Variance_Order_By = {
   user_id?: InputMaybe<Order_By>;
 };
 
+/** columns and relationships of "links" */
+export type Links = {
+  __typename?: 'links';
+  created_at: Scalars['timestamp']['output'];
+  id: Scalars['bigint']['output'];
+  linkable_id?: Maybe<Scalars['Int']['output']>;
+  linkable_type?: Maybe<Scalars['String']['output']>;
+  social_type?: Maybe<Scalars['Int']['output']>;
+  updated_at: Scalars['timestamp']['output'];
+  url?: Maybe<Scalars['String']['output']>;
+  /** An object relationship */
+  user?: Maybe<Users>;
+  username?: Maybe<Scalars['String']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "links". All fields are combined with a logical 'AND'. */
+export type Links_Bool_Exp = {
+  _and?: InputMaybe<Array<Links_Bool_Exp>>;
+  _not?: InputMaybe<Links_Bool_Exp>;
+  _or?: InputMaybe<Array<Links_Bool_Exp>>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
+  linkable_id?: InputMaybe<Int_Comparison_Exp>;
+  linkable_type?: InputMaybe<String_Comparison_Exp>;
+  social_type?: InputMaybe<Int_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  url?: InputMaybe<String_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
+  username?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "links". */
+export type Links_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  linkable_id?: InputMaybe<Order_By>;
+  linkable_type?: InputMaybe<Order_By>;
+  social_type?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+  url?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
+  username?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "links" */
+export enum Links_Select_Column {
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LinkableId = 'linkable_id',
+  /** column name */
+  LinkableType = 'linkable_type',
+  /** column name */
+  SocialType = 'social_type',
+  /** column name */
+  UpdatedAt = 'updated_at',
+  /** column name */
+  Url = 'url',
+  /** column name */
+  Username = 'username'
+}
+
+/** Streaming cursor of the table "links" */
+export type Links_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Links_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Links_Stream_Cursor_Value_Input = {
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  id?: InputMaybe<Scalars['bigint']['input']>;
+  linkable_id?: InputMaybe<Scalars['Int']['input']>;
+  linkable_type?: InputMaybe<Scalars['String']['input']>;
+  social_type?: InputMaybe<Scalars['Int']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+  username?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** columns and relationships of "list_books" */
 export type List_Books = {
   __typename?: 'list_books';
@@ -7767,6 +8197,7 @@ export type List_Books = {
   user_books_aggregate: User_Books_Aggregate;
 };
 
+
 /** columns and relationships of "list_books" */
 export type List_BooksUser_BooksArgs = {
   distinct_on?: InputMaybe<Array<User_Books_Select_Column>>;
@@ -7775,6 +8206,7 @@ export type List_BooksUser_BooksArgs = {
   order_by?: InputMaybe<Array<User_Books_Order_By>>;
   where?: InputMaybe<User_Books_Bool_Exp>;
 };
+
 
 /** columns and relationships of "list_books" */
 export type List_BooksUser_Books_AggregateArgs = {
@@ -7834,6 +8266,7 @@ export type List_Books_Aggregate_Fields = {
   var_samp?: Maybe<List_Books_Var_Samp_Fields>;
   variance?: Maybe<List_Books_Variance_Fields>;
 };
+
 
 /** aggregate fields of "list_books" */
 export type List_Books_Aggregate_FieldsCountArgs = {
@@ -8037,19 +8470,19 @@ export enum List_Books_Select_Column {
   /** column name */
   Reason = 'reason',
   /** column name */
-  UpdatedAt = 'updated_at',
+  UpdatedAt = 'updated_at'
 }
 
 /** select "list_books_aggregate_bool_exp_bool_and_arguments_columns" columns of table "list_books" */
 export enum List_Books_Select_Column_List_Books_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
   /** column name */
-  Imported = 'imported',
+  Imported = 'imported'
 }
 
 /** select "list_books_aggregate_bool_exp_bool_or_arguments_columns" columns of table "list_books" */
 export enum List_Books_Select_Column_List_Books_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
   /** column name */
-  Imported = 'imported',
+  Imported = 'imported'
 }
 
 /** input type for updating data in table "list_books" */
@@ -8291,6 +8724,7 @@ export type Lists = {
   user_id: Scalars['Int']['output'];
 };
 
+
 /** columns and relationships of "lists" */
 export type ListsFollowed_ListsArgs = {
   distinct_on?: InputMaybe<Array<Followed_Lists_Select_Column>>;
@@ -8299,6 +8733,7 @@ export type ListsFollowed_ListsArgs = {
   order_by?: InputMaybe<Array<Followed_Lists_Order_By>>;
   where?: InputMaybe<Followed_Lists_Bool_Exp>;
 };
+
 
 /** columns and relationships of "lists" */
 export type ListsFollowersArgs = {
@@ -8309,6 +8744,7 @@ export type ListsFollowersArgs = {
   where?: InputMaybe<Followed_Users_Bool_Exp>;
 };
 
+
 /** columns and relationships of "lists" */
 export type ListsLikesArgs = {
   distinct_on?: InputMaybe<Array<Likes_Select_Column>>;
@@ -8318,6 +8754,7 @@ export type ListsLikesArgs = {
   where?: InputMaybe<Likes_Bool_Exp>;
 };
 
+
 /** columns and relationships of "lists" */
 export type ListsList_BooksArgs = {
   distinct_on?: InputMaybe<Array<List_Books_Select_Column>>;
@@ -8326,6 +8763,7 @@ export type ListsList_BooksArgs = {
   order_by?: InputMaybe<Array<List_Books_Order_By>>;
   where?: InputMaybe<List_Books_Bool_Exp>;
 };
+
 
 /** columns and relationships of "lists" */
 export type ListsList_Books_AggregateArgs = {
@@ -8385,6 +8823,7 @@ export type Lists_Aggregate_Fields = {
   var_samp?: Maybe<Lists_Var_Samp_Fields>;
   variance?: Maybe<Lists_Variance_Fields>;
 };
+
 
 /** aggregate fields of "lists" */
 export type Lists_Aggregate_FieldsCountArgs = {
@@ -8603,7 +9042,7 @@ export enum Lists_Select_Column {
   /** column name */
   Url = 'url',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** select "lists_aggregate_bool_exp_bool_and_arguments_columns" columns of table "lists" */
@@ -8617,7 +9056,7 @@ export enum Lists_Select_Column_Lists_Aggregate_Bool_Exp_Bool_And_Arguments_Colu
   /** column name */
   Public = 'public',
   /** column name */
-  Ranked = 'ranked',
+  Ranked = 'ranked'
 }
 
 /** select "lists_aggregate_bool_exp_bool_or_arguments_columns" columns of table "lists" */
@@ -8631,7 +9070,7 @@ export enum Lists_Select_Column_Lists_Aggregate_Bool_Exp_Bool_Or_Arguments_Colum
   /** column name */
   Public = 'public',
   /** column name */
-  Ranked = 'ranked',
+  Ranked = 'ranked'
 }
 
 /** aggregate stddev on columns */
@@ -8828,6 +9267,8 @@ export type Mutation_Root = {
   delete_activities_by_pk?: Maybe<Activities>;
   /** delete_book_mapping */
   delete_book_mapping?: Maybe<BookMappingIdType>;
+  /** delete_follow */
+  delete_follow?: Maybe<FollowDeleteType>;
   /** delete_followed_list */
   delete_followed_list?: Maybe<DeleteListType>;
   /** delete_followed_prompt */
@@ -8842,10 +9283,8 @@ export type Mutation_Root = {
   delete_followed_users?: Maybe<Followed_Users_Mutation_Response>;
   /** delete single row from the table: "followed_users" */
   delete_followed_users_by_pk?: Maybe<Followed_Users>;
-  /** delete data from the table: "goals" */
-  delete_goals?: Maybe<Goals_Mutation_Response>;
-  /** delete single row from the table: "goals" */
-  delete_goals_by_pk?: Maybe<Goals>;
+  /** delete_goal */
+  delete_goal?: Maybe<GoalIdType>;
   /** delete_like */
   delete_like?: Maybe<LikeDeleteType>;
   /** delete_list */
@@ -8889,6 +9328,8 @@ export type Mutation_Root = {
   insert_collection_import?: Maybe<CollectionImportIdType>;
   /** insert_edition */
   insert_edition?: Maybe<EditionIdType>;
+  /** insert_follow */
+  insert_follow?: Maybe<FollowType>;
   /** insert data into the table: "followed_prompts" */
   insert_followed_prompts?: Maybe<Followed_Prompts_Mutation_Response>;
   /** insert a single row into the table: "followed_prompts" */
@@ -8945,9 +9386,7 @@ export type Mutation_Root = {
   /** update single row of the table: "collection_import_results" */
   update_collection_import_results_by_pk?: Maybe<Collection_Import_Results>;
   /** update multiples rows of table: "collection_import_results" */
-  update_collection_import_results_many?: Maybe<
-    Array<Maybe<Collection_Import_Results_Mutation_Response>>
-  >;
+  update_collection_import_results_many?: Maybe<Array<Maybe<Collection_Import_Results_Mutation_Response>>>;
   /** update_edition */
   update_edition?: Maybe<EditionIdType>;
   /** update data of the table: "followed_prompts" */
@@ -8975,9 +9414,7 @@ export type Mutation_Root = {
   /** update single row of the table: "notification_deliveries" */
   update_notification_deliveries_by_pk?: Maybe<Notification_Deliveries>;
   /** update multiples rows of table: "notification_deliveries" */
-  update_notification_deliveries_many?: Maybe<
-    Array<Maybe<Notification_Deliveries_Mutation_Response>>
-  >;
+  update_notification_deliveries_many?: Maybe<Array<Maybe<Notification_Deliveries_Mutation_Response>>>;
   /** update data of the table: "notification_settings" */
   update_notification_settings?: Maybe<Notification_Settings_Mutation_Response>;
   /** update single row of the table: "notification_settings" */
@@ -9022,11 +9459,13 @@ export type Mutation_Root = {
   user_login?: Maybe<UserIdType>;
 };
 
+
 /** mutation root */
 export type Mutation_RootBook_Mapping_NormalizeArgs = {
   deep: Scalars['Boolean']['input'];
   id: Scalars['Int']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootBook_NormalizeArgs = {
@@ -9034,75 +9473,92 @@ export type Mutation_RootBook_NormalizeArgs = {
   id: Scalars['Int']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootCollection_Import_Result_ReimportArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootCollection_Import_RetryArgs = {
   id: Scalars['Int']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_ActivitiesArgs = {
   where: Activities_Bool_Exp;
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_Activities_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_Book_MappingArgs = {
   id: Scalars['Int']['input'];
 };
+
+
+/** mutation root */
+export type Mutation_RootDelete_FollowArgs = {
+  followable_id: Scalars['Int']['input'];
+  followable_type: Scalars['String']['input'];
+};
+
 
 /** mutation root */
 export type Mutation_RootDelete_Followed_ListArgs = {
   list_id: Scalars['Int']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_Followed_PromptArgs = {
   prompt_id: Scalars['Int']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_Followed_PromptsArgs = {
   where: Followed_Prompts_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_Followed_Prompts_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_Followed_UserArgs = {
+  remove_follower?: InputMaybe<Scalars['Boolean']['input']>;
   user_id: Scalars['Int']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_Followed_UsersArgs = {
   where: Followed_Users_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_Followed_Users_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
 
-/** mutation root */
-export type Mutation_RootDelete_GoalsArgs = {
-  where: Goals_Bool_Exp;
-};
 
 /** mutation root */
-export type Mutation_RootDelete_Goals_By_PkArgs = {
+export type Mutation_RootDelete_GoalArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_LikeArgs = {
@@ -9110,60 +9566,72 @@ export type Mutation_RootDelete_LikeArgs = {
   likeable_type: Scalars['String']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_ListArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_List_BookArgs = {
   id: Scalars['Int']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_Prompt_AnswerArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_PromptsArgs = {
   where: Prompts_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_Prompts_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_Reading_JournalArgs = {
   id: Scalars['Int']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_Reading_Journals_For_BookArgs = {
   book_id: Scalars['Int']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_User_BlocksArgs = {
   where: User_Blocks_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_User_Blocks_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootDelete_User_BookArgs = {
   id: Scalars['Int']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootDelete_User_Book_ReadArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootEdition_NormalizeArgs = {
@@ -9171,40 +9639,48 @@ export type Mutation_RootEdition_NormalizeArgs = {
   id: Scalars['Int']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootEdition_OwnedArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_AuthorArgs = {
   object: AuthorInputType;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_BlockArgs = {
   blocked_user_id: Scalars['Int']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_BookArgs = {
   edition: EditionInput;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_Book_MappingArgs = {
   object: BookMappingInput;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_CharacterArgs = {
   character: CharacterInput;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_Collection_ImportArgs = {
   object: CollectionImportInput;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_EditionArgs = {
@@ -9212,11 +9688,20 @@ export type Mutation_RootInsert_EditionArgs = {
   edition: EditionInput;
 };
 
+
+/** mutation root */
+export type Mutation_RootInsert_FollowArgs = {
+  followable_id: Scalars['Int']['input'];
+  followable_type: Scalars['String']['input'];
+};
+
+
 /** mutation root */
 export type Mutation_RootInsert_Followed_PromptsArgs = {
   objects: Array<Followed_Prompts_Insert_Input>;
   on_conflict?: InputMaybe<Followed_Prompts_On_Conflict>;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_Followed_Prompts_OneArgs = {
@@ -9224,30 +9709,36 @@ export type Mutation_RootInsert_Followed_Prompts_OneArgs = {
   on_conflict?: InputMaybe<Followed_Prompts_On_Conflict>;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_Followed_UserArgs = {
   user_id: Scalars['Int']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_GoalArgs = {
   object: GoalInput;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_ImageArgs = {
   image: ImageInput;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_ListArgs = {
   object: ListInput;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_List_BookArgs = {
   object: ListBookInput;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_Notification_SettingsArgs = {
@@ -9255,46 +9746,55 @@ export type Mutation_RootInsert_Notification_SettingsArgs = {
   on_conflict?: InputMaybe<Notification_Settings_On_Conflict>;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_Notification_Settings_OneArgs = {
   object: Notification_Settings_Insert_Input;
   on_conflict?: InputMaybe<Notification_Settings_On_Conflict>;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_PromptArgs = {
   object: CreatePromptInput;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_Prompt_AnswerArgs = {
   object: PromptAnswerCreateInput;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_PublisherArgs = {
   publisher: PublisherInputType;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_Reading_JournalArgs = {
   object: ReadingJournalCreateType;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_ReportArgs = {
   report: ReportInput;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_SerieArgs = {
   object: SeriesInput;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_UserArgs = {
   user: UserJoinInput;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_User_BlocksArgs = {
@@ -9302,16 +9802,19 @@ export type Mutation_RootInsert_User_BlocksArgs = {
   on_conflict?: InputMaybe<User_Blocks_On_Conflict>;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_User_Blocks_OneArgs = {
   object: User_Blocks_Insert_Input;
   on_conflict?: InputMaybe<User_Blocks_On_Conflict>;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_User_BookArgs = {
   object: UserBookCreateInput;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_User_Book_ReadArgs = {
@@ -9319,11 +9822,13 @@ export type Mutation_RootInsert_User_Book_ReadArgs = {
   user_book_read: DatesReadInput;
 };
 
+
 /** mutation root */
 export type Mutation_RootInsert_User_FlagsArgs = {
   objects: Array<User_Flags_Insert_Input>;
   on_conflict?: InputMaybe<User_Flags_On_Conflict>;
 };
+
 
 /** mutation root */
 export type Mutation_RootInsert_User_Flags_OneArgs = {
@@ -9331,11 +9836,13 @@ export type Mutation_RootInsert_User_Flags_OneArgs = {
   on_conflict?: InputMaybe<User_Flags_On_Conflict>;
 };
 
+
 /** mutation root */
 export type Mutation_RootReceipt_ValidateArgs = {
   payment_system_id: Scalars['Int']['input'];
   receipt: Scalars['String']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_AuthorArgs = {
@@ -9343,17 +9850,20 @@ export type Mutation_RootUpdate_AuthorArgs = {
   id: Scalars['Int']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_BookArgs = {
   book: BookInput;
   id: Scalars['Int']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_CharacterArgs = {
   character: CharacterInput;
   id: Scalars['Int']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_Collection_Import_ResultsArgs = {
@@ -9362,6 +9872,7 @@ export type Mutation_RootUpdate_Collection_Import_ResultsArgs = {
   where: Collection_Import_Results_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Collection_Import_Results_By_PkArgs = {
   _inc?: InputMaybe<Collection_Import_Results_Inc_Input>;
@@ -9369,16 +9880,19 @@ export type Mutation_RootUpdate_Collection_Import_Results_By_PkArgs = {
   pk_columns: Collection_Import_Results_Pk_Columns_Input;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Collection_Import_Results_ManyArgs = {
   updates: Array<Collection_Import_Results_Updates>;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_EditionArgs = {
   edition: EditionInput;
   id: Scalars['Int']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_Followed_PromptsArgs = {
@@ -9387,6 +9901,7 @@ export type Mutation_RootUpdate_Followed_PromptsArgs = {
   where: Followed_Prompts_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Followed_Prompts_By_PkArgs = {
   _inc?: InputMaybe<Followed_Prompts_Inc_Input>;
@@ -9394,10 +9909,12 @@ export type Mutation_RootUpdate_Followed_Prompts_By_PkArgs = {
   pk_columns: Followed_Prompts_Pk_Columns_Input;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Followed_Prompts_ManyArgs = {
   updates: Array<Followed_Prompts_Updates>;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_GoalArgs = {
@@ -9405,16 +9922,19 @@ export type Mutation_RootUpdate_GoalArgs = {
   object: GoalInput;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Goal_ProgressArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_ListArgs = {
   id: Scalars['Int']['input'];
   object: ListInput;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_List_BooksArgs = {
@@ -9423,6 +9943,7 @@ export type Mutation_RootUpdate_List_BooksArgs = {
   where: List_Books_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_List_Books_By_PkArgs = {
   _inc?: InputMaybe<List_Books_Inc_Input>;
@@ -9430,15 +9951,18 @@ export type Mutation_RootUpdate_List_Books_By_PkArgs = {
   pk_columns: List_Books_Pk_Columns_Input;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_List_Books_ManyArgs = {
   updates: Array<List_Books_Updates>;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_NewsletterArgs = {
   subscribed: Scalars['Boolean']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_Notification_DeliveriesArgs = {
@@ -9446,16 +9970,19 @@ export type Mutation_RootUpdate_Notification_DeliveriesArgs = {
   where: Notification_Deliveries_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Notification_Deliveries_By_PkArgs = {
   _set?: InputMaybe<Notification_Deliveries_Set_Input>;
   pk_columns: Notification_Deliveries_Pk_Columns_Input;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Notification_Deliveries_ManyArgs = {
   updates: Array<Notification_Deliveries_Updates>;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_Notification_SettingsArgs = {
@@ -9463,21 +9990,25 @@ export type Mutation_RootUpdate_Notification_SettingsArgs = {
   where: Notification_Settings_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Notification_Settings_By_PkArgs = {
   _set?: InputMaybe<Notification_Settings_Set_Input>;
   pk_columns: Notification_Settings_Pk_Columns_Input;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Notification_Settings_ManyArgs = {
   updates: Array<Notification_Settings_Updates>;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_PromptArgs = {
   object: UpdatePromptInput;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_Prompt_AnswersArgs = {
@@ -9485,16 +10016,19 @@ export type Mutation_RootUpdate_Prompt_AnswersArgs = {
   where: Prompt_Answers_Bool_Exp;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Prompt_Answers_By_PkArgs = {
   _set?: InputMaybe<Prompt_Answers_Set_Input>;
   pk_columns: Prompt_Answers_Pk_Columns_Input;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Prompt_Answers_ManyArgs = {
   updates: Array<Prompt_Answers_Updates>;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_PublisherArgs = {
@@ -9502,11 +10036,13 @@ export type Mutation_RootUpdate_PublisherArgs = {
   publisher: PublisherInputType;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_Reading_JournalArgs = {
   id: Scalars['Int']['input'];
   object: ReadingJournalUpdateType;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_SerieArgs = {
@@ -9514,10 +10050,12 @@ export type Mutation_RootUpdate_SerieArgs = {
   series: SeriesInputType;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_UserArgs = {
   user: Update_User_Input;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpdate_User_BookArgs = {
@@ -9525,37 +10063,44 @@ export type Mutation_RootUpdate_User_BookArgs = {
   object: UserBookUpdateInput;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_User_Book_ReadArgs = {
   id: Scalars['Int']['input'];
   object: DatesReadInput;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpdate_User_Privacy_SettingArgs = {
   privacy_setting_id: Scalars['Int']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootUpsert_BookArgs = {
   book: CreateBookFromPlatformInput;
 };
 
+
 /** mutation root */
 export type Mutation_RootUpsert_Followed_ListArgs = {
   list_id: Scalars['Int']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootUpsert_Followed_PromptArgs = {
   prompt_id: Scalars['Int']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootUpsert_LikeArgs = {
   likeable_id: Scalars['Int']['input'];
   likeable_type?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** mutation root */
 export type Mutation_RootUpsert_TagsArgs = {
@@ -9564,11 +10109,13 @@ export type Mutation_RootUpsert_TagsArgs = {
   type: Scalars['String']['input'];
 };
 
+
 /** mutation root */
 export type Mutation_RootUpsert_User_Book_ReadsArgs = {
   datesRead: Array<InputMaybe<DatesReadInput>>;
   user_book_id: Scalars['Int']['input'];
 };
+
 
 /** mutation root */
 export type Mutation_RootUser_LoginArgs = {
@@ -9602,7 +10149,7 @@ export enum Notification_Channels_Select_Column {
   /** column name */
   Channel = 'channel',
   /** column name */
-  Id = 'id',
+  Id = 'id'
 }
 
 /** Streaming cursor of the table "notification_channels" */
@@ -9686,6 +10233,7 @@ export type Notification_Deliveries_Aggregate_Fields = {
   var_samp?: Maybe<Notification_Deliveries_Var_Samp_Fields>;
   variance?: Maybe<Notification_Deliveries_Variance_Fields>;
 };
+
 
 /** aggregate fields of "notification_deliveries" */
 export type Notification_Deliveries_Aggregate_FieldsCountArgs = {
@@ -9827,19 +10375,19 @@ export enum Notification_Deliveries_Select_Column {
   /** column name */
   SentAt = 'sent_at',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** select "notification_deliveries_aggregate_bool_exp_bool_and_arguments_columns" columns of table "notification_deliveries" */
 export enum Notification_Deliveries_Select_Column_Notification_Deliveries_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
   /** column name */
-  Read = 'read',
+  Read = 'read'
 }
 
 /** select "notification_deliveries_aggregate_bool_exp_bool_or_arguments_columns" columns of table "notification_deliveries" */
 export enum Notification_Deliveries_Select_Column_Notification_Deliveries_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
   /** column name */
-  Read = 'read',
+  Read = 'read'
 }
 
 /** input type for updating data in table "notification_deliveries" */
@@ -10004,6 +10552,7 @@ export type Notification_Settings = {
   user_id: Scalars['Int']['output'];
 };
 
+
 /** columns and relationships of "notification_settings" */
 export type Notification_SettingsChannel_IdsArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
@@ -10046,7 +10595,7 @@ export type Notification_Settings_Bool_Exp = {
 /** unique or primary key constraints on table "notification_settings" */
 export enum Notification_Settings_Constraint {
   /** unique or primary key constraint on columns "id" */
-  NotificationSettingsPkey = 'notification_settings_pkey',
+  NotificationSettingsPkey = 'notification_settings_pkey'
 }
 
 /** input type for inserting data into table "notification_settings" */
@@ -10109,7 +10658,7 @@ export enum Notification_Settings_Select_Column {
   /** column name */
   NotificationTypeId = 'notification_type_id',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** input type for updating data in table "notification_settings" */
@@ -10164,7 +10713,7 @@ export type Notification_Settings_Sum_Order_By = {
 /** update columns of table "notification_settings" */
 export enum Notification_Settings_Update_Column {
   /** column name */
-  ChannelIds = 'channel_ids',
+  ChannelIds = 'channel_ids'
 }
 
 export type Notification_Settings_Updates = {
@@ -10209,10 +10758,12 @@ export type Notification_Types = {
   uid: Scalars['String']['output'];
 };
 
+
 /** columns and relationships of "notification_types" */
 export type Notification_TypesDefault_Channel_IdsArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** columns and relationships of "notification_types" */
 export type Notification_TypesNotification_SettingsArgs = {
@@ -10265,7 +10816,7 @@ export enum Notification_Types_Select_Column {
   /** column name */
   Name = 'name',
   /** column name */
-  Uid = 'uid',
+  Uid = 'uid'
 }
 
 /** Streaming cursor of the table "notification_types" */
@@ -10308,6 +10859,7 @@ export type Notifications = {
   uid: Scalars['String']['output'];
 };
 
+
 /** columns and relationships of "notifications" */
 export type NotificationsNotification_DeliveriesArgs = {
   distinct_on?: InputMaybe<Array<Notification_Deliveries_Select_Column>>;
@@ -10316,6 +10868,7 @@ export type NotificationsNotification_DeliveriesArgs = {
   order_by?: InputMaybe<Array<Notification_Deliveries_Order_By>>;
   where?: InputMaybe<Notification_Deliveries_Bool_Exp>;
 };
+
 
 /** columns and relationships of "notifications" */
 export type NotificationsNotification_Deliveries_AggregateArgs = {
@@ -10383,7 +10936,7 @@ export enum Notifications_Select_Column {
   /** column name */
   Title = 'title',
   /** column name */
-  Uid = 'uid',
+  Uid = 'uid'
 }
 
 /** Streaming cursor of the table "notifications" */
@@ -10434,7 +10987,7 @@ export enum Order_By {
   /** in descending order, nulls first */
   DescNullsFirst = 'desc_nulls_first',
   /** in descending order, nulls last */
-  DescNullsLast = 'desc_nulls_last',
+  DescNullsLast = 'desc_nulls_last'
 }
 
 /** columns and relationships of "platforms" */
@@ -10446,6 +10999,7 @@ export type Platforms = {
   name: Scalars['String']['output'];
   url?: Maybe<Scalars['String']['output']>;
 };
+
 
 /** columns and relationships of "platforms" */
 export type PlatformsBook_MappingsArgs = {
@@ -10482,7 +11036,7 @@ export enum Platforms_Select_Column {
   /** column name */
   Name = 'name',
   /** column name */
-  Url = 'url',
+  Url = 'url'
 }
 
 /** Streaming cursor of the table "platforms" */
@@ -10523,6 +11077,7 @@ export type Privacy_Settings = {
   users_by_activity: Array<Users>;
 };
 
+
 /** columns and relationships of "privacy_settings" */
 export type Privacy_SettingsActivitiesArgs = {
   distinct_on?: InputMaybe<Array<Activities_Select_Column>>;
@@ -10531,6 +11086,7 @@ export type Privacy_SettingsActivitiesArgs = {
   order_by?: InputMaybe<Array<Activities_Order_By>>;
   where?: InputMaybe<Activities_Bool_Exp>;
 };
+
 
 /** columns and relationships of "privacy_settings" */
 export type Privacy_SettingsListsArgs = {
@@ -10541,6 +11097,7 @@ export type Privacy_SettingsListsArgs = {
   where?: InputMaybe<Lists_Bool_Exp>;
 };
 
+
 /** columns and relationships of "privacy_settings" */
 export type Privacy_SettingsLists_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Lists_Select_Column>>;
@@ -10549,6 +11106,7 @@ export type Privacy_SettingsLists_AggregateArgs = {
   order_by?: InputMaybe<Array<Lists_Order_By>>;
   where?: InputMaybe<Lists_Bool_Exp>;
 };
+
 
 /** columns and relationships of "privacy_settings" */
 export type Privacy_SettingsPromptsArgs = {
@@ -10559,6 +11117,7 @@ export type Privacy_SettingsPromptsArgs = {
   where?: InputMaybe<Prompts_Bool_Exp>;
 };
 
+
 /** columns and relationships of "privacy_settings" */
 export type Privacy_SettingsUser_BooksArgs = {
   distinct_on?: InputMaybe<Array<User_Books_Select_Column>>;
@@ -10567,6 +11126,7 @@ export type Privacy_SettingsUser_BooksArgs = {
   order_by?: InputMaybe<Array<User_Books_Order_By>>;
   where?: InputMaybe<User_Books_Bool_Exp>;
 };
+
 
 /** columns and relationships of "privacy_settings" */
 export type Privacy_SettingsUser_Books_AggregateArgs = {
@@ -10577,6 +11137,7 @@ export type Privacy_SettingsUser_Books_AggregateArgs = {
   where?: InputMaybe<User_Books_Bool_Exp>;
 };
 
+
 /** columns and relationships of "privacy_settings" */
 export type Privacy_SettingsUsersArgs = {
   distinct_on?: InputMaybe<Array<Users_Select_Column>>;
@@ -10585,6 +11146,7 @@ export type Privacy_SettingsUsersArgs = {
   order_by?: InputMaybe<Array<Users_Order_By>>;
   where?: InputMaybe<Users_Bool_Exp>;
 };
+
 
 /** columns and relationships of "privacy_settings" */
 export type Privacy_SettingsUsers_By_ActivityArgs = {
@@ -10629,7 +11191,7 @@ export enum Privacy_Settings_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  Setting = 'setting',
+  Setting = 'setting'
 }
 
 /** Streaming cursor of the table "privacy_settings" */
@@ -10700,6 +11262,7 @@ export type Prompt_Answers_Aggregate_Fields = {
   var_samp?: Maybe<Prompt_Answers_Var_Samp_Fields>;
   variance?: Maybe<Prompt_Answers_Variance_Fields>;
 };
+
 
 /** aggregate fields of "prompt_answers" */
 export type Prompt_Answers_Aggregate_FieldsCountArgs = {
@@ -10857,7 +11420,7 @@ export enum Prompt_Answers_Select_Column {
   /** column name */
   PromptId = 'prompt_id',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** input type for updating data in table "prompt_answers" */
@@ -11101,7 +11664,7 @@ export enum Prompt_Books_Summary_Select_Column {
   /** column name */
   BookId = 'book_id',
   /** column name */
-  PromptId = 'prompt_id',
+  PromptId = 'prompt_id'
 }
 
 /** order by stddev() on columns of table "prompt_books_summary" */
@@ -11198,6 +11761,7 @@ export type Prompts = {
   users_count: Scalars['Int']['output'];
 };
 
+
 /** columns and relationships of "prompts" */
 export type PromptsFollowed_PromptsArgs = {
   distinct_on?: InputMaybe<Array<Followed_Prompts_Select_Column>>;
@@ -11206,6 +11770,7 @@ export type PromptsFollowed_PromptsArgs = {
   order_by?: InputMaybe<Array<Followed_Prompts_Order_By>>;
   where?: InputMaybe<Followed_Prompts_Bool_Exp>;
 };
+
 
 /** columns and relationships of "prompts" */
 export type PromptsFollowersArgs = {
@@ -11216,6 +11781,7 @@ export type PromptsFollowersArgs = {
   where?: InputMaybe<Followed_Users_Bool_Exp>;
 };
 
+
 /** columns and relationships of "prompts" */
 export type PromptsPrompt_AnswersArgs = {
   distinct_on?: InputMaybe<Array<Prompt_Answers_Select_Column>>;
@@ -11225,6 +11791,7 @@ export type PromptsPrompt_AnswersArgs = {
   where?: InputMaybe<Prompt_Answers_Bool_Exp>;
 };
 
+
 /** columns and relationships of "prompts" */
 export type PromptsPrompt_Answers_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Prompt_Answers_Select_Column>>;
@@ -11233,6 +11800,7 @@ export type PromptsPrompt_Answers_AggregateArgs = {
   order_by?: InputMaybe<Array<Prompt_Answers_Order_By>>;
   where?: InputMaybe<Prompt_Answers_Bool_Exp>;
 };
+
 
 /** columns and relationships of "prompts" */
 export type PromptsPrompt_BooksArgs = {
@@ -11374,7 +11942,7 @@ export enum Prompts_Select_Column {
   /** column name */
   UserId = 'user_id',
   /** column name */
-  UsersCount = 'users_count',
+  UsersCount = 'users_count'
 }
 
 /** order by stddev() on columns of table "prompts" */
@@ -11481,6 +12049,7 @@ export type Publishers = {
   id: Scalars['bigint']['output'];
   locked: Scalars['Boolean']['output'];
   name?: Maybe<Scalars['String']['output']>;
+  object_type: Scalars['String']['output'];
   parent_id?: Maybe<Scalars['Int']['output']>;
   /** An object relationship */
   parent_publisher?: Maybe<Publishers>;
@@ -11489,6 +12058,7 @@ export type Publishers = {
   updated_at: Scalars['timestamp']['output'];
   user_id?: Maybe<Scalars['Int']['output']>;
 };
+
 
 /** columns and relationships of "publishers" */
 export type PublishersEditionsArgs = {
@@ -11511,6 +12081,7 @@ export type Publishers_Bool_Exp = {
   id?: InputMaybe<Bigint_Comparison_Exp>;
   locked?: InputMaybe<Boolean_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
+  object_type?: InputMaybe<String_Comparison_Exp>;
   parent_id?: InputMaybe<Int_Comparison_Exp>;
   parent_publisher?: InputMaybe<Publishers_Bool_Exp>;
   slug?: InputMaybe<String_Comparison_Exp>;
@@ -11528,6 +12099,7 @@ export type Publishers_Order_By = {
   id?: InputMaybe<Order_By>;
   locked?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
+  object_type?: InputMaybe<Order_By>;
   parent_id?: InputMaybe<Order_By>;
   parent_publisher?: InputMaybe<Publishers_Order_By>;
   slug?: InputMaybe<Order_By>;
@@ -11551,6 +12123,8 @@ export enum Publishers_Select_Column {
   /** column name */
   Name = 'name',
   /** column name */
+  ObjectType = 'object_type',
+  /** column name */
   ParentId = 'parent_id',
   /** column name */
   Slug = 'slug',
@@ -11559,7 +12133,7 @@ export enum Publishers_Select_Column {
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** Streaming cursor of the table "publishers" */
@@ -11578,6 +12152,7 @@ export type Publishers_Stream_Cursor_Value_Input = {
   id?: InputMaybe<Scalars['bigint']['input']>;
   locked?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  object_type?: InputMaybe<Scalars['String']['input']>;
   parent_id?: InputMaybe<Scalars['Int']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   state?: InputMaybe<Scalars['String']['input']>;
@@ -11688,6 +12263,12 @@ export type Query_Root = {
   /** fetch aggregated fields from the table: "following_user_books" */
   following_user_books_aggregate: Following_User_Books_Aggregate;
   /** An array relationship */
+  follows: Array<Follows>;
+  /** An aggregate relationship */
+  follows_aggregate: Follows_Aggregate;
+  /** fetch data from the table: "follows" using primary key columns */
+  follows_by_pk?: Maybe<Follows>;
+  /** An array relationship */
   goals: Array<Goals>;
   /** fetch data from the table: "goals" using primary key columns */
   goals_by_pk?: Maybe<Goals>;
@@ -11703,6 +12284,10 @@ export type Query_Root = {
   likes: Array<Likes>;
   /** fetch data from the table: "likes" using primary key columns */
   likes_by_pk?: Maybe<Likes>;
+  /** fetch data from the table: "links" */
+  links: Array<Links>;
+  /** fetch data from the table: "links" using primary key columns */
+  links_by_pk?: Maybe<Links>;
   /** An array relationship */
   list_books: Array<List_Books>;
   /** An aggregate relationship */
@@ -11775,10 +12360,6 @@ export type Query_Root = {
   reading_journals_by_pk?: Maybe<Reading_Journals>;
   /** fetch data from the table: "reading_journals_summary" */
   reading_journals_summary: Array<Reading_Journals_Summary>;
-  /** An array relationship */
-  recommendations: Array<Recommendations>;
-  /** fetch data from the table: "disco_recommendations" using primary key columns */
-  recommendations_by_pk?: Maybe<Recommendations>;
   /** referrals_for_user */
   referrals_for_user?: Maybe<Array<Maybe<ReferralType>>>;
   search?: Maybe<SearchOutput>;
@@ -11850,6 +12431,7 @@ export type Query_Root = {
   users_by_pk?: Maybe<Users>;
 };
 
+
 export type Query_RootActivitiesArgs = {
   distinct_on?: InputMaybe<Array<Activities_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -11858,9 +12440,11 @@ export type Query_RootActivitiesArgs = {
   where?: InputMaybe<Activities_Bool_Exp>;
 };
 
+
 export type Query_RootActivities_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootActivity_FeedArgs = {
   args: Activity_Feed_Args;
@@ -11871,6 +12455,7 @@ export type Query_RootActivity_FeedArgs = {
   where?: InputMaybe<Activities_Bool_Exp>;
 };
 
+
 export type Query_RootActivity_Foryou_FeedArgs = {
   args: Activity_Foryou_Feed_Args;
   distinct_on?: InputMaybe<Array<Activities_Select_Column>>;
@@ -11880,6 +12465,7 @@ export type Query_RootActivity_Foryou_FeedArgs = {
   where?: InputMaybe<Activities_Bool_Exp>;
 };
 
+
 export type Query_RootAuthorsArgs = {
   distinct_on?: InputMaybe<Array<Authors_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -11888,9 +12474,11 @@ export type Query_RootAuthorsArgs = {
   where?: InputMaybe<Authors_Bool_Exp>;
 };
 
+
 export type Query_RootAuthors_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootBook_CategoriesArgs = {
   distinct_on?: InputMaybe<Array<Book_Categories_Select_Column>>;
@@ -11900,9 +12488,11 @@ export type Query_RootBook_CategoriesArgs = {
   where?: InputMaybe<Book_Categories_Bool_Exp>;
 };
 
+
 export type Query_RootBook_Categories_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootBook_CharactersArgs = {
   distinct_on?: InputMaybe<Array<Book_Characters_Select_Column>>;
@@ -11912,9 +12502,11 @@ export type Query_RootBook_CharactersArgs = {
   where?: InputMaybe<Book_Characters_Bool_Exp>;
 };
 
+
 export type Query_RootBook_Characters_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootBook_CollectionsArgs = {
   distinct_on?: InputMaybe<Array<Book_Collections_Select_Column>>;
@@ -11924,9 +12516,11 @@ export type Query_RootBook_CollectionsArgs = {
   where?: InputMaybe<Book_Collections_Bool_Exp>;
 };
 
+
 export type Query_RootBook_Collections_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootBook_MappingsArgs = {
   distinct_on?: InputMaybe<Array<Book_Mappings_Select_Column>>;
@@ -11936,9 +12530,11 @@ export type Query_RootBook_MappingsArgs = {
   where?: InputMaybe<Book_Mappings_Bool_Exp>;
 };
 
+
 export type Query_RootBook_Mappings_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootBook_SeriesArgs = {
   distinct_on?: InputMaybe<Array<Book_Series_Select_Column>>;
@@ -11948,6 +12544,7 @@ export type Query_RootBook_SeriesArgs = {
   where?: InputMaybe<Book_Series_Bool_Exp>;
 };
 
+
 export type Query_RootBook_Series_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Book_Series_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -11956,9 +12553,11 @@ export type Query_RootBook_Series_AggregateArgs = {
   where?: InputMaybe<Book_Series_Bool_Exp>;
 };
 
+
 export type Query_RootBook_Series_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootBook_StatusesArgs = {
   distinct_on?: InputMaybe<Array<Book_Statuses_Select_Column>>;
@@ -11968,9 +12567,11 @@ export type Query_RootBook_StatusesArgs = {
   where?: InputMaybe<Book_Statuses_Bool_Exp>;
 };
 
+
 export type Query_RootBook_Statuses_By_PkArgs = {
   id: Scalars['smallint']['input'];
 };
+
 
 export type Query_RootBooklesArgs = {
   distinct_on?: InputMaybe<Array<Bookles_Select_Column>>;
@@ -11980,9 +12581,11 @@ export type Query_RootBooklesArgs = {
   where?: InputMaybe<Bookles_Bool_Exp>;
 };
 
+
 export type Query_RootBookles_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootBooksArgs = {
   distinct_on?: InputMaybe<Array<Books_Select_Column>>;
@@ -11992,6 +12595,7 @@ export type Query_RootBooksArgs = {
   where?: InputMaybe<Books_Bool_Exp>;
 };
 
+
 export type Query_RootBooks_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Books_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -12000,9 +12604,11 @@ export type Query_RootBooks_AggregateArgs = {
   where?: InputMaybe<Books_Bool_Exp>;
 };
 
+
 export type Query_RootBooks_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootBooks_TrendingArgs = {
   from: Scalars['date']['input'];
@@ -12010,6 +12616,7 @@ export type Query_RootBooks_TrendingArgs = {
   offset: Scalars['Int']['input'];
   to: Scalars['date']['input'];
 };
+
 
 export type Query_RootCharactersArgs = {
   distinct_on?: InputMaybe<Array<Characters_Select_Column>>;
@@ -12019,9 +12626,11 @@ export type Query_RootCharactersArgs = {
   where?: InputMaybe<Characters_Bool_Exp>;
 };
 
+
 export type Query_RootCharacters_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootCollection_Import_ResultsArgs = {
   distinct_on?: InputMaybe<Array<Collection_Import_Results_Select_Column>>;
@@ -12031,9 +12640,11 @@ export type Query_RootCollection_Import_ResultsArgs = {
   where?: InputMaybe<Collection_Import_Results_Bool_Exp>;
 };
 
+
 export type Query_RootCollection_Import_Results_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootCollection_ImportsArgs = {
   distinct_on?: InputMaybe<Array<Collection_Imports_Select_Column>>;
@@ -12043,9 +12654,11 @@ export type Query_RootCollection_ImportsArgs = {
   where?: InputMaybe<Collection_Imports_Bool_Exp>;
 };
 
+
 export type Query_RootCollection_Imports_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootContributionsArgs = {
   distinct_on?: InputMaybe<Array<Contributions_Select_Column>>;
@@ -12055,6 +12668,7 @@ export type Query_RootContributionsArgs = {
   where?: InputMaybe<Contributions_Bool_Exp>;
 };
 
+
 export type Query_RootContributions_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Contributions_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -12063,9 +12677,11 @@ export type Query_RootContributions_AggregateArgs = {
   where?: InputMaybe<Contributions_Bool_Exp>;
 };
 
+
 export type Query_RootContributions_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootCountriesArgs = {
   distinct_on?: InputMaybe<Array<Countries_Select_Column>>;
@@ -12075,9 +12691,11 @@ export type Query_RootCountriesArgs = {
   where?: InputMaybe<Countries_Bool_Exp>;
 };
 
+
 export type Query_RootCountries_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootEditionsArgs = {
   distinct_on?: InputMaybe<Array<Editions_Select_Column>>;
@@ -12087,9 +12705,11 @@ export type Query_RootEditionsArgs = {
   where?: InputMaybe<Editions_Bool_Exp>;
 };
 
+
 export type Query_RootEditions_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootFlag_StatusesArgs = {
   distinct_on?: InputMaybe<Array<Flag_Statuses_Select_Column>>;
@@ -12099,9 +12719,11 @@ export type Query_RootFlag_StatusesArgs = {
   where?: InputMaybe<Flag_Statuses_Bool_Exp>;
 };
 
+
 export type Query_RootFlag_Statuses_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootFollowed_ListsArgs = {
   distinct_on?: InputMaybe<Array<Followed_Lists_Select_Column>>;
@@ -12111,9 +12733,11 @@ export type Query_RootFollowed_ListsArgs = {
   where?: InputMaybe<Followed_Lists_Bool_Exp>;
 };
 
+
 export type Query_RootFollowed_Lists_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootFollowed_PromptsArgs = {
   distinct_on?: InputMaybe<Array<Followed_Prompts_Select_Column>>;
@@ -12123,9 +12747,11 @@ export type Query_RootFollowed_PromptsArgs = {
   where?: InputMaybe<Followed_Prompts_Bool_Exp>;
 };
 
+
 export type Query_RootFollowed_Prompts_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootFollowed_User_BooksArgs = {
   distinct_on?: InputMaybe<Array<Followed_User_Books_Select_Column>>;
@@ -12135,6 +12761,7 @@ export type Query_RootFollowed_User_BooksArgs = {
   where?: InputMaybe<Followed_User_Books_Bool_Exp>;
 };
 
+
 export type Query_RootFollowed_User_Books_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Followed_User_Books_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -12142,6 +12769,7 @@ export type Query_RootFollowed_User_Books_AggregateArgs = {
   order_by?: InputMaybe<Array<Followed_User_Books_Order_By>>;
   where?: InputMaybe<Followed_User_Books_Bool_Exp>;
 };
+
 
 export type Query_RootFollowed_UsersArgs = {
   distinct_on?: InputMaybe<Array<Followed_Users_Select_Column>>;
@@ -12151,9 +12779,11 @@ export type Query_RootFollowed_UsersArgs = {
   where?: InputMaybe<Followed_Users_Bool_Exp>;
 };
 
+
 export type Query_RootFollowed_Users_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootFollowing_User_BooksArgs = {
   distinct_on?: InputMaybe<Array<Following_User_Books_Select_Column>>;
@@ -12163,6 +12793,7 @@ export type Query_RootFollowing_User_BooksArgs = {
   where?: InputMaybe<Following_User_Books_Bool_Exp>;
 };
 
+
 export type Query_RootFollowing_User_Books_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Following_User_Books_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -12170,6 +12801,30 @@ export type Query_RootFollowing_User_Books_AggregateArgs = {
   order_by?: InputMaybe<Array<Following_User_Books_Order_By>>;
   where?: InputMaybe<Following_User_Books_Bool_Exp>;
 };
+
+
+export type Query_RootFollowsArgs = {
+  distinct_on?: InputMaybe<Array<Follows_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Follows_Order_By>>;
+  where?: InputMaybe<Follows_Bool_Exp>;
+};
+
+
+export type Query_RootFollows_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Follows_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Follows_Order_By>>;
+  where?: InputMaybe<Follows_Bool_Exp>;
+};
+
+
+export type Query_RootFollows_By_PkArgs = {
+  id: Scalars['bigint']['input'];
+};
+
 
 export type Query_RootGoalsArgs = {
   distinct_on?: InputMaybe<Array<Goals_Select_Column>>;
@@ -12179,9 +12834,11 @@ export type Query_RootGoalsArgs = {
   where?: InputMaybe<Goals_Bool_Exp>;
 };
 
+
 export type Query_RootGoals_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootImagesArgs = {
   distinct_on?: InputMaybe<Array<Images_Select_Column>>;
@@ -12191,9 +12848,11 @@ export type Query_RootImagesArgs = {
   where?: InputMaybe<Images_Bool_Exp>;
 };
 
+
 export type Query_RootImages_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootLanguagesArgs = {
   distinct_on?: InputMaybe<Array<Languages_Select_Column>>;
@@ -12203,9 +12862,11 @@ export type Query_RootLanguagesArgs = {
   where?: InputMaybe<Languages_Bool_Exp>;
 };
 
+
 export type Query_RootLanguages_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootLikesArgs = {
   distinct_on?: InputMaybe<Array<Likes_Select_Column>>;
@@ -12215,9 +12876,25 @@ export type Query_RootLikesArgs = {
   where?: InputMaybe<Likes_Bool_Exp>;
 };
 
+
 export type Query_RootLikes_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
+
+export type Query_RootLinksArgs = {
+  distinct_on?: InputMaybe<Array<Links_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Links_Order_By>>;
+  where?: InputMaybe<Links_Bool_Exp>;
+};
+
+
+export type Query_RootLinks_By_PkArgs = {
+  id: Scalars['bigint']['input'];
+};
+
 
 export type Query_RootList_BooksArgs = {
   distinct_on?: InputMaybe<Array<List_Books_Select_Column>>;
@@ -12227,6 +12904,7 @@ export type Query_RootList_BooksArgs = {
   where?: InputMaybe<List_Books_Bool_Exp>;
 };
 
+
 export type Query_RootList_Books_AggregateArgs = {
   distinct_on?: InputMaybe<Array<List_Books_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -12235,9 +12913,11 @@ export type Query_RootList_Books_AggregateArgs = {
   where?: InputMaybe<List_Books_Bool_Exp>;
 };
 
+
 export type Query_RootList_Books_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootListsArgs = {
   distinct_on?: InputMaybe<Array<Lists_Select_Column>>;
@@ -12247,6 +12927,7 @@ export type Query_RootListsArgs = {
   where?: InputMaybe<Lists_Bool_Exp>;
 };
 
+
 export type Query_RootLists_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Lists_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -12255,9 +12936,11 @@ export type Query_RootLists_AggregateArgs = {
   where?: InputMaybe<Lists_Bool_Exp>;
 };
 
+
 export type Query_RootLists_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootMeArgs = {
   distinct_on?: InputMaybe<Array<Users_Select_Column>>;
@@ -12267,6 +12950,7 @@ export type Query_RootMeArgs = {
   where?: InputMaybe<Users_Bool_Exp>;
 };
 
+
 export type Query_RootNotification_ChannelsArgs = {
   distinct_on?: InputMaybe<Array<Notification_Channels_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -12275,9 +12959,11 @@ export type Query_RootNotification_ChannelsArgs = {
   where?: InputMaybe<Notification_Channels_Bool_Exp>;
 };
 
+
 export type Query_RootNotification_Channels_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootNotification_DeliveriesArgs = {
   distinct_on?: InputMaybe<Array<Notification_Deliveries_Select_Column>>;
@@ -12287,6 +12973,7 @@ export type Query_RootNotification_DeliveriesArgs = {
   where?: InputMaybe<Notification_Deliveries_Bool_Exp>;
 };
 
+
 export type Query_RootNotification_Deliveries_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Notification_Deliveries_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -12295,9 +12982,11 @@ export type Query_RootNotification_Deliveries_AggregateArgs = {
   where?: InputMaybe<Notification_Deliveries_Bool_Exp>;
 };
 
+
 export type Query_RootNotification_Deliveries_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootNotification_SettingsArgs = {
   distinct_on?: InputMaybe<Array<Notification_Settings_Select_Column>>;
@@ -12307,9 +12996,11 @@ export type Query_RootNotification_SettingsArgs = {
   where?: InputMaybe<Notification_Settings_Bool_Exp>;
 };
 
+
 export type Query_RootNotification_Settings_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootNotification_TypesArgs = {
   distinct_on?: InputMaybe<Array<Notification_Types_Select_Column>>;
@@ -12319,9 +13010,11 @@ export type Query_RootNotification_TypesArgs = {
   where?: InputMaybe<Notification_Types_Bool_Exp>;
 };
 
+
 export type Query_RootNotification_Types_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootNotificationsArgs = {
   distinct_on?: InputMaybe<Array<Notifications_Select_Column>>;
@@ -12331,9 +13024,11 @@ export type Query_RootNotificationsArgs = {
   where?: InputMaybe<Notifications_Bool_Exp>;
 };
 
+
 export type Query_RootNotifications_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootPlatformsArgs = {
   distinct_on?: InputMaybe<Array<Platforms_Select_Column>>;
@@ -12343,9 +13038,11 @@ export type Query_RootPlatformsArgs = {
   where?: InputMaybe<Platforms_Bool_Exp>;
 };
 
+
 export type Query_RootPlatforms_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootPrivacy_SettingsArgs = {
   distinct_on?: InputMaybe<Array<Privacy_Settings_Select_Column>>;
@@ -12355,9 +13052,11 @@ export type Query_RootPrivacy_SettingsArgs = {
   where?: InputMaybe<Privacy_Settings_Bool_Exp>;
 };
 
+
 export type Query_RootPrivacy_Settings_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootPrompt_AnswersArgs = {
   distinct_on?: InputMaybe<Array<Prompt_Answers_Select_Column>>;
@@ -12367,6 +13066,7 @@ export type Query_RootPrompt_AnswersArgs = {
   where?: InputMaybe<Prompt_Answers_Bool_Exp>;
 };
 
+
 export type Query_RootPrompt_Answers_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Prompt_Answers_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -12375,9 +13075,11 @@ export type Query_RootPrompt_Answers_AggregateArgs = {
   where?: InputMaybe<Prompt_Answers_Bool_Exp>;
 };
 
+
 export type Query_RootPrompt_Answers_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootPrompt_Books_SummaryArgs = {
   distinct_on?: InputMaybe<Array<Prompt_Books_Summary_Select_Column>>;
@@ -12387,6 +13089,7 @@ export type Query_RootPrompt_Books_SummaryArgs = {
   where?: InputMaybe<Prompt_Books_Summary_Bool_Exp>;
 };
 
+
 export type Query_RootPromptsArgs = {
   distinct_on?: InputMaybe<Array<Prompts_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -12395,9 +13098,11 @@ export type Query_RootPromptsArgs = {
   where?: InputMaybe<Prompts_Bool_Exp>;
 };
 
+
 export type Query_RootPrompts_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootPublishersArgs = {
   distinct_on?: InputMaybe<Array<Publishers_Select_Column>>;
@@ -12407,9 +13112,11 @@ export type Query_RootPublishersArgs = {
   where?: InputMaybe<Publishers_Bool_Exp>;
 };
 
+
 export type Query_RootPublishers_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootReading_FormatsArgs = {
   distinct_on?: InputMaybe<Array<Reading_Formats_Select_Column>>;
@@ -12419,9 +13126,11 @@ export type Query_RootReading_FormatsArgs = {
   where?: InputMaybe<Reading_Formats_Bool_Exp>;
 };
 
+
 export type Query_RootReading_Formats_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootReading_JournalsArgs = {
   distinct_on?: InputMaybe<Array<Reading_Journals_Select_Column>>;
@@ -12431,9 +13140,11 @@ export type Query_RootReading_JournalsArgs = {
   where?: InputMaybe<Reading_Journals_Bool_Exp>;
 };
 
+
 export type Query_RootReading_Journals_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootReading_Journals_SummaryArgs = {
   distinct_on?: InputMaybe<Array<Reading_Journals_Summary_Select_Column>>;
@@ -12443,17 +13154,6 @@ export type Query_RootReading_Journals_SummaryArgs = {
   where?: InputMaybe<Reading_Journals_Summary_Bool_Exp>;
 };
 
-export type Query_RootRecommendationsArgs = {
-  distinct_on?: InputMaybe<Array<Recommendations_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Recommendations_Order_By>>;
-  where?: InputMaybe<Recommendations_Bool_Exp>;
-};
-
-export type Query_RootRecommendations_By_PkArgs = {
-  id: Scalars['bigint']['input'];
-};
 
 export type Query_RootReferrals_For_UserArgs = {
   end_date?: InputMaybe<Scalars['date']['input']>;
@@ -12461,6 +13161,7 @@ export type Query_RootReferrals_For_UserArgs = {
   start_date?: InputMaybe<Scalars['date']['input']>;
   user_id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootSearchArgs = {
   fields?: InputMaybe<Scalars['String']['input']>;
@@ -12472,6 +13173,7 @@ export type Query_RootSearchArgs = {
   weights?: InputMaybe<Scalars['String']['input']>;
 };
 
+
 export type Query_RootSeriesArgs = {
   distinct_on?: InputMaybe<Array<Series_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -12480,13 +13182,16 @@ export type Query_RootSeriesArgs = {
   where?: InputMaybe<Series_Bool_Exp>;
 };
 
+
 export type Query_RootSeries_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
 
+
 export type Query_RootSubscriptionsArgs = {
   default_payment_system_id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootTag_CategoriesArgs = {
   distinct_on?: InputMaybe<Array<Tag_Categories_Select_Column>>;
@@ -12496,9 +13201,11 @@ export type Query_RootTag_CategoriesArgs = {
   where?: InputMaybe<Tag_Categories_Bool_Exp>;
 };
 
+
 export type Query_RootTag_Categories_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootTaggable_CountsArgs = {
   distinct_on?: InputMaybe<Array<Taggable_Counts_Select_Column>>;
@@ -12508,9 +13215,11 @@ export type Query_RootTaggable_CountsArgs = {
   where?: InputMaybe<Taggable_Counts_Bool_Exp>;
 };
 
+
 export type Query_RootTaggable_Counts_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootTaggingsArgs = {
   distinct_on?: InputMaybe<Array<Taggings_Select_Column>>;
@@ -12520,6 +13229,7 @@ export type Query_RootTaggingsArgs = {
   where?: InputMaybe<Taggings_Bool_Exp>;
 };
 
+
 export type Query_RootTaggings_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Taggings_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -12528,9 +13238,11 @@ export type Query_RootTaggings_AggregateArgs = {
   where?: InputMaybe<Taggings_Bool_Exp>;
 };
 
+
 export type Query_RootTaggings_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootTagsArgs = {
   distinct_on?: InputMaybe<Array<Tags_Select_Column>>;
@@ -12540,6 +13252,7 @@ export type Query_RootTagsArgs = {
   where?: InputMaybe<Tags_Bool_Exp>;
 };
 
+
 export type Query_RootTags_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Tags_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -12548,9 +13261,11 @@ export type Query_RootTags_AggregateArgs = {
   where?: InputMaybe<Tags_Bool_Exp>;
 };
 
+
 export type Query_RootTags_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootUser_BlocksArgs = {
   distinct_on?: InputMaybe<Array<User_Blocks_Select_Column>>;
@@ -12560,9 +13275,11 @@ export type Query_RootUser_BlocksArgs = {
   where?: InputMaybe<User_Blocks_Bool_Exp>;
 };
 
+
 export type Query_RootUser_Blocks_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootUser_Book_ReadsArgs = {
   distinct_on?: InputMaybe<Array<User_Book_Reads_Select_Column>>;
@@ -12572,6 +13289,7 @@ export type Query_RootUser_Book_ReadsArgs = {
   where?: InputMaybe<User_Book_Reads_Bool_Exp>;
 };
 
+
 export type Query_RootUser_Book_Reads_AggregateArgs = {
   distinct_on?: InputMaybe<Array<User_Book_Reads_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -12580,9 +13298,11 @@ export type Query_RootUser_Book_Reads_AggregateArgs = {
   where?: InputMaybe<User_Book_Reads_Bool_Exp>;
 };
 
+
 export type Query_RootUser_Book_Reads_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootUser_Book_StatusesArgs = {
   distinct_on?: InputMaybe<Array<User_Book_Statuses_Select_Column>>;
@@ -12592,6 +13312,7 @@ export type Query_RootUser_Book_StatusesArgs = {
   where?: InputMaybe<User_Book_Statuses_Bool_Exp>;
 };
 
+
 export type Query_RootUser_Book_Statuses_AggregateArgs = {
   distinct_on?: InputMaybe<Array<User_Book_Statuses_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -12600,9 +13321,11 @@ export type Query_RootUser_Book_Statuses_AggregateArgs = {
   where?: InputMaybe<User_Book_Statuses_Bool_Exp>;
 };
 
+
 export type Query_RootUser_Book_Statuses_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootUser_BooksArgs = {
   distinct_on?: InputMaybe<Array<User_Books_Select_Column>>;
@@ -12612,6 +13335,7 @@ export type Query_RootUser_BooksArgs = {
   where?: InputMaybe<User_Books_Bool_Exp>;
 };
 
+
 export type Query_RootUser_Books_AggregateArgs = {
   distinct_on?: InputMaybe<Array<User_Books_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -12620,9 +13344,11 @@ export type Query_RootUser_Books_AggregateArgs = {
   where?: InputMaybe<User_Books_Bool_Exp>;
 };
 
+
 export type Query_RootUser_Books_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootUser_FlagsArgs = {
   distinct_on?: InputMaybe<Array<User_Flags_Select_Column>>;
@@ -12632,9 +13358,11 @@ export type Query_RootUser_FlagsArgs = {
   where?: InputMaybe<User_Flags_Bool_Exp>;
 };
 
+
 export type Query_RootUser_Flags_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootUser_ReferralsArgs = {
   distinct_on?: InputMaybe<Array<User_Referrals_Select_Column>>;
@@ -12644,9 +13372,11 @@ export type Query_RootUser_ReferralsArgs = {
   where?: InputMaybe<User_Referrals_Bool_Exp>;
 };
 
+
 export type Query_RootUser_Referrals_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Query_RootUser_StatusesArgs = {
   distinct_on?: InputMaybe<Array<User_Statuses_Select_Column>>;
@@ -12656,9 +13386,11 @@ export type Query_RootUser_StatusesArgs = {
   where?: InputMaybe<User_Statuses_Bool_Exp>;
 };
 
+
 export type Query_RootUser_Statuses_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Query_RootUsersArgs = {
   distinct_on?: InputMaybe<Array<Users_Select_Column>>;
@@ -12668,6 +13400,7 @@ export type Query_RootUsersArgs = {
   where?: InputMaybe<Users_Bool_Exp>;
 };
 
+
 export type Query_RootUsers_Aggregate_By_Created_At_DateArgs = {
   distinct_on?: InputMaybe<Array<Users_Aggregate_By_Created_At_Date_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -12675,6 +13408,7 @@ export type Query_RootUsers_Aggregate_By_Created_At_DateArgs = {
   order_by?: InputMaybe<Array<Users_Aggregate_By_Created_At_Date_Order_By>>;
   where?: InputMaybe<Users_Aggregate_By_Created_At_Date_Bool_Exp>;
 };
+
 
 export type Query_RootUsers_By_PkArgs = {
   id: Scalars['Int']['input'];
@@ -12707,7 +13441,7 @@ export enum Reading_Formats_Select_Column {
   /** column name */
   Format = 'format',
   /** column name */
-  Id = 'id',
+  Id = 'id'
 }
 
 /** Streaming cursor of the table "reading_formats" */
@@ -12727,6 +13461,7 @@ export type Reading_Formats_Stream_Cursor_Value_Input = {
 /** columns and relationships of "reading_journals" */
 export type Reading_Journals = {
   __typename?: 'reading_journals';
+  action_at: Scalars['timestamptz']['output'];
   /** An object relationship */
   book?: Maybe<Books>;
   book_id?: Maybe<Scalars['Int']['output']>;
@@ -12755,6 +13490,7 @@ export type Reading_Journals = {
   user_id?: Maybe<Scalars['Int']['output']>;
 };
 
+
 /** columns and relationships of "reading_journals" */
 export type Reading_JournalsFollowersArgs = {
   distinct_on?: InputMaybe<Array<Followed_Users_Select_Column>>;
@@ -12763,6 +13499,7 @@ export type Reading_JournalsFollowersArgs = {
   order_by?: InputMaybe<Array<Followed_Users_Order_By>>;
   where?: InputMaybe<Followed_Users_Bool_Exp>;
 };
+
 
 /** columns and relationships of "reading_journals" */
 export type Reading_JournalsLikesArgs = {
@@ -12773,10 +13510,12 @@ export type Reading_JournalsLikesArgs = {
   where?: InputMaybe<Likes_Bool_Exp>;
 };
 
+
 /** columns and relationships of "reading_journals" */
 export type Reading_JournalsMetadataArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** columns and relationships of "reading_journals" */
 export type Reading_JournalsTaggingsArgs = {
@@ -12786,6 +13525,7 @@ export type Reading_JournalsTaggingsArgs = {
   order_by?: InputMaybe<Array<Taggings_Order_By>>;
   where?: InputMaybe<Taggings_Bool_Exp>;
 };
+
 
 /** columns and relationships of "reading_journals" */
 export type Reading_JournalsTaggings_AggregateArgs = {
@@ -12826,6 +13566,7 @@ export type Reading_Journals_Bool_Exp = {
   _and?: InputMaybe<Array<Reading_Journals_Bool_Exp>>;
   _not?: InputMaybe<Reading_Journals_Bool_Exp>;
   _or?: InputMaybe<Array<Reading_Journals_Bool_Exp>>;
+  action_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   book?: InputMaybe<Books_Bool_Exp>;
   book_id?: InputMaybe<Int_Comparison_Exp>;
   created_at?: InputMaybe<Timestamp_Comparison_Exp>;
@@ -12849,6 +13590,7 @@ export type Reading_Journals_Bool_Exp = {
 
 /** order by max() on columns of table "reading_journals" */
 export type Reading_Journals_Max_Order_By = {
+  action_at?: InputMaybe<Order_By>;
   book_id?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   edition_id?: InputMaybe<Order_By>;
@@ -12864,6 +13606,7 @@ export type Reading_Journals_Max_Order_By = {
 
 /** order by min() on columns of table "reading_journals" */
 export type Reading_Journals_Min_Order_By = {
+  action_at?: InputMaybe<Order_By>;
   book_id?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   edition_id?: InputMaybe<Order_By>;
@@ -12879,6 +13622,7 @@ export type Reading_Journals_Min_Order_By = {
 
 /** Ordering options when selecting data from "reading_journals". */
 export type Reading_Journals_Order_By = {
+  action_at?: InputMaybe<Order_By>;
   book?: InputMaybe<Books_Order_By>;
   book_id?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
@@ -12902,6 +13646,8 @@ export type Reading_Journals_Order_By = {
 /** select columns of table "reading_journals" */
 export enum Reading_Journals_Select_Column {
   /** column name */
+  ActionAt = 'action_at',
+  /** column name */
   BookId = 'book_id',
   /** column name */
   CreatedAt = 'created_at',
@@ -12924,7 +13670,7 @@ export enum Reading_Journals_Select_Column {
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** order by stddev() on columns of table "reading_journals" */
@@ -12967,6 +13713,7 @@ export type Reading_Journals_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Reading_Journals_Stream_Cursor_Value_Input = {
+  action_at?: InputMaybe<Scalars['timestamptz']['input']>;
   book_id?: InputMaybe<Scalars['Int']['input']>;
   created_at?: InputMaybe<Scalars['timestamp']['input']>;
   edition_id?: InputMaybe<Scalars['Int']['input']>;
@@ -13008,6 +13755,7 @@ export type Reading_Journals_Summary = {
   user_id?: Maybe<Scalars['Int']['output']>;
 };
 
+
 /** columns and relationships of "reading_journals_summary" */
 export type Reading_Journals_SummaryFollowersArgs = {
   distinct_on?: InputMaybe<Array<Followed_Users_Select_Column>>;
@@ -13016,6 +13764,7 @@ export type Reading_Journals_SummaryFollowersArgs = {
   order_by?: InputMaybe<Array<Followed_Users_Order_By>>;
   where?: InputMaybe<Followed_Users_Bool_Exp>;
 };
+
 
 /** columns and relationships of "reading_journals_summary" */
 export type Reading_Journals_SummaryReading_JournalsArgs = {
@@ -13062,7 +13811,7 @@ export enum Reading_Journals_Summary_Select_Column {
   /** column name */
   LastUpdatedAt = 'last_updated_at',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** Streaming cursor of the table "reading_journals_summary" */
@@ -13111,209 +13860,6 @@ export type Reading_Journals_Variance_Order_By = {
   user_id?: InputMaybe<Order_By>;
 };
 
-/** columns and relationships of "disco_recommendations" */
-export type Recommendations = {
-  __typename?: 'recommendations';
-  context?: Maybe<Scalars['String']['output']>;
-  created_at: Scalars['timestamp']['output'];
-  id: Scalars['bigint']['output'];
-  /** An object relationship */
-  item_book?: Maybe<Books>;
-  item_id?: Maybe<Scalars['bigint']['output']>;
-  item_type?: Maybe<Scalars['String']['output']>;
-  /** An object relationship */
-  item_user?: Maybe<Users>;
-  score?: Maybe<Scalars['float8']['output']>;
-  subject_id?: Maybe<Scalars['bigint']['output']>;
-  subject_type?: Maybe<Scalars['String']['output']>;
-  /** An object relationship */
-  subject_user?: Maybe<Users>;
-  updated_at: Scalars['timestamp']['output'];
-};
-
-/** order by aggregate values of table "disco_recommendations" */
-export type Recommendations_Aggregate_Order_By = {
-  avg?: InputMaybe<Recommendations_Avg_Order_By>;
-  count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Recommendations_Max_Order_By>;
-  min?: InputMaybe<Recommendations_Min_Order_By>;
-  stddev?: InputMaybe<Recommendations_Stddev_Order_By>;
-  stddev_pop?: InputMaybe<Recommendations_Stddev_Pop_Order_By>;
-  stddev_samp?: InputMaybe<Recommendations_Stddev_Samp_Order_By>;
-  sum?: InputMaybe<Recommendations_Sum_Order_By>;
-  var_pop?: InputMaybe<Recommendations_Var_Pop_Order_By>;
-  var_samp?: InputMaybe<Recommendations_Var_Samp_Order_By>;
-  variance?: InputMaybe<Recommendations_Variance_Order_By>;
-};
-
-/** order by avg() on columns of table "disco_recommendations" */
-export type Recommendations_Avg_Order_By = {
-  id?: InputMaybe<Order_By>;
-  item_id?: InputMaybe<Order_By>;
-  score?: InputMaybe<Order_By>;
-  subject_id?: InputMaybe<Order_By>;
-};
-
-/** Boolean expression to filter rows from the table "disco_recommendations". All fields are combined with a logical 'AND'. */
-export type Recommendations_Bool_Exp = {
-  _and?: InputMaybe<Array<Recommendations_Bool_Exp>>;
-  _not?: InputMaybe<Recommendations_Bool_Exp>;
-  _or?: InputMaybe<Array<Recommendations_Bool_Exp>>;
-  context?: InputMaybe<String_Comparison_Exp>;
-  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  id?: InputMaybe<Bigint_Comparison_Exp>;
-  item_book?: InputMaybe<Books_Bool_Exp>;
-  item_id?: InputMaybe<Bigint_Comparison_Exp>;
-  item_type?: InputMaybe<String_Comparison_Exp>;
-  item_user?: InputMaybe<Users_Bool_Exp>;
-  score?: InputMaybe<Float8_Comparison_Exp>;
-  subject_id?: InputMaybe<Bigint_Comparison_Exp>;
-  subject_type?: InputMaybe<String_Comparison_Exp>;
-  subject_user?: InputMaybe<Users_Bool_Exp>;
-  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
-};
-
-/** order by max() on columns of table "disco_recommendations" */
-export type Recommendations_Max_Order_By = {
-  context?: InputMaybe<Order_By>;
-  created_at?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  item_id?: InputMaybe<Order_By>;
-  item_type?: InputMaybe<Order_By>;
-  score?: InputMaybe<Order_By>;
-  subject_id?: InputMaybe<Order_By>;
-  subject_type?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-};
-
-/** order by min() on columns of table "disco_recommendations" */
-export type Recommendations_Min_Order_By = {
-  context?: InputMaybe<Order_By>;
-  created_at?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  item_id?: InputMaybe<Order_By>;
-  item_type?: InputMaybe<Order_By>;
-  score?: InputMaybe<Order_By>;
-  subject_id?: InputMaybe<Order_By>;
-  subject_type?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-};
-
-/** Ordering options when selecting data from "disco_recommendations". */
-export type Recommendations_Order_By = {
-  context?: InputMaybe<Order_By>;
-  created_at?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  item_book?: InputMaybe<Books_Order_By>;
-  item_id?: InputMaybe<Order_By>;
-  item_type?: InputMaybe<Order_By>;
-  item_user?: InputMaybe<Users_Order_By>;
-  score?: InputMaybe<Order_By>;
-  subject_id?: InputMaybe<Order_By>;
-  subject_type?: InputMaybe<Order_By>;
-  subject_user?: InputMaybe<Users_Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-};
-
-/** select columns of table "disco_recommendations" */
-export enum Recommendations_Select_Column {
-  /** column name */
-  Context = 'context',
-  /** column name */
-  CreatedAt = 'created_at',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  ItemId = 'item_id',
-  /** column name */
-  ItemType = 'item_type',
-  /** column name */
-  Score = 'score',
-  /** column name */
-  SubjectId = 'subject_id',
-  /** column name */
-  SubjectType = 'subject_type',
-  /** column name */
-  UpdatedAt = 'updated_at',
-}
-
-/** order by stddev() on columns of table "disco_recommendations" */
-export type Recommendations_Stddev_Order_By = {
-  id?: InputMaybe<Order_By>;
-  item_id?: InputMaybe<Order_By>;
-  score?: InputMaybe<Order_By>;
-  subject_id?: InputMaybe<Order_By>;
-};
-
-/** order by stddev_pop() on columns of table "disco_recommendations" */
-export type Recommendations_Stddev_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-  item_id?: InputMaybe<Order_By>;
-  score?: InputMaybe<Order_By>;
-  subject_id?: InputMaybe<Order_By>;
-};
-
-/** order by stddev_samp() on columns of table "disco_recommendations" */
-export type Recommendations_Stddev_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-  item_id?: InputMaybe<Order_By>;
-  score?: InputMaybe<Order_By>;
-  subject_id?: InputMaybe<Order_By>;
-};
-
-/** Streaming cursor of the table "recommendations" */
-export type Recommendations_Stream_Cursor_Input = {
-  /** Stream column input with initial value */
-  initial_value: Recommendations_Stream_Cursor_Value_Input;
-  /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>;
-};
-
-/** Initial value of the column from where the streaming should start */
-export type Recommendations_Stream_Cursor_Value_Input = {
-  context?: InputMaybe<Scalars['String']['input']>;
-  created_at?: InputMaybe<Scalars['timestamp']['input']>;
-  id?: InputMaybe<Scalars['bigint']['input']>;
-  item_id?: InputMaybe<Scalars['bigint']['input']>;
-  item_type?: InputMaybe<Scalars['String']['input']>;
-  score?: InputMaybe<Scalars['float8']['input']>;
-  subject_id?: InputMaybe<Scalars['bigint']['input']>;
-  subject_type?: InputMaybe<Scalars['String']['input']>;
-  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
-};
-
-/** order by sum() on columns of table "disco_recommendations" */
-export type Recommendations_Sum_Order_By = {
-  id?: InputMaybe<Order_By>;
-  item_id?: InputMaybe<Order_By>;
-  score?: InputMaybe<Order_By>;
-  subject_id?: InputMaybe<Order_By>;
-};
-
-/** order by var_pop() on columns of table "disco_recommendations" */
-export type Recommendations_Var_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-  item_id?: InputMaybe<Order_By>;
-  score?: InputMaybe<Order_By>;
-  subject_id?: InputMaybe<Order_By>;
-};
-
-/** order by var_samp() on columns of table "disco_recommendations" */
-export type Recommendations_Var_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-  item_id?: InputMaybe<Order_By>;
-  score?: InputMaybe<Order_By>;
-  subject_id?: InputMaybe<Order_By>;
-};
-
-/** order by variance() on columns of table "disco_recommendations" */
-export type Recommendations_Variance_Order_By = {
-  id?: InputMaybe<Order_By>;
-  item_id?: InputMaybe<Order_By>;
-  score?: InputMaybe<Order_By>;
-  subject_id?: InputMaybe<Order_By>;
-};
-
 /** columns and relationships of "series" */
 export type Series = {
   __typename?: 'series';
@@ -13336,11 +13882,13 @@ export type Series = {
   is_completed?: Maybe<Scalars['Boolean']['output']>;
   locked: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
+  object_type: Scalars['String']['output'];
   primary_books_count?: Maybe<Scalars['Int']['output']>;
   slug: Scalars['String']['output'];
   state: Scalars['String']['output'];
   user_id?: Maybe<Scalars['Int']['output']>;
 };
+
 
 /** columns and relationships of "series" */
 export type SeriesBook_SeriesArgs = {
@@ -13351,6 +13899,7 @@ export type SeriesBook_SeriesArgs = {
   where?: InputMaybe<Book_Series_Bool_Exp>;
 };
 
+
 /** columns and relationships of "series" */
 export type SeriesBook_Series_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Book_Series_Select_Column>>;
@@ -13359,6 +13908,7 @@ export type SeriesBook_Series_AggregateArgs = {
   order_by?: InputMaybe<Array<Book_Series_Order_By>>;
   where?: InputMaybe<Book_Series_Bool_Exp>;
 };
+
 
 /** columns and relationships of "series" */
 export type SeriesIdentifiersArgs = {
@@ -13384,6 +13934,7 @@ export type Series_Bool_Exp = {
   is_completed?: InputMaybe<Boolean_Comparison_Exp>;
   locked?: InputMaybe<Boolean_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
+  object_type?: InputMaybe<String_Comparison_Exp>;
   primary_books_count?: InputMaybe<Int_Comparison_Exp>;
   slug?: InputMaybe<String_Comparison_Exp>;
   state?: InputMaybe<String_Comparison_Exp>;
@@ -13405,6 +13956,7 @@ export type Series_Order_By = {
   is_completed?: InputMaybe<Order_By>;
   locked?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
+  object_type?: InputMaybe<Order_By>;
   primary_books_count?: InputMaybe<Order_By>;
   slug?: InputMaybe<Order_By>;
   state?: InputMaybe<Order_By>;
@@ -13432,13 +13984,15 @@ export enum Series_Select_Column {
   /** column name */
   Name = 'name',
   /** column name */
+  ObjectType = 'object_type',
+  /** column name */
   PrimaryBooksCount = 'primary_books_count',
   /** column name */
   Slug = 'slug',
   /** column name */
   State = 'state',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** Streaming cursor of the table "series" */
@@ -13460,6 +14014,7 @@ export type Series_Stream_Cursor_Value_Input = {
   is_completed?: InputMaybe<Scalars['Boolean']['input']>;
   locked?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  object_type?: InputMaybe<Scalars['String']['input']>;
   primary_books_count?: InputMaybe<Scalars['Int']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   state?: InputMaybe<Scalars['String']['input']>;
@@ -13624,6 +14179,14 @@ export type Subscription_Root = {
   /** fetch data from the table in a streaming manner: "following_user_books" */
   following_user_books_stream: Array<Following_User_Books>;
   /** An array relationship */
+  follows: Array<Follows>;
+  /** An aggregate relationship */
+  follows_aggregate: Follows_Aggregate;
+  /** fetch data from the table: "follows" using primary key columns */
+  follows_by_pk?: Maybe<Follows>;
+  /** fetch data from the table in a streaming manner: "follows" */
+  follows_stream: Array<Follows>;
+  /** An array relationship */
   goals: Array<Goals>;
   /** fetch data from the table: "goals" using primary key columns */
   goals_by_pk?: Maybe<Goals>;
@@ -13647,6 +14210,12 @@ export type Subscription_Root = {
   likes_by_pk?: Maybe<Likes>;
   /** fetch data from the table in a streaming manner: "likes" */
   likes_stream: Array<Likes>;
+  /** fetch data from the table: "links" */
+  links: Array<Links>;
+  /** fetch data from the table: "links" using primary key columns */
+  links_by_pk?: Maybe<Links>;
+  /** fetch data from the table in a streaming manner: "links" */
+  links_stream: Array<Links>;
   /** An array relationship */
   list_books: Array<List_Books>;
   /** An aggregate relationship */
@@ -13749,12 +14318,6 @@ export type Subscription_Root = {
   reading_journals_summary: Array<Reading_Journals_Summary>;
   /** fetch data from the table in a streaming manner: "reading_journals_summary" */
   reading_journals_summary_stream: Array<Reading_Journals_Summary>;
-  /** An array relationship */
-  recommendations: Array<Recommendations>;
-  /** fetch data from the table: "disco_recommendations" using primary key columns */
-  recommendations_by_pk?: Maybe<Recommendations>;
-  /** fetch data from the table in a streaming manner: "disco_recommendations" */
-  recommendations_stream: Array<Recommendations>;
   /** fetch data from the table: "series" */
   series: Array<Series>;
   /** fetch data from the table: "series" using primary key columns */
@@ -13849,6 +14412,7 @@ export type Subscription_Root = {
   users_stream: Array<Users>;
 };
 
+
 export type Subscription_RootActivitiesArgs = {
   distinct_on?: InputMaybe<Array<Activities_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -13857,15 +14421,18 @@ export type Subscription_RootActivitiesArgs = {
   where?: InputMaybe<Activities_Bool_Exp>;
 };
 
+
 export type Subscription_RootActivities_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootActivities_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Activities_Stream_Cursor_Input>>;
   where?: InputMaybe<Activities_Bool_Exp>;
 };
+
 
 export type Subscription_RootActivity_FeedArgs = {
   args: Activity_Feed_Args;
@@ -13876,6 +14443,7 @@ export type Subscription_RootActivity_FeedArgs = {
   where?: InputMaybe<Activities_Bool_Exp>;
 };
 
+
 export type Subscription_RootActivity_Foryou_FeedArgs = {
   args: Activity_Foryou_Feed_Args;
   distinct_on?: InputMaybe<Array<Activities_Select_Column>>;
@@ -13885,6 +14453,7 @@ export type Subscription_RootActivity_Foryou_FeedArgs = {
   where?: InputMaybe<Activities_Bool_Exp>;
 };
 
+
 export type Subscription_RootAuthorsArgs = {
   distinct_on?: InputMaybe<Array<Authors_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -13893,15 +14462,18 @@ export type Subscription_RootAuthorsArgs = {
   where?: InputMaybe<Authors_Bool_Exp>;
 };
 
+
 export type Subscription_RootAuthors_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootAuthors_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Authors_Stream_Cursor_Input>>;
   where?: InputMaybe<Authors_Bool_Exp>;
 };
+
 
 export type Subscription_RootBook_CategoriesArgs = {
   distinct_on?: InputMaybe<Array<Book_Categories_Select_Column>>;
@@ -13911,15 +14483,18 @@ export type Subscription_RootBook_CategoriesArgs = {
   where?: InputMaybe<Book_Categories_Bool_Exp>;
 };
 
+
 export type Subscription_RootBook_Categories_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootBook_Categories_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Book_Categories_Stream_Cursor_Input>>;
   where?: InputMaybe<Book_Categories_Bool_Exp>;
 };
+
 
 export type Subscription_RootBook_CharactersArgs = {
   distinct_on?: InputMaybe<Array<Book_Characters_Select_Column>>;
@@ -13929,15 +14504,18 @@ export type Subscription_RootBook_CharactersArgs = {
   where?: InputMaybe<Book_Characters_Bool_Exp>;
 };
 
+
 export type Subscription_RootBook_Characters_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootBook_Characters_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Book_Characters_Stream_Cursor_Input>>;
   where?: InputMaybe<Book_Characters_Bool_Exp>;
 };
+
 
 export type Subscription_RootBook_CollectionsArgs = {
   distinct_on?: InputMaybe<Array<Book_Collections_Select_Column>>;
@@ -13947,15 +14525,18 @@ export type Subscription_RootBook_CollectionsArgs = {
   where?: InputMaybe<Book_Collections_Bool_Exp>;
 };
 
+
 export type Subscription_RootBook_Collections_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootBook_Collections_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Book_Collections_Stream_Cursor_Input>>;
   where?: InputMaybe<Book_Collections_Bool_Exp>;
 };
+
 
 export type Subscription_RootBook_MappingsArgs = {
   distinct_on?: InputMaybe<Array<Book_Mappings_Select_Column>>;
@@ -13965,15 +14546,18 @@ export type Subscription_RootBook_MappingsArgs = {
   where?: InputMaybe<Book_Mappings_Bool_Exp>;
 };
 
+
 export type Subscription_RootBook_Mappings_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootBook_Mappings_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Book_Mappings_Stream_Cursor_Input>>;
   where?: InputMaybe<Book_Mappings_Bool_Exp>;
 };
+
 
 export type Subscription_RootBook_SeriesArgs = {
   distinct_on?: InputMaybe<Array<Book_Series_Select_Column>>;
@@ -13983,6 +14567,7 @@ export type Subscription_RootBook_SeriesArgs = {
   where?: InputMaybe<Book_Series_Bool_Exp>;
 };
 
+
 export type Subscription_RootBook_Series_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Book_Series_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -13991,15 +14576,18 @@ export type Subscription_RootBook_Series_AggregateArgs = {
   where?: InputMaybe<Book_Series_Bool_Exp>;
 };
 
+
 export type Subscription_RootBook_Series_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootBook_Series_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Book_Series_Stream_Cursor_Input>>;
   where?: InputMaybe<Book_Series_Bool_Exp>;
 };
+
 
 export type Subscription_RootBook_StatusesArgs = {
   distinct_on?: InputMaybe<Array<Book_Statuses_Select_Column>>;
@@ -14009,15 +14597,18 @@ export type Subscription_RootBook_StatusesArgs = {
   where?: InputMaybe<Book_Statuses_Bool_Exp>;
 };
 
+
 export type Subscription_RootBook_Statuses_By_PkArgs = {
   id: Scalars['smallint']['input'];
 };
+
 
 export type Subscription_RootBook_Statuses_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Book_Statuses_Stream_Cursor_Input>>;
   where?: InputMaybe<Book_Statuses_Bool_Exp>;
 };
+
 
 export type Subscription_RootBooklesArgs = {
   distinct_on?: InputMaybe<Array<Bookles_Select_Column>>;
@@ -14027,15 +14618,18 @@ export type Subscription_RootBooklesArgs = {
   where?: InputMaybe<Bookles_Bool_Exp>;
 };
 
+
 export type Subscription_RootBookles_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootBookles_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Bookles_Stream_Cursor_Input>>;
   where?: InputMaybe<Bookles_Bool_Exp>;
 };
+
 
 export type Subscription_RootBooksArgs = {
   distinct_on?: InputMaybe<Array<Books_Select_Column>>;
@@ -14045,6 +14639,7 @@ export type Subscription_RootBooksArgs = {
   where?: InputMaybe<Books_Bool_Exp>;
 };
 
+
 export type Subscription_RootBooks_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Books_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -14053,15 +14648,18 @@ export type Subscription_RootBooks_AggregateArgs = {
   where?: InputMaybe<Books_Bool_Exp>;
 };
 
+
 export type Subscription_RootBooks_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootBooks_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Books_Stream_Cursor_Input>>;
   where?: InputMaybe<Books_Bool_Exp>;
 };
+
 
 export type Subscription_RootCharactersArgs = {
   distinct_on?: InputMaybe<Array<Characters_Select_Column>>;
@@ -14071,15 +14669,18 @@ export type Subscription_RootCharactersArgs = {
   where?: InputMaybe<Characters_Bool_Exp>;
 };
 
+
 export type Subscription_RootCharacters_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootCharacters_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Characters_Stream_Cursor_Input>>;
   where?: InputMaybe<Characters_Bool_Exp>;
 };
+
 
 export type Subscription_RootCollection_Import_ResultsArgs = {
   distinct_on?: InputMaybe<Array<Collection_Import_Results_Select_Column>>;
@@ -14089,15 +14690,18 @@ export type Subscription_RootCollection_Import_ResultsArgs = {
   where?: InputMaybe<Collection_Import_Results_Bool_Exp>;
 };
 
+
 export type Subscription_RootCollection_Import_Results_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootCollection_Import_Results_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Collection_Import_Results_Stream_Cursor_Input>>;
   where?: InputMaybe<Collection_Import_Results_Bool_Exp>;
 };
+
 
 export type Subscription_RootCollection_ImportsArgs = {
   distinct_on?: InputMaybe<Array<Collection_Imports_Select_Column>>;
@@ -14107,15 +14711,18 @@ export type Subscription_RootCollection_ImportsArgs = {
   where?: InputMaybe<Collection_Imports_Bool_Exp>;
 };
 
+
 export type Subscription_RootCollection_Imports_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootCollection_Imports_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Collection_Imports_Stream_Cursor_Input>>;
   where?: InputMaybe<Collection_Imports_Bool_Exp>;
 };
+
 
 export type Subscription_RootContributionsArgs = {
   distinct_on?: InputMaybe<Array<Contributions_Select_Column>>;
@@ -14125,6 +14732,7 @@ export type Subscription_RootContributionsArgs = {
   where?: InputMaybe<Contributions_Bool_Exp>;
 };
 
+
 export type Subscription_RootContributions_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Contributions_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -14133,15 +14741,18 @@ export type Subscription_RootContributions_AggregateArgs = {
   where?: InputMaybe<Contributions_Bool_Exp>;
 };
 
+
 export type Subscription_RootContributions_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootContributions_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Contributions_Stream_Cursor_Input>>;
   where?: InputMaybe<Contributions_Bool_Exp>;
 };
+
 
 export type Subscription_RootCountriesArgs = {
   distinct_on?: InputMaybe<Array<Countries_Select_Column>>;
@@ -14151,15 +14762,18 @@ export type Subscription_RootCountriesArgs = {
   where?: InputMaybe<Countries_Bool_Exp>;
 };
 
+
 export type Subscription_RootCountries_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootCountries_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Countries_Stream_Cursor_Input>>;
   where?: InputMaybe<Countries_Bool_Exp>;
 };
+
 
 export type Subscription_RootEditionsArgs = {
   distinct_on?: InputMaybe<Array<Editions_Select_Column>>;
@@ -14169,15 +14783,18 @@ export type Subscription_RootEditionsArgs = {
   where?: InputMaybe<Editions_Bool_Exp>;
 };
 
+
 export type Subscription_RootEditions_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootEditions_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Editions_Stream_Cursor_Input>>;
   where?: InputMaybe<Editions_Bool_Exp>;
 };
+
 
 export type Subscription_RootFlag_StatusesArgs = {
   distinct_on?: InputMaybe<Array<Flag_Statuses_Select_Column>>;
@@ -14187,15 +14804,18 @@ export type Subscription_RootFlag_StatusesArgs = {
   where?: InputMaybe<Flag_Statuses_Bool_Exp>;
 };
 
+
 export type Subscription_RootFlag_Statuses_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootFlag_Statuses_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Flag_Statuses_Stream_Cursor_Input>>;
   where?: InputMaybe<Flag_Statuses_Bool_Exp>;
 };
+
 
 export type Subscription_RootFollowed_ListsArgs = {
   distinct_on?: InputMaybe<Array<Followed_Lists_Select_Column>>;
@@ -14205,15 +14825,18 @@ export type Subscription_RootFollowed_ListsArgs = {
   where?: InputMaybe<Followed_Lists_Bool_Exp>;
 };
 
+
 export type Subscription_RootFollowed_Lists_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootFollowed_Lists_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Followed_Lists_Stream_Cursor_Input>>;
   where?: InputMaybe<Followed_Lists_Bool_Exp>;
 };
+
 
 export type Subscription_RootFollowed_PromptsArgs = {
   distinct_on?: InputMaybe<Array<Followed_Prompts_Select_Column>>;
@@ -14223,15 +14846,18 @@ export type Subscription_RootFollowed_PromptsArgs = {
   where?: InputMaybe<Followed_Prompts_Bool_Exp>;
 };
 
+
 export type Subscription_RootFollowed_Prompts_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootFollowed_Prompts_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Followed_Prompts_Stream_Cursor_Input>>;
   where?: InputMaybe<Followed_Prompts_Bool_Exp>;
 };
+
 
 export type Subscription_RootFollowed_User_BooksArgs = {
   distinct_on?: InputMaybe<Array<Followed_User_Books_Select_Column>>;
@@ -14241,6 +14867,7 @@ export type Subscription_RootFollowed_User_BooksArgs = {
   where?: InputMaybe<Followed_User_Books_Bool_Exp>;
 };
 
+
 export type Subscription_RootFollowed_User_Books_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Followed_User_Books_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -14249,11 +14876,13 @@ export type Subscription_RootFollowed_User_Books_AggregateArgs = {
   where?: InputMaybe<Followed_User_Books_Bool_Exp>;
 };
 
+
 export type Subscription_RootFollowed_User_Books_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Followed_User_Books_Stream_Cursor_Input>>;
   where?: InputMaybe<Followed_User_Books_Bool_Exp>;
 };
+
 
 export type Subscription_RootFollowed_UsersArgs = {
   distinct_on?: InputMaybe<Array<Followed_Users_Select_Column>>;
@@ -14263,15 +14892,18 @@ export type Subscription_RootFollowed_UsersArgs = {
   where?: InputMaybe<Followed_Users_Bool_Exp>;
 };
 
+
 export type Subscription_RootFollowed_Users_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootFollowed_Users_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Followed_Users_Stream_Cursor_Input>>;
   where?: InputMaybe<Followed_Users_Bool_Exp>;
 };
+
 
 export type Subscription_RootFollowing_User_BooksArgs = {
   distinct_on?: InputMaybe<Array<Following_User_Books_Select_Column>>;
@@ -14281,6 +14913,7 @@ export type Subscription_RootFollowing_User_BooksArgs = {
   where?: InputMaybe<Following_User_Books_Bool_Exp>;
 };
 
+
 export type Subscription_RootFollowing_User_Books_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Following_User_Books_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -14289,11 +14922,43 @@ export type Subscription_RootFollowing_User_Books_AggregateArgs = {
   where?: InputMaybe<Following_User_Books_Bool_Exp>;
 };
 
+
 export type Subscription_RootFollowing_User_Books_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Following_User_Books_Stream_Cursor_Input>>;
   where?: InputMaybe<Following_User_Books_Bool_Exp>;
 };
+
+
+export type Subscription_RootFollowsArgs = {
+  distinct_on?: InputMaybe<Array<Follows_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Follows_Order_By>>;
+  where?: InputMaybe<Follows_Bool_Exp>;
+};
+
+
+export type Subscription_RootFollows_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Follows_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Follows_Order_By>>;
+  where?: InputMaybe<Follows_Bool_Exp>;
+};
+
+
+export type Subscription_RootFollows_By_PkArgs = {
+  id: Scalars['bigint']['input'];
+};
+
+
+export type Subscription_RootFollows_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Follows_Stream_Cursor_Input>>;
+  where?: InputMaybe<Follows_Bool_Exp>;
+};
+
 
 export type Subscription_RootGoalsArgs = {
   distinct_on?: InputMaybe<Array<Goals_Select_Column>>;
@@ -14303,15 +14968,18 @@ export type Subscription_RootGoalsArgs = {
   where?: InputMaybe<Goals_Bool_Exp>;
 };
 
+
 export type Subscription_RootGoals_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootGoals_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Goals_Stream_Cursor_Input>>;
   where?: InputMaybe<Goals_Bool_Exp>;
 };
+
 
 export type Subscription_RootImagesArgs = {
   distinct_on?: InputMaybe<Array<Images_Select_Column>>;
@@ -14321,15 +14989,18 @@ export type Subscription_RootImagesArgs = {
   where?: InputMaybe<Images_Bool_Exp>;
 };
 
+
 export type Subscription_RootImages_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootImages_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Images_Stream_Cursor_Input>>;
   where?: InputMaybe<Images_Bool_Exp>;
 };
+
 
 export type Subscription_RootLanguagesArgs = {
   distinct_on?: InputMaybe<Array<Languages_Select_Column>>;
@@ -14339,15 +15010,18 @@ export type Subscription_RootLanguagesArgs = {
   where?: InputMaybe<Languages_Bool_Exp>;
 };
 
+
 export type Subscription_RootLanguages_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootLanguages_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Languages_Stream_Cursor_Input>>;
   where?: InputMaybe<Languages_Bool_Exp>;
 };
+
 
 export type Subscription_RootLikesArgs = {
   distinct_on?: InputMaybe<Array<Likes_Select_Column>>;
@@ -14357,15 +15031,39 @@ export type Subscription_RootLikesArgs = {
   where?: InputMaybe<Likes_Bool_Exp>;
 };
 
+
 export type Subscription_RootLikes_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootLikes_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Likes_Stream_Cursor_Input>>;
   where?: InputMaybe<Likes_Bool_Exp>;
 };
+
+
+export type Subscription_RootLinksArgs = {
+  distinct_on?: InputMaybe<Array<Links_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Links_Order_By>>;
+  where?: InputMaybe<Links_Bool_Exp>;
+};
+
+
+export type Subscription_RootLinks_By_PkArgs = {
+  id: Scalars['bigint']['input'];
+};
+
+
+export type Subscription_RootLinks_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Links_Stream_Cursor_Input>>;
+  where?: InputMaybe<Links_Bool_Exp>;
+};
+
 
 export type Subscription_RootList_BooksArgs = {
   distinct_on?: InputMaybe<Array<List_Books_Select_Column>>;
@@ -14375,6 +15073,7 @@ export type Subscription_RootList_BooksArgs = {
   where?: InputMaybe<List_Books_Bool_Exp>;
 };
 
+
 export type Subscription_RootList_Books_AggregateArgs = {
   distinct_on?: InputMaybe<Array<List_Books_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -14383,15 +15082,18 @@ export type Subscription_RootList_Books_AggregateArgs = {
   where?: InputMaybe<List_Books_Bool_Exp>;
 };
 
+
 export type Subscription_RootList_Books_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootList_Books_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<List_Books_Stream_Cursor_Input>>;
   where?: InputMaybe<List_Books_Bool_Exp>;
 };
+
 
 export type Subscription_RootListsArgs = {
   distinct_on?: InputMaybe<Array<Lists_Select_Column>>;
@@ -14401,6 +15103,7 @@ export type Subscription_RootListsArgs = {
   where?: InputMaybe<Lists_Bool_Exp>;
 };
 
+
 export type Subscription_RootLists_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Lists_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -14409,15 +15112,18 @@ export type Subscription_RootLists_AggregateArgs = {
   where?: InputMaybe<Lists_Bool_Exp>;
 };
 
+
 export type Subscription_RootLists_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootLists_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Lists_Stream_Cursor_Input>>;
   where?: InputMaybe<Lists_Bool_Exp>;
 };
+
 
 export type Subscription_RootMeArgs = {
   distinct_on?: InputMaybe<Array<Users_Select_Column>>;
@@ -14427,6 +15133,7 @@ export type Subscription_RootMeArgs = {
   where?: InputMaybe<Users_Bool_Exp>;
 };
 
+
 export type Subscription_RootNotification_ChannelsArgs = {
   distinct_on?: InputMaybe<Array<Notification_Channels_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -14435,15 +15142,18 @@ export type Subscription_RootNotification_ChannelsArgs = {
   where?: InputMaybe<Notification_Channels_Bool_Exp>;
 };
 
+
 export type Subscription_RootNotification_Channels_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootNotification_Channels_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Notification_Channels_Stream_Cursor_Input>>;
   where?: InputMaybe<Notification_Channels_Bool_Exp>;
 };
+
 
 export type Subscription_RootNotification_DeliveriesArgs = {
   distinct_on?: InputMaybe<Array<Notification_Deliveries_Select_Column>>;
@@ -14453,6 +15163,7 @@ export type Subscription_RootNotification_DeliveriesArgs = {
   where?: InputMaybe<Notification_Deliveries_Bool_Exp>;
 };
 
+
 export type Subscription_RootNotification_Deliveries_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Notification_Deliveries_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -14461,15 +15172,18 @@ export type Subscription_RootNotification_Deliveries_AggregateArgs = {
   where?: InputMaybe<Notification_Deliveries_Bool_Exp>;
 };
 
+
 export type Subscription_RootNotification_Deliveries_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootNotification_Deliveries_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Notification_Deliveries_Stream_Cursor_Input>>;
   where?: InputMaybe<Notification_Deliveries_Bool_Exp>;
 };
+
 
 export type Subscription_RootNotification_SettingsArgs = {
   distinct_on?: InputMaybe<Array<Notification_Settings_Select_Column>>;
@@ -14479,15 +15193,18 @@ export type Subscription_RootNotification_SettingsArgs = {
   where?: InputMaybe<Notification_Settings_Bool_Exp>;
 };
 
+
 export type Subscription_RootNotification_Settings_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootNotification_Settings_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Notification_Settings_Stream_Cursor_Input>>;
   where?: InputMaybe<Notification_Settings_Bool_Exp>;
 };
+
 
 export type Subscription_RootNotification_TypesArgs = {
   distinct_on?: InputMaybe<Array<Notification_Types_Select_Column>>;
@@ -14497,15 +15214,18 @@ export type Subscription_RootNotification_TypesArgs = {
   where?: InputMaybe<Notification_Types_Bool_Exp>;
 };
 
+
 export type Subscription_RootNotification_Types_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootNotification_Types_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Notification_Types_Stream_Cursor_Input>>;
   where?: InputMaybe<Notification_Types_Bool_Exp>;
 };
+
 
 export type Subscription_RootNotificationsArgs = {
   distinct_on?: InputMaybe<Array<Notifications_Select_Column>>;
@@ -14515,15 +15235,18 @@ export type Subscription_RootNotificationsArgs = {
   where?: InputMaybe<Notifications_Bool_Exp>;
 };
 
+
 export type Subscription_RootNotifications_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootNotifications_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Notifications_Stream_Cursor_Input>>;
   where?: InputMaybe<Notifications_Bool_Exp>;
 };
+
 
 export type Subscription_RootPlatformsArgs = {
   distinct_on?: InputMaybe<Array<Platforms_Select_Column>>;
@@ -14533,15 +15256,18 @@ export type Subscription_RootPlatformsArgs = {
   where?: InputMaybe<Platforms_Bool_Exp>;
 };
 
+
 export type Subscription_RootPlatforms_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootPlatforms_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Platforms_Stream_Cursor_Input>>;
   where?: InputMaybe<Platforms_Bool_Exp>;
 };
+
 
 export type Subscription_RootPrivacy_SettingsArgs = {
   distinct_on?: InputMaybe<Array<Privacy_Settings_Select_Column>>;
@@ -14551,15 +15277,18 @@ export type Subscription_RootPrivacy_SettingsArgs = {
   where?: InputMaybe<Privacy_Settings_Bool_Exp>;
 };
 
+
 export type Subscription_RootPrivacy_Settings_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootPrivacy_Settings_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Privacy_Settings_Stream_Cursor_Input>>;
   where?: InputMaybe<Privacy_Settings_Bool_Exp>;
 };
+
 
 export type Subscription_RootPrompt_AnswersArgs = {
   distinct_on?: InputMaybe<Array<Prompt_Answers_Select_Column>>;
@@ -14569,6 +15298,7 @@ export type Subscription_RootPrompt_AnswersArgs = {
   where?: InputMaybe<Prompt_Answers_Bool_Exp>;
 };
 
+
 export type Subscription_RootPrompt_Answers_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Prompt_Answers_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -14577,15 +15307,18 @@ export type Subscription_RootPrompt_Answers_AggregateArgs = {
   where?: InputMaybe<Prompt_Answers_Bool_Exp>;
 };
 
+
 export type Subscription_RootPrompt_Answers_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootPrompt_Answers_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Prompt_Answers_Stream_Cursor_Input>>;
   where?: InputMaybe<Prompt_Answers_Bool_Exp>;
 };
+
 
 export type Subscription_RootPrompt_Books_SummaryArgs = {
   distinct_on?: InputMaybe<Array<Prompt_Books_Summary_Select_Column>>;
@@ -14595,11 +15328,13 @@ export type Subscription_RootPrompt_Books_SummaryArgs = {
   where?: InputMaybe<Prompt_Books_Summary_Bool_Exp>;
 };
 
+
 export type Subscription_RootPrompt_Books_Summary_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Prompt_Books_Summary_Stream_Cursor_Input>>;
   where?: InputMaybe<Prompt_Books_Summary_Bool_Exp>;
 };
+
 
 export type Subscription_RootPromptsArgs = {
   distinct_on?: InputMaybe<Array<Prompts_Select_Column>>;
@@ -14609,15 +15344,18 @@ export type Subscription_RootPromptsArgs = {
   where?: InputMaybe<Prompts_Bool_Exp>;
 };
 
+
 export type Subscription_RootPrompts_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootPrompts_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Prompts_Stream_Cursor_Input>>;
   where?: InputMaybe<Prompts_Bool_Exp>;
 };
+
 
 export type Subscription_RootPublishersArgs = {
   distinct_on?: InputMaybe<Array<Publishers_Select_Column>>;
@@ -14627,15 +15365,18 @@ export type Subscription_RootPublishersArgs = {
   where?: InputMaybe<Publishers_Bool_Exp>;
 };
 
+
 export type Subscription_RootPublishers_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootPublishers_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Publishers_Stream_Cursor_Input>>;
   where?: InputMaybe<Publishers_Bool_Exp>;
 };
+
 
 export type Subscription_RootReading_FormatsArgs = {
   distinct_on?: InputMaybe<Array<Reading_Formats_Select_Column>>;
@@ -14645,15 +15386,18 @@ export type Subscription_RootReading_FormatsArgs = {
   where?: InputMaybe<Reading_Formats_Bool_Exp>;
 };
 
+
 export type Subscription_RootReading_Formats_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootReading_Formats_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Reading_Formats_Stream_Cursor_Input>>;
   where?: InputMaybe<Reading_Formats_Bool_Exp>;
 };
+
 
 export type Subscription_RootReading_JournalsArgs = {
   distinct_on?: InputMaybe<Array<Reading_Journals_Select_Column>>;
@@ -14663,15 +15407,18 @@ export type Subscription_RootReading_JournalsArgs = {
   where?: InputMaybe<Reading_Journals_Bool_Exp>;
 };
 
+
 export type Subscription_RootReading_Journals_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootReading_Journals_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Reading_Journals_Stream_Cursor_Input>>;
   where?: InputMaybe<Reading_Journals_Bool_Exp>;
 };
+
 
 export type Subscription_RootReading_Journals_SummaryArgs = {
   distinct_on?: InputMaybe<Array<Reading_Journals_Summary_Select_Column>>;
@@ -14681,29 +15428,13 @@ export type Subscription_RootReading_Journals_SummaryArgs = {
   where?: InputMaybe<Reading_Journals_Summary_Bool_Exp>;
 };
 
+
 export type Subscription_RootReading_Journals_Summary_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Reading_Journals_Summary_Stream_Cursor_Input>>;
   where?: InputMaybe<Reading_Journals_Summary_Bool_Exp>;
 };
 
-export type Subscription_RootRecommendationsArgs = {
-  distinct_on?: InputMaybe<Array<Recommendations_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Recommendations_Order_By>>;
-  where?: InputMaybe<Recommendations_Bool_Exp>;
-};
-
-export type Subscription_RootRecommendations_By_PkArgs = {
-  id: Scalars['bigint']['input'];
-};
-
-export type Subscription_RootRecommendations_StreamArgs = {
-  batch_size: Scalars['Int']['input'];
-  cursor: Array<InputMaybe<Recommendations_Stream_Cursor_Input>>;
-  where?: InputMaybe<Recommendations_Bool_Exp>;
-};
 
 export type Subscription_RootSeriesArgs = {
   distinct_on?: InputMaybe<Array<Series_Select_Column>>;
@@ -14713,15 +15444,18 @@ export type Subscription_RootSeriesArgs = {
   where?: InputMaybe<Series_Bool_Exp>;
 };
 
+
 export type Subscription_RootSeries_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootSeries_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Series_Stream_Cursor_Input>>;
   where?: InputMaybe<Series_Bool_Exp>;
 };
+
 
 export type Subscription_RootTag_CategoriesArgs = {
   distinct_on?: InputMaybe<Array<Tag_Categories_Select_Column>>;
@@ -14731,15 +15465,18 @@ export type Subscription_RootTag_CategoriesArgs = {
   where?: InputMaybe<Tag_Categories_Bool_Exp>;
 };
 
+
 export type Subscription_RootTag_Categories_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootTag_Categories_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Tag_Categories_Stream_Cursor_Input>>;
   where?: InputMaybe<Tag_Categories_Bool_Exp>;
 };
+
 
 export type Subscription_RootTaggable_CountsArgs = {
   distinct_on?: InputMaybe<Array<Taggable_Counts_Select_Column>>;
@@ -14749,15 +15486,18 @@ export type Subscription_RootTaggable_CountsArgs = {
   where?: InputMaybe<Taggable_Counts_Bool_Exp>;
 };
 
+
 export type Subscription_RootTaggable_Counts_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootTaggable_Counts_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Taggable_Counts_Stream_Cursor_Input>>;
   where?: InputMaybe<Taggable_Counts_Bool_Exp>;
 };
+
 
 export type Subscription_RootTaggingsArgs = {
   distinct_on?: InputMaybe<Array<Taggings_Select_Column>>;
@@ -14767,6 +15507,7 @@ export type Subscription_RootTaggingsArgs = {
   where?: InputMaybe<Taggings_Bool_Exp>;
 };
 
+
 export type Subscription_RootTaggings_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Taggings_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -14775,15 +15516,18 @@ export type Subscription_RootTaggings_AggregateArgs = {
   where?: InputMaybe<Taggings_Bool_Exp>;
 };
 
+
 export type Subscription_RootTaggings_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootTaggings_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Taggings_Stream_Cursor_Input>>;
   where?: InputMaybe<Taggings_Bool_Exp>;
 };
+
 
 export type Subscription_RootTagsArgs = {
   distinct_on?: InputMaybe<Array<Tags_Select_Column>>;
@@ -14793,6 +15537,7 @@ export type Subscription_RootTagsArgs = {
   where?: InputMaybe<Tags_Bool_Exp>;
 };
 
+
 export type Subscription_RootTags_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Tags_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -14801,15 +15546,18 @@ export type Subscription_RootTags_AggregateArgs = {
   where?: InputMaybe<Tags_Bool_Exp>;
 };
 
+
 export type Subscription_RootTags_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootTags_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Tags_Stream_Cursor_Input>>;
   where?: InputMaybe<Tags_Bool_Exp>;
 };
+
 
 export type Subscription_RootUser_BlocksArgs = {
   distinct_on?: InputMaybe<Array<User_Blocks_Select_Column>>;
@@ -14819,15 +15567,18 @@ export type Subscription_RootUser_BlocksArgs = {
   where?: InputMaybe<User_Blocks_Bool_Exp>;
 };
 
+
 export type Subscription_RootUser_Blocks_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootUser_Blocks_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<User_Blocks_Stream_Cursor_Input>>;
   where?: InputMaybe<User_Blocks_Bool_Exp>;
 };
+
 
 export type Subscription_RootUser_Book_ReadsArgs = {
   distinct_on?: InputMaybe<Array<User_Book_Reads_Select_Column>>;
@@ -14837,6 +15588,7 @@ export type Subscription_RootUser_Book_ReadsArgs = {
   where?: InputMaybe<User_Book_Reads_Bool_Exp>;
 };
 
+
 export type Subscription_RootUser_Book_Reads_AggregateArgs = {
   distinct_on?: InputMaybe<Array<User_Book_Reads_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -14845,15 +15597,18 @@ export type Subscription_RootUser_Book_Reads_AggregateArgs = {
   where?: InputMaybe<User_Book_Reads_Bool_Exp>;
 };
 
+
 export type Subscription_RootUser_Book_Reads_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootUser_Book_Reads_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<User_Book_Reads_Stream_Cursor_Input>>;
   where?: InputMaybe<User_Book_Reads_Bool_Exp>;
 };
+
 
 export type Subscription_RootUser_Book_StatusesArgs = {
   distinct_on?: InputMaybe<Array<User_Book_Statuses_Select_Column>>;
@@ -14863,6 +15618,7 @@ export type Subscription_RootUser_Book_StatusesArgs = {
   where?: InputMaybe<User_Book_Statuses_Bool_Exp>;
 };
 
+
 export type Subscription_RootUser_Book_Statuses_AggregateArgs = {
   distinct_on?: InputMaybe<Array<User_Book_Statuses_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -14871,15 +15627,18 @@ export type Subscription_RootUser_Book_Statuses_AggregateArgs = {
   where?: InputMaybe<User_Book_Statuses_Bool_Exp>;
 };
 
+
 export type Subscription_RootUser_Book_Statuses_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootUser_Book_Statuses_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<User_Book_Statuses_Stream_Cursor_Input>>;
   where?: InputMaybe<User_Book_Statuses_Bool_Exp>;
 };
+
 
 export type Subscription_RootUser_BooksArgs = {
   distinct_on?: InputMaybe<Array<User_Books_Select_Column>>;
@@ -14889,6 +15648,7 @@ export type Subscription_RootUser_BooksArgs = {
   where?: InputMaybe<User_Books_Bool_Exp>;
 };
 
+
 export type Subscription_RootUser_Books_AggregateArgs = {
   distinct_on?: InputMaybe<Array<User_Books_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -14897,15 +15657,18 @@ export type Subscription_RootUser_Books_AggregateArgs = {
   where?: InputMaybe<User_Books_Bool_Exp>;
 };
 
+
 export type Subscription_RootUser_Books_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootUser_Books_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<User_Books_Stream_Cursor_Input>>;
   where?: InputMaybe<User_Books_Bool_Exp>;
 };
+
 
 export type Subscription_RootUser_FlagsArgs = {
   distinct_on?: InputMaybe<Array<User_Flags_Select_Column>>;
@@ -14915,15 +15678,18 @@ export type Subscription_RootUser_FlagsArgs = {
   where?: InputMaybe<User_Flags_Bool_Exp>;
 };
 
+
 export type Subscription_RootUser_Flags_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootUser_Flags_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<User_Flags_Stream_Cursor_Input>>;
   where?: InputMaybe<User_Flags_Bool_Exp>;
 };
+
 
 export type Subscription_RootUser_ReferralsArgs = {
   distinct_on?: InputMaybe<Array<User_Referrals_Select_Column>>;
@@ -14933,15 +15699,18 @@ export type Subscription_RootUser_ReferralsArgs = {
   where?: InputMaybe<User_Referrals_Bool_Exp>;
 };
 
+
 export type Subscription_RootUser_Referrals_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
+
 
 export type Subscription_RootUser_Referrals_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<User_Referrals_Stream_Cursor_Input>>;
   where?: InputMaybe<User_Referrals_Bool_Exp>;
 };
+
 
 export type Subscription_RootUser_StatusesArgs = {
   distinct_on?: InputMaybe<Array<User_Statuses_Select_Column>>;
@@ -14951,15 +15720,18 @@ export type Subscription_RootUser_StatusesArgs = {
   where?: InputMaybe<User_Statuses_Bool_Exp>;
 };
 
+
 export type Subscription_RootUser_Statuses_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootUser_Statuses_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<User_Statuses_Stream_Cursor_Input>>;
   where?: InputMaybe<User_Statuses_Bool_Exp>;
 };
+
 
 export type Subscription_RootUsersArgs = {
   distinct_on?: InputMaybe<Array<Users_Select_Column>>;
@@ -14969,6 +15741,7 @@ export type Subscription_RootUsersArgs = {
   where?: InputMaybe<Users_Bool_Exp>;
 };
 
+
 export type Subscription_RootUsers_Aggregate_By_Created_At_DateArgs = {
   distinct_on?: InputMaybe<Array<Users_Aggregate_By_Created_At_Date_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -14977,15 +15750,18 @@ export type Subscription_RootUsers_Aggregate_By_Created_At_DateArgs = {
   where?: InputMaybe<Users_Aggregate_By_Created_At_Date_Bool_Exp>;
 };
 
+
 export type Subscription_RootUsers_Aggregate_By_Created_At_Date_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Users_Aggregate_By_Created_At_Date_Stream_Cursor_Input>>;
   where?: InputMaybe<Users_Aggregate_By_Created_At_Date_Bool_Exp>;
 };
 
+
 export type Subscription_RootUsers_By_PkArgs = {
   id: Scalars['Int']['input'];
 };
+
 
 export type Subscription_RootUsers_StreamArgs = {
   batch_size: Scalars['Int']['input'];
@@ -15006,6 +15782,7 @@ export type Tag_Categories = {
   tags_aggregate: Tags_Aggregate;
 };
 
+
 /** columns and relationships of "tag_categories" */
 export type Tag_CategoriesTagsArgs = {
   distinct_on?: InputMaybe<Array<Tags_Select_Column>>;
@@ -15014,6 +15791,7 @@ export type Tag_CategoriesTagsArgs = {
   order_by?: InputMaybe<Array<Tags_Order_By>>;
   where?: InputMaybe<Tags_Bool_Exp>;
 };
+
 
 /** columns and relationships of "tag_categories" */
 export type Tag_CategoriesTags_AggregateArgs = {
@@ -15055,7 +15833,7 @@ export enum Tag_Categories_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  Slug = 'slug',
+  Slug = 'slug'
 }
 
 /** Streaming cursor of the table "tag_categories" */
@@ -15192,7 +15970,7 @@ export enum Taggable_Counts_Select_Column {
   /** column name */
   TaggableType = 'taggable_type',
   /** column name */
-  UpdatedAt = 'updated_at',
+  UpdatedAt = 'updated_at'
 }
 
 /** order by stddev() on columns of table "taggable_counts" */
@@ -15347,6 +16125,7 @@ export type Taggings_Aggregate_Fields = {
   variance?: Maybe<Taggings_Variance_Fields>;
 };
 
+
 /** aggregate fields of "taggings" */
 export type Taggings_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Taggings_Select_Column>>;
@@ -15473,19 +16252,19 @@ export enum Taggings_Select_Column {
   /** column name */
   TaggableType = 'taggable_type',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** select "taggings_aggregate_bool_exp_bool_and_arguments_columns" columns of table "taggings" */
 export enum Taggings_Select_Column_Taggings_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
   /** column name */
-  Spoiler = 'spoiler',
+  Spoiler = 'spoiler'
 }
 
 /** select "taggings_aggregate_bool_exp_bool_or_arguments_columns" columns of table "taggings" */
 export enum Taggings_Select_Column_Taggings_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
   /** column name */
-  Spoiler = 'spoiler',
+  Spoiler = 'spoiler'
 }
 
 /** aggregate stddev on columns */
@@ -15642,6 +16421,7 @@ export type Tags = {
   taggings_aggregate: Taggings_Aggregate;
 };
 
+
 /** columns and relationships of "tags" */
 export type TagsTaggingsArgs = {
   distinct_on?: InputMaybe<Array<Taggings_Select_Column>>;
@@ -15650,6 +16430,7 @@ export type TagsTaggingsArgs = {
   order_by?: InputMaybe<Array<Taggings_Order_By>>;
   where?: InputMaybe<Taggings_Bool_Exp>;
 };
+
 
 /** columns and relationships of "tags" */
 export type TagsTaggings_AggregateArgs = {
@@ -15693,6 +16474,7 @@ export type Tags_Aggregate_Fields = {
   var_samp?: Maybe<Tags_Var_Samp_Fields>;
   variance?: Maybe<Tags_Variance_Fields>;
 };
+
 
 /** aggregate fields of "tags" */
 export type Tags_Aggregate_FieldsCountArgs = {
@@ -15805,7 +16587,7 @@ export enum Tags_Select_Column {
   /** column name */
   Tag = 'tag',
   /** column name */
-  TagCategoryId = 'tag_category_id',
+  TagCategoryId = 'tag_category_id'
 }
 
 /** aggregate stddev on columns */
@@ -15966,6 +16748,7 @@ export type Update_User_Input = {
   email?: InputMaybe<Scalars['String']['input']>;
   image?: InputMaybe<Scalars['String']['input']>;
   link?: InputMaybe<Scalars['String']['input']>;
+  links?: InputMaybe<Array<InputMaybe<LinkInput>>>;
   location?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   onboarded?: InputMaybe<Scalars['Boolean']['input']>;
@@ -16029,7 +16812,7 @@ export enum User_Blocks_Constraint {
   /** unique or primary key constraint on columns "user_id", "blocked_user_id" */
   IndexUserBlocksOnUserIdAndBlockedUserId = 'index_user_blocks_on_user_id_and_blocked_user_id',
   /** unique or primary key constraint on columns "id" */
-  UserBlocksPkey = 'user_blocks_pkey',
+  UserBlocksPkey = 'user_blocks_pkey'
 }
 
 /** input type for inserting data into table "user_blocks" */
@@ -16089,7 +16872,7 @@ export enum User_Blocks_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** order by stddev() on columns of table "user_blocks" */
@@ -16139,7 +16922,7 @@ export type User_Blocks_Sum_Order_By = {
 /** placeholder for update columns of table "user_blocks" (current role has no relevant permissions) */
 export enum User_Blocks_Update_Column {
   /** placeholder (do not use) */
-  Placeholder = '_PLACEHOLDER',
+  Placeholder = '_PLACEHOLDER'
 }
 
 /** order by var_pop() on columns of table "user_blocks" */
@@ -16289,6 +17072,7 @@ export type User_Book_Reads_Aggregate_Fields = {
   variance?: Maybe<User_Book_Reads_Variance_Fields>;
 };
 
+
 /** aggregate fields of "user_book_reads" */
 export type User_Book_Reads_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<User_Book_Reads_Select_Column>>;
@@ -16437,55 +17221,55 @@ export enum User_Book_Reads_Select_Column {
   /** column name */
   StartedAt = 'started_at',
   /** column name */
-  UserBookId = 'user_book_id',
+  UserBookId = 'user_book_id'
 }
 
 /** select "user_book_reads_aggregate_bool_exp_avg_arguments_columns" columns of table "user_book_reads" */
 export enum User_Book_Reads_Select_Column_User_Book_Reads_Aggregate_Bool_Exp_Avg_Arguments_Columns {
   /** column name */
-  Progress = 'progress',
+  Progress = 'progress'
 }
 
 /** select "user_book_reads_aggregate_bool_exp_corr_arguments_columns" columns of table "user_book_reads" */
 export enum User_Book_Reads_Select_Column_User_Book_Reads_Aggregate_Bool_Exp_Corr_Arguments_Columns {
   /** column name */
-  Progress = 'progress',
+  Progress = 'progress'
 }
 
 /** select "user_book_reads_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "user_book_reads" */
 export enum User_Book_Reads_Select_Column_User_Book_Reads_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
   /** column name */
-  Progress = 'progress',
+  Progress = 'progress'
 }
 
 /** select "user_book_reads_aggregate_bool_exp_max_arguments_columns" columns of table "user_book_reads" */
 export enum User_Book_Reads_Select_Column_User_Book_Reads_Aggregate_Bool_Exp_Max_Arguments_Columns {
   /** column name */
-  Progress = 'progress',
+  Progress = 'progress'
 }
 
 /** select "user_book_reads_aggregate_bool_exp_min_arguments_columns" columns of table "user_book_reads" */
 export enum User_Book_Reads_Select_Column_User_Book_Reads_Aggregate_Bool_Exp_Min_Arguments_Columns {
   /** column name */
-  Progress = 'progress',
+  Progress = 'progress'
 }
 
 /** select "user_book_reads_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "user_book_reads" */
 export enum User_Book_Reads_Select_Column_User_Book_Reads_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
   /** column name */
-  Progress = 'progress',
+  Progress = 'progress'
 }
 
 /** select "user_book_reads_aggregate_bool_exp_sum_arguments_columns" columns of table "user_book_reads" */
 export enum User_Book_Reads_Select_Column_User_Book_Reads_Aggregate_Bool_Exp_Sum_Arguments_Columns {
   /** column name */
-  Progress = 'progress',
+  Progress = 'progress'
 }
 
 /** select "user_book_reads_aggregate_bool_exp_var_samp_arguments_columns" columns of table "user_book_reads" */
 export enum User_Book_Reads_Select_Column_User_Book_Reads_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
   /** column name */
-  Progress = 'progress',
+  Progress = 'progress'
 }
 
 /** aggregate stddev on columns */
@@ -16669,6 +17453,7 @@ export type User_Book_Statuses = {
   user_books_aggregate: User_Books_Aggregate;
 };
 
+
 /** columns and relationships of "user_book_statuses" */
 export type User_Book_StatusesUser_BooksArgs = {
   distinct_on?: InputMaybe<Array<User_Books_Select_Column>>;
@@ -16677,6 +17462,7 @@ export type User_Book_StatusesUser_BooksArgs = {
   order_by?: InputMaybe<Array<User_Books_Order_By>>;
   where?: InputMaybe<User_Books_Bool_Exp>;
 };
+
 
 /** columns and relationships of "user_book_statuses" */
 export type User_Book_StatusesUser_Books_AggregateArgs = {
@@ -16709,6 +17495,7 @@ export type User_Book_Statuses_Aggregate_Fields = {
   var_samp?: Maybe<User_Book_Statuses_Var_Samp_Fields>;
   variance?: Maybe<User_Book_Statuses_Variance_Fields>;
 };
+
 
 /** aggregate fields of "user_book_statuses" */
 export type User_Book_Statuses_Aggregate_FieldsCountArgs = {
@@ -16771,7 +17558,7 @@ export enum User_Book_Statuses_Select_Column {
   /** column name */
   Slug = 'slug',
   /** column name */
-  Status = 'status',
+  Status = 'status'
 }
 
 /** aggregate stddev on columns */
@@ -16838,7 +17625,6 @@ export type User_Books = {
   /** An object relationship */
   book: Books;
   book_id: Scalars['Int']['output'];
-  cached_match_score?: Maybe<Scalars['float8']['output']>;
   created_at: Scalars['timestamptz']['output'];
   date_added: Scalars['date']['output'];
   /** An object relationship */
@@ -16857,6 +17643,7 @@ export type User_Books = {
   likes_count: Scalars['Int']['output'];
   media_url?: Maybe<Scalars['String']['output']>;
   merged_at?: Maybe<Scalars['timestamp']['output']>;
+  mod_status: Scalars['Int']['output'];
   object_type: Scalars['String']['output'];
   original_book_id?: Maybe<Scalars['Int']['output']>;
   original_edition_id?: Maybe<Scalars['Int']['output']>;
@@ -16868,9 +17655,6 @@ export type User_Books = {
   private_notes?: Maybe<Scalars['String']['output']>;
   rating?: Maybe<Scalars['numeric']['output']>;
   read_count: Scalars['Int']['output'];
-  /** An object relationship */
-  reading_format?: Maybe<Reading_Formats>;
-  reading_format_id: Scalars['Int']['output'];
   /** An object relationship */
   reading_journal_summary?: Maybe<Reading_Journals_Summary>;
   /** An array relationship */
@@ -16909,6 +17693,7 @@ export type User_Books = {
   user_id: Scalars['Int']['output'];
 };
 
+
 /** columns and relationships of "user_books" */
 export type User_BooksFollowersArgs = {
   distinct_on?: InputMaybe<Array<Followed_Users_Select_Column>>;
@@ -16917,6 +17702,7 @@ export type User_BooksFollowersArgs = {
   order_by?: InputMaybe<Array<Followed_Users_Order_By>>;
   where?: InputMaybe<Followed_Users_Bool_Exp>;
 };
+
 
 /** columns and relationships of "user_books" */
 export type User_BooksLikesArgs = {
@@ -16927,6 +17713,7 @@ export type User_BooksLikesArgs = {
   where?: InputMaybe<Likes_Bool_Exp>;
 };
 
+
 /** columns and relationships of "user_books" */
 export type User_BooksReading_JournalsArgs = {
   distinct_on?: InputMaybe<Array<Reading_Journals_Select_Column>>;
@@ -16936,15 +17723,18 @@ export type User_BooksReading_JournalsArgs = {
   where?: InputMaybe<Reading_Journals_Bool_Exp>;
 };
 
+
 /** columns and relationships of "user_books" */
 export type User_BooksReview_ObjectArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
 
+
 /** columns and relationships of "user_books" */
 export type User_BooksReview_SlateArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** columns and relationships of "user_books" */
 export type User_BooksUser_Book_ReadsArgs = {
@@ -16955,6 +17745,7 @@ export type User_BooksUser_Book_ReadsArgs = {
   where?: InputMaybe<User_Book_Reads_Bool_Exp>;
 };
 
+
 /** columns and relationships of "user_books" */
 export type User_BooksUser_Book_Reads_AggregateArgs = {
   distinct_on?: InputMaybe<Array<User_Book_Reads_Select_Column>>;
@@ -16964,6 +17755,7 @@ export type User_BooksUser_Book_Reads_AggregateArgs = {
   where?: InputMaybe<User_Book_Reads_Bool_Exp>;
 };
 
+
 /** columns and relationships of "user_books" */
 export type User_BooksUser_BooksArgs = {
   distinct_on?: InputMaybe<Array<User_Books_Select_Column>>;
@@ -16972,6 +17764,7 @@ export type User_BooksUser_BooksArgs = {
   order_by?: InputMaybe<Array<User_Books_Order_By>>;
   where?: InputMaybe<User_Books_Bool_Exp>;
 };
+
 
 /** columns and relationships of "user_books" */
 export type User_BooksUser_Books_AggregateArgs = {
@@ -16990,24 +17783,9 @@ export type User_Books_Aggregate = {
 };
 
 export type User_Books_Aggregate_Bool_Exp = {
-  avg?: InputMaybe<User_Books_Aggregate_Bool_Exp_Avg>;
   bool_and?: InputMaybe<User_Books_Aggregate_Bool_Exp_Bool_And>;
   bool_or?: InputMaybe<User_Books_Aggregate_Bool_Exp_Bool_Or>;
-  corr?: InputMaybe<User_Books_Aggregate_Bool_Exp_Corr>;
   count?: InputMaybe<User_Books_Aggregate_Bool_Exp_Count>;
-  covar_samp?: InputMaybe<User_Books_Aggregate_Bool_Exp_Covar_Samp>;
-  max?: InputMaybe<User_Books_Aggregate_Bool_Exp_Max>;
-  min?: InputMaybe<User_Books_Aggregate_Bool_Exp_Min>;
-  stddev_samp?: InputMaybe<User_Books_Aggregate_Bool_Exp_Stddev_Samp>;
-  sum?: InputMaybe<User_Books_Aggregate_Bool_Exp_Sum>;
-  var_samp?: InputMaybe<User_Books_Aggregate_Bool_Exp_Var_Samp>;
-};
-
-export type User_Books_Aggregate_Bool_Exp_Avg = {
-  arguments: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Avg_Arguments_Columns;
-  distinct?: InputMaybe<Scalars['Boolean']['input']>;
-  filter?: InputMaybe<User_Books_Bool_Exp>;
-  predicate: Float8_Comparison_Exp;
 };
 
 export type User_Books_Aggregate_Bool_Exp_Bool_And = {
@@ -17024,70 +17802,11 @@ export type User_Books_Aggregate_Bool_Exp_Bool_Or = {
   predicate: Boolean_Comparison_Exp;
 };
 
-export type User_Books_Aggregate_Bool_Exp_Corr = {
-  arguments: User_Books_Aggregate_Bool_Exp_Corr_Arguments;
-  distinct?: InputMaybe<Scalars['Boolean']['input']>;
-  filter?: InputMaybe<User_Books_Bool_Exp>;
-  predicate: Float8_Comparison_Exp;
-};
-
-export type User_Books_Aggregate_Bool_Exp_Corr_Arguments = {
-  X: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Corr_Arguments_Columns;
-  Y: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Corr_Arguments_Columns;
-};
-
 export type User_Books_Aggregate_Bool_Exp_Count = {
   arguments?: InputMaybe<Array<User_Books_Select_Column>>;
   distinct?: InputMaybe<Scalars['Boolean']['input']>;
   filter?: InputMaybe<User_Books_Bool_Exp>;
   predicate: Int_Comparison_Exp;
-};
-
-export type User_Books_Aggregate_Bool_Exp_Covar_Samp = {
-  arguments: User_Books_Aggregate_Bool_Exp_Covar_Samp_Arguments;
-  distinct?: InputMaybe<Scalars['Boolean']['input']>;
-  filter?: InputMaybe<User_Books_Bool_Exp>;
-  predicate: Float8_Comparison_Exp;
-};
-
-export type User_Books_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
-  X: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
-  Y: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
-};
-
-export type User_Books_Aggregate_Bool_Exp_Max = {
-  arguments: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Max_Arguments_Columns;
-  distinct?: InputMaybe<Scalars['Boolean']['input']>;
-  filter?: InputMaybe<User_Books_Bool_Exp>;
-  predicate: Float8_Comparison_Exp;
-};
-
-export type User_Books_Aggregate_Bool_Exp_Min = {
-  arguments: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Min_Arguments_Columns;
-  distinct?: InputMaybe<Scalars['Boolean']['input']>;
-  filter?: InputMaybe<User_Books_Bool_Exp>;
-  predicate: Float8_Comparison_Exp;
-};
-
-export type User_Books_Aggregate_Bool_Exp_Stddev_Samp = {
-  arguments: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
-  distinct?: InputMaybe<Scalars['Boolean']['input']>;
-  filter?: InputMaybe<User_Books_Bool_Exp>;
-  predicate: Float8_Comparison_Exp;
-};
-
-export type User_Books_Aggregate_Bool_Exp_Sum = {
-  arguments: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Sum_Arguments_Columns;
-  distinct?: InputMaybe<Scalars['Boolean']['input']>;
-  filter?: InputMaybe<User_Books_Bool_Exp>;
-  predicate: Float8_Comparison_Exp;
-};
-
-export type User_Books_Aggregate_Bool_Exp_Var_Samp = {
-  arguments: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
-  distinct?: InputMaybe<Scalars['Boolean']['input']>;
-  filter?: InputMaybe<User_Books_Bool_Exp>;
-  predicate: Float8_Comparison_Exp;
 };
 
 /** aggregate fields of "user_books" */
@@ -17105,6 +17824,7 @@ export type User_Books_Aggregate_Fields = {
   var_samp?: Maybe<User_Books_Var_Samp_Fields>;
   variance?: Maybe<User_Books_Variance_Fields>;
 };
+
 
 /** aggregate fields of "user_books" */
 export type User_Books_Aggregate_FieldsCountArgs = {
@@ -17131,17 +17851,16 @@ export type User_Books_Aggregate_Order_By = {
 export type User_Books_Avg_Fields = {
   __typename?: 'user_books_avg_fields';
   book_id?: Maybe<Scalars['Float']['output']>;
-  cached_match_score?: Maybe<Scalars['Float']['output']>;
   edition_id?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   likes_count?: Maybe<Scalars['Float']['output']>;
+  mod_status?: Maybe<Scalars['Float']['output']>;
   original_book_id?: Maybe<Scalars['Float']['output']>;
   original_edition_id?: Maybe<Scalars['Float']['output']>;
   owned_copies?: Maybe<Scalars['Float']['output']>;
   privacy_setting_id?: Maybe<Scalars['Float']['output']>;
   rating?: Maybe<Scalars['Float']['output']>;
   read_count?: Maybe<Scalars['Float']['output']>;
-  reading_format_id?: Maybe<Scalars['Float']['output']>;
   referrer_user_id?: Maybe<Scalars['Float']['output']>;
   review_length?: Maybe<Scalars['Float']['output']>;
   status_id?: Maybe<Scalars['Float']['output']>;
@@ -17151,17 +17870,16 @@ export type User_Books_Avg_Fields = {
 /** order by avg() on columns of table "user_books" */
 export type User_Books_Avg_Order_By = {
   book_id?: InputMaybe<Order_By>;
-  cached_match_score?: InputMaybe<Order_By>;
   edition_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   likes_count?: InputMaybe<Order_By>;
+  mod_status?: InputMaybe<Order_By>;
   original_book_id?: InputMaybe<Order_By>;
   original_edition_id?: InputMaybe<Order_By>;
   owned_copies?: InputMaybe<Order_By>;
   privacy_setting_id?: InputMaybe<Order_By>;
   rating?: InputMaybe<Order_By>;
   read_count?: InputMaybe<Order_By>;
-  reading_format_id?: InputMaybe<Order_By>;
   referrer_user_id?: InputMaybe<Order_By>;
   review_length?: InputMaybe<Order_By>;
   status_id?: InputMaybe<Order_By>;
@@ -17175,7 +17893,6 @@ export type User_Books_Bool_Exp = {
   _or?: InputMaybe<Array<User_Books_Bool_Exp>>;
   book?: InputMaybe<Books_Bool_Exp>;
   book_id?: InputMaybe<Int_Comparison_Exp>;
-  cached_match_score?: InputMaybe<Float8_Comparison_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   date_added?: InputMaybe<Date_Comparison_Exp>;
   edition?: InputMaybe<Editions_Bool_Exp>;
@@ -17191,6 +17908,7 @@ export type User_Books_Bool_Exp = {
   likes_count?: InputMaybe<Int_Comparison_Exp>;
   media_url?: InputMaybe<String_Comparison_Exp>;
   merged_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  mod_status?: InputMaybe<Int_Comparison_Exp>;
   object_type?: InputMaybe<String_Comparison_Exp>;
   original_book_id?: InputMaybe<Int_Comparison_Exp>;
   original_edition_id?: InputMaybe<Int_Comparison_Exp>;
@@ -17201,8 +17919,6 @@ export type User_Books_Bool_Exp = {
   private_notes?: InputMaybe<String_Comparison_Exp>;
   rating?: InputMaybe<Numeric_Comparison_Exp>;
   read_count?: InputMaybe<Int_Comparison_Exp>;
-  reading_format?: InputMaybe<Reading_Formats_Bool_Exp>;
-  reading_format_id?: InputMaybe<Int_Comparison_Exp>;
   reading_journal_summary?: InputMaybe<Reading_Journals_Summary_Bool_Exp>;
   reading_journals?: InputMaybe<Reading_Journals_Bool_Exp>;
   recommended_by?: InputMaybe<String_Comparison_Exp>;
@@ -17236,7 +17952,6 @@ export type User_Books_Bool_Exp = {
 export type User_Books_Max_Fields = {
   __typename?: 'user_books_max_fields';
   book_id?: Maybe<Scalars['Int']['output']>;
-  cached_match_score?: Maybe<Scalars['float8']['output']>;
   created_at?: Maybe<Scalars['timestamptz']['output']>;
   date_added?: Maybe<Scalars['date']['output']>;
   edition_id?: Maybe<Scalars['Int']['output']>;
@@ -17247,6 +17962,7 @@ export type User_Books_Max_Fields = {
   likes_count?: Maybe<Scalars['Int']['output']>;
   media_url?: Maybe<Scalars['String']['output']>;
   merged_at?: Maybe<Scalars['timestamp']['output']>;
+  mod_status?: Maybe<Scalars['Int']['output']>;
   object_type?: Maybe<Scalars['String']['output']>;
   original_book_id?: Maybe<Scalars['Int']['output']>;
   original_edition_id?: Maybe<Scalars['Int']['output']>;
@@ -17255,7 +17971,6 @@ export type User_Books_Max_Fields = {
   private_notes?: Maybe<Scalars['String']['output']>;
   rating?: Maybe<Scalars['numeric']['output']>;
   read_count?: Maybe<Scalars['Int']['output']>;
-  reading_format_id?: Maybe<Scalars['Int']['output']>;
   recommended_by?: Maybe<Scalars['String']['output']>;
   recommended_for?: Maybe<Scalars['String']['output']>;
   referrer_user_id?: Maybe<Scalars['Int']['output']>;
@@ -17273,7 +17988,6 @@ export type User_Books_Max_Fields = {
 /** order by max() on columns of table "user_books" */
 export type User_Books_Max_Order_By = {
   book_id?: InputMaybe<Order_By>;
-  cached_match_score?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   date_added?: InputMaybe<Order_By>;
   edition_id?: InputMaybe<Order_By>;
@@ -17284,6 +17998,7 @@ export type User_Books_Max_Order_By = {
   likes_count?: InputMaybe<Order_By>;
   media_url?: InputMaybe<Order_By>;
   merged_at?: InputMaybe<Order_By>;
+  mod_status?: InputMaybe<Order_By>;
   object_type?: InputMaybe<Order_By>;
   original_book_id?: InputMaybe<Order_By>;
   original_edition_id?: InputMaybe<Order_By>;
@@ -17292,7 +18007,6 @@ export type User_Books_Max_Order_By = {
   private_notes?: InputMaybe<Order_By>;
   rating?: InputMaybe<Order_By>;
   read_count?: InputMaybe<Order_By>;
-  reading_format_id?: InputMaybe<Order_By>;
   recommended_by?: InputMaybe<Order_By>;
   recommended_for?: InputMaybe<Order_By>;
   referrer_user_id?: InputMaybe<Order_By>;
@@ -17311,7 +18025,6 @@ export type User_Books_Max_Order_By = {
 export type User_Books_Min_Fields = {
   __typename?: 'user_books_min_fields';
   book_id?: Maybe<Scalars['Int']['output']>;
-  cached_match_score?: Maybe<Scalars['float8']['output']>;
   created_at?: Maybe<Scalars['timestamptz']['output']>;
   date_added?: Maybe<Scalars['date']['output']>;
   edition_id?: Maybe<Scalars['Int']['output']>;
@@ -17322,6 +18035,7 @@ export type User_Books_Min_Fields = {
   likes_count?: Maybe<Scalars['Int']['output']>;
   media_url?: Maybe<Scalars['String']['output']>;
   merged_at?: Maybe<Scalars['timestamp']['output']>;
+  mod_status?: Maybe<Scalars['Int']['output']>;
   object_type?: Maybe<Scalars['String']['output']>;
   original_book_id?: Maybe<Scalars['Int']['output']>;
   original_edition_id?: Maybe<Scalars['Int']['output']>;
@@ -17330,7 +18044,6 @@ export type User_Books_Min_Fields = {
   private_notes?: Maybe<Scalars['String']['output']>;
   rating?: Maybe<Scalars['numeric']['output']>;
   read_count?: Maybe<Scalars['Int']['output']>;
-  reading_format_id?: Maybe<Scalars['Int']['output']>;
   recommended_by?: Maybe<Scalars['String']['output']>;
   recommended_for?: Maybe<Scalars['String']['output']>;
   referrer_user_id?: Maybe<Scalars['Int']['output']>;
@@ -17348,7 +18061,6 @@ export type User_Books_Min_Fields = {
 /** order by min() on columns of table "user_books" */
 export type User_Books_Min_Order_By = {
   book_id?: InputMaybe<Order_By>;
-  cached_match_score?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   date_added?: InputMaybe<Order_By>;
   edition_id?: InputMaybe<Order_By>;
@@ -17359,6 +18071,7 @@ export type User_Books_Min_Order_By = {
   likes_count?: InputMaybe<Order_By>;
   media_url?: InputMaybe<Order_By>;
   merged_at?: InputMaybe<Order_By>;
+  mod_status?: InputMaybe<Order_By>;
   object_type?: InputMaybe<Order_By>;
   original_book_id?: InputMaybe<Order_By>;
   original_edition_id?: InputMaybe<Order_By>;
@@ -17367,7 +18080,6 @@ export type User_Books_Min_Order_By = {
   private_notes?: InputMaybe<Order_By>;
   rating?: InputMaybe<Order_By>;
   read_count?: InputMaybe<Order_By>;
-  reading_format_id?: InputMaybe<Order_By>;
   recommended_by?: InputMaybe<Order_By>;
   recommended_for?: InputMaybe<Order_By>;
   referrer_user_id?: InputMaybe<Order_By>;
@@ -17386,7 +18098,6 @@ export type User_Books_Min_Order_By = {
 export type User_Books_Order_By = {
   book?: InputMaybe<Books_Order_By>;
   book_id?: InputMaybe<Order_By>;
-  cached_match_score?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   date_added?: InputMaybe<Order_By>;
   edition?: InputMaybe<Editions_Order_By>;
@@ -17402,6 +18113,7 @@ export type User_Books_Order_By = {
   likes_count?: InputMaybe<Order_By>;
   media_url?: InputMaybe<Order_By>;
   merged_at?: InputMaybe<Order_By>;
+  mod_status?: InputMaybe<Order_By>;
   object_type?: InputMaybe<Order_By>;
   original_book_id?: InputMaybe<Order_By>;
   original_edition_id?: InputMaybe<Order_By>;
@@ -17412,8 +18124,6 @@ export type User_Books_Order_By = {
   private_notes?: InputMaybe<Order_By>;
   rating?: InputMaybe<Order_By>;
   read_count?: InputMaybe<Order_By>;
-  reading_format?: InputMaybe<Reading_Formats_Order_By>;
-  reading_format_id?: InputMaybe<Order_By>;
   reading_journal_summary?: InputMaybe<Reading_Journals_Summary_Order_By>;
   reading_journals_aggregate?: InputMaybe<Reading_Journals_Aggregate_Order_By>;
   recommended_by?: InputMaybe<Order_By>;
@@ -17446,8 +18156,6 @@ export enum User_Books_Select_Column {
   /** column name */
   BookId = 'book_id',
   /** column name */
-  CachedMatchScore = 'cached_match_score',
-  /** column name */
   CreatedAt = 'created_at',
   /** column name */
   DateAdded = 'date_added',
@@ -17472,6 +18180,8 @@ export enum User_Books_Select_Column {
   /** column name */
   MergedAt = 'merged_at',
   /** column name */
+  ModStatus = 'mod_status',
+  /** column name */
   ObjectType = 'object_type',
   /** column name */
   OriginalBookId = 'original_book_id',
@@ -17489,8 +18199,6 @@ export enum User_Books_Select_Column {
   Rating = 'rating',
   /** column name */
   ReadCount = 'read_count',
-  /** column name */
-  ReadingFormatId = 'reading_format_id',
   /** column name */
   RecommendedBy = 'recommended_by',
   /** column name */
@@ -17526,13 +18234,7 @@ export enum User_Books_Select_Column {
   /** column name */
   Url = 'url',
   /** column name */
-  UserId = 'user_id',
-}
-
-/** select "user_books_aggregate_bool_exp_avg_arguments_columns" columns of table "user_books" */
-export enum User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Avg_Arguments_Columns {
-  /** column name */
-  CachedMatchScore = 'cached_match_score',
+  UserId = 'user_id'
 }
 
 /** select "user_books_aggregate_bool_exp_bool_and_arguments_columns" columns of table "user_books" */
@@ -17550,7 +18252,7 @@ export enum User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Bool_And_Argu
   /** column name */
   SponsoredReview = 'sponsored_review',
   /** column name */
-  Starred = 'starred',
+  Starred = 'starred'
 }
 
 /** select "user_books_aggregate_bool_exp_bool_or_arguments_columns" columns of table "user_books" */
@@ -17568,66 +18270,23 @@ export enum User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Bool_Or_Argum
   /** column name */
   SponsoredReview = 'sponsored_review',
   /** column name */
-  Starred = 'starred',
-}
-
-/** select "user_books_aggregate_bool_exp_corr_arguments_columns" columns of table "user_books" */
-export enum User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Corr_Arguments_Columns {
-  /** column name */
-  CachedMatchScore = 'cached_match_score',
-}
-
-/** select "user_books_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "user_books" */
-export enum User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
-  /** column name */
-  CachedMatchScore = 'cached_match_score',
-}
-
-/** select "user_books_aggregate_bool_exp_max_arguments_columns" columns of table "user_books" */
-export enum User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Max_Arguments_Columns {
-  /** column name */
-  CachedMatchScore = 'cached_match_score',
-}
-
-/** select "user_books_aggregate_bool_exp_min_arguments_columns" columns of table "user_books" */
-export enum User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Min_Arguments_Columns {
-  /** column name */
-  CachedMatchScore = 'cached_match_score',
-}
-
-/** select "user_books_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "user_books" */
-export enum User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
-  /** column name */
-  CachedMatchScore = 'cached_match_score',
-}
-
-/** select "user_books_aggregate_bool_exp_sum_arguments_columns" columns of table "user_books" */
-export enum User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Sum_Arguments_Columns {
-  /** column name */
-  CachedMatchScore = 'cached_match_score',
-}
-
-/** select "user_books_aggregate_bool_exp_var_samp_arguments_columns" columns of table "user_books" */
-export enum User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
-  /** column name */
-  CachedMatchScore = 'cached_match_score',
+  Starred = 'starred'
 }
 
 /** aggregate stddev on columns */
 export type User_Books_Stddev_Fields = {
   __typename?: 'user_books_stddev_fields';
   book_id?: Maybe<Scalars['Float']['output']>;
-  cached_match_score?: Maybe<Scalars['Float']['output']>;
   edition_id?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   likes_count?: Maybe<Scalars['Float']['output']>;
+  mod_status?: Maybe<Scalars['Float']['output']>;
   original_book_id?: Maybe<Scalars['Float']['output']>;
   original_edition_id?: Maybe<Scalars['Float']['output']>;
   owned_copies?: Maybe<Scalars['Float']['output']>;
   privacy_setting_id?: Maybe<Scalars['Float']['output']>;
   rating?: Maybe<Scalars['Float']['output']>;
   read_count?: Maybe<Scalars['Float']['output']>;
-  reading_format_id?: Maybe<Scalars['Float']['output']>;
   referrer_user_id?: Maybe<Scalars['Float']['output']>;
   review_length?: Maybe<Scalars['Float']['output']>;
   status_id?: Maybe<Scalars['Float']['output']>;
@@ -17637,17 +18296,16 @@ export type User_Books_Stddev_Fields = {
 /** order by stddev() on columns of table "user_books" */
 export type User_Books_Stddev_Order_By = {
   book_id?: InputMaybe<Order_By>;
-  cached_match_score?: InputMaybe<Order_By>;
   edition_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   likes_count?: InputMaybe<Order_By>;
+  mod_status?: InputMaybe<Order_By>;
   original_book_id?: InputMaybe<Order_By>;
   original_edition_id?: InputMaybe<Order_By>;
   owned_copies?: InputMaybe<Order_By>;
   privacy_setting_id?: InputMaybe<Order_By>;
   rating?: InputMaybe<Order_By>;
   read_count?: InputMaybe<Order_By>;
-  reading_format_id?: InputMaybe<Order_By>;
   referrer_user_id?: InputMaybe<Order_By>;
   review_length?: InputMaybe<Order_By>;
   status_id?: InputMaybe<Order_By>;
@@ -17658,17 +18316,16 @@ export type User_Books_Stddev_Order_By = {
 export type User_Books_Stddev_Pop_Fields = {
   __typename?: 'user_books_stddev_pop_fields';
   book_id?: Maybe<Scalars['Float']['output']>;
-  cached_match_score?: Maybe<Scalars['Float']['output']>;
   edition_id?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   likes_count?: Maybe<Scalars['Float']['output']>;
+  mod_status?: Maybe<Scalars['Float']['output']>;
   original_book_id?: Maybe<Scalars['Float']['output']>;
   original_edition_id?: Maybe<Scalars['Float']['output']>;
   owned_copies?: Maybe<Scalars['Float']['output']>;
   privacy_setting_id?: Maybe<Scalars['Float']['output']>;
   rating?: Maybe<Scalars['Float']['output']>;
   read_count?: Maybe<Scalars['Float']['output']>;
-  reading_format_id?: Maybe<Scalars['Float']['output']>;
   referrer_user_id?: Maybe<Scalars['Float']['output']>;
   review_length?: Maybe<Scalars['Float']['output']>;
   status_id?: Maybe<Scalars['Float']['output']>;
@@ -17678,17 +18335,16 @@ export type User_Books_Stddev_Pop_Fields = {
 /** order by stddev_pop() on columns of table "user_books" */
 export type User_Books_Stddev_Pop_Order_By = {
   book_id?: InputMaybe<Order_By>;
-  cached_match_score?: InputMaybe<Order_By>;
   edition_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   likes_count?: InputMaybe<Order_By>;
+  mod_status?: InputMaybe<Order_By>;
   original_book_id?: InputMaybe<Order_By>;
   original_edition_id?: InputMaybe<Order_By>;
   owned_copies?: InputMaybe<Order_By>;
   privacy_setting_id?: InputMaybe<Order_By>;
   rating?: InputMaybe<Order_By>;
   read_count?: InputMaybe<Order_By>;
-  reading_format_id?: InputMaybe<Order_By>;
   referrer_user_id?: InputMaybe<Order_By>;
   review_length?: InputMaybe<Order_By>;
   status_id?: InputMaybe<Order_By>;
@@ -17699,17 +18355,16 @@ export type User_Books_Stddev_Pop_Order_By = {
 export type User_Books_Stddev_Samp_Fields = {
   __typename?: 'user_books_stddev_samp_fields';
   book_id?: Maybe<Scalars['Float']['output']>;
-  cached_match_score?: Maybe<Scalars['Float']['output']>;
   edition_id?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   likes_count?: Maybe<Scalars['Float']['output']>;
+  mod_status?: Maybe<Scalars['Float']['output']>;
   original_book_id?: Maybe<Scalars['Float']['output']>;
   original_edition_id?: Maybe<Scalars['Float']['output']>;
   owned_copies?: Maybe<Scalars['Float']['output']>;
   privacy_setting_id?: Maybe<Scalars['Float']['output']>;
   rating?: Maybe<Scalars['Float']['output']>;
   read_count?: Maybe<Scalars['Float']['output']>;
-  reading_format_id?: Maybe<Scalars['Float']['output']>;
   referrer_user_id?: Maybe<Scalars['Float']['output']>;
   review_length?: Maybe<Scalars['Float']['output']>;
   status_id?: Maybe<Scalars['Float']['output']>;
@@ -17719,17 +18374,16 @@ export type User_Books_Stddev_Samp_Fields = {
 /** order by stddev_samp() on columns of table "user_books" */
 export type User_Books_Stddev_Samp_Order_By = {
   book_id?: InputMaybe<Order_By>;
-  cached_match_score?: InputMaybe<Order_By>;
   edition_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   likes_count?: InputMaybe<Order_By>;
+  mod_status?: InputMaybe<Order_By>;
   original_book_id?: InputMaybe<Order_By>;
   original_edition_id?: InputMaybe<Order_By>;
   owned_copies?: InputMaybe<Order_By>;
   privacy_setting_id?: InputMaybe<Order_By>;
   rating?: InputMaybe<Order_By>;
   read_count?: InputMaybe<Order_By>;
-  reading_format_id?: InputMaybe<Order_By>;
   referrer_user_id?: InputMaybe<Order_By>;
   review_length?: InputMaybe<Order_By>;
   status_id?: InputMaybe<Order_By>;
@@ -17747,7 +18401,6 @@ export type User_Books_Stream_Cursor_Input = {
 /** Initial value of the column from where the streaming should start */
 export type User_Books_Stream_Cursor_Value_Input = {
   book_id?: InputMaybe<Scalars['Int']['input']>;
-  cached_match_score?: InputMaybe<Scalars['float8']['input']>;
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   date_added?: InputMaybe<Scalars['date']['input']>;
   edition_id?: InputMaybe<Scalars['Int']['input']>;
@@ -17760,6 +18413,7 @@ export type User_Books_Stream_Cursor_Value_Input = {
   likes_count?: InputMaybe<Scalars['Int']['input']>;
   media_url?: InputMaybe<Scalars['String']['input']>;
   merged_at?: InputMaybe<Scalars['timestamp']['input']>;
+  mod_status?: InputMaybe<Scalars['Int']['input']>;
   object_type?: InputMaybe<Scalars['String']['input']>;
   original_book_id?: InputMaybe<Scalars['Int']['input']>;
   original_edition_id?: InputMaybe<Scalars['Int']['input']>;
@@ -17769,7 +18423,6 @@ export type User_Books_Stream_Cursor_Value_Input = {
   private_notes?: InputMaybe<Scalars['String']['input']>;
   rating?: InputMaybe<Scalars['numeric']['input']>;
   read_count?: InputMaybe<Scalars['Int']['input']>;
-  reading_format_id?: InputMaybe<Scalars['Int']['input']>;
   recommended_by?: InputMaybe<Scalars['String']['input']>;
   recommended_for?: InputMaybe<Scalars['String']['input']>;
   referrer_user_id?: InputMaybe<Scalars['Int']['input']>;
@@ -17794,17 +18447,16 @@ export type User_Books_Stream_Cursor_Value_Input = {
 export type User_Books_Sum_Fields = {
   __typename?: 'user_books_sum_fields';
   book_id?: Maybe<Scalars['Int']['output']>;
-  cached_match_score?: Maybe<Scalars['float8']['output']>;
   edition_id?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['Int']['output']>;
   likes_count?: Maybe<Scalars['Int']['output']>;
+  mod_status?: Maybe<Scalars['Int']['output']>;
   original_book_id?: Maybe<Scalars['Int']['output']>;
   original_edition_id?: Maybe<Scalars['Int']['output']>;
   owned_copies?: Maybe<Scalars['Int']['output']>;
   privacy_setting_id?: Maybe<Scalars['Int']['output']>;
   rating?: Maybe<Scalars['numeric']['output']>;
   read_count?: Maybe<Scalars['Int']['output']>;
-  reading_format_id?: Maybe<Scalars['Int']['output']>;
   referrer_user_id?: Maybe<Scalars['Int']['output']>;
   review_length?: Maybe<Scalars['Int']['output']>;
   status_id?: Maybe<Scalars['Int']['output']>;
@@ -17814,17 +18466,16 @@ export type User_Books_Sum_Fields = {
 /** order by sum() on columns of table "user_books" */
 export type User_Books_Sum_Order_By = {
   book_id?: InputMaybe<Order_By>;
-  cached_match_score?: InputMaybe<Order_By>;
   edition_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   likes_count?: InputMaybe<Order_By>;
+  mod_status?: InputMaybe<Order_By>;
   original_book_id?: InputMaybe<Order_By>;
   original_edition_id?: InputMaybe<Order_By>;
   owned_copies?: InputMaybe<Order_By>;
   privacy_setting_id?: InputMaybe<Order_By>;
   rating?: InputMaybe<Order_By>;
   read_count?: InputMaybe<Order_By>;
-  reading_format_id?: InputMaybe<Order_By>;
   referrer_user_id?: InputMaybe<Order_By>;
   review_length?: InputMaybe<Order_By>;
   status_id?: InputMaybe<Order_By>;
@@ -17835,17 +18486,16 @@ export type User_Books_Sum_Order_By = {
 export type User_Books_Var_Pop_Fields = {
   __typename?: 'user_books_var_pop_fields';
   book_id?: Maybe<Scalars['Float']['output']>;
-  cached_match_score?: Maybe<Scalars['Float']['output']>;
   edition_id?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   likes_count?: Maybe<Scalars['Float']['output']>;
+  mod_status?: Maybe<Scalars['Float']['output']>;
   original_book_id?: Maybe<Scalars['Float']['output']>;
   original_edition_id?: Maybe<Scalars['Float']['output']>;
   owned_copies?: Maybe<Scalars['Float']['output']>;
   privacy_setting_id?: Maybe<Scalars['Float']['output']>;
   rating?: Maybe<Scalars['Float']['output']>;
   read_count?: Maybe<Scalars['Float']['output']>;
-  reading_format_id?: Maybe<Scalars['Float']['output']>;
   referrer_user_id?: Maybe<Scalars['Float']['output']>;
   review_length?: Maybe<Scalars['Float']['output']>;
   status_id?: Maybe<Scalars['Float']['output']>;
@@ -17855,17 +18505,16 @@ export type User_Books_Var_Pop_Fields = {
 /** order by var_pop() on columns of table "user_books" */
 export type User_Books_Var_Pop_Order_By = {
   book_id?: InputMaybe<Order_By>;
-  cached_match_score?: InputMaybe<Order_By>;
   edition_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   likes_count?: InputMaybe<Order_By>;
+  mod_status?: InputMaybe<Order_By>;
   original_book_id?: InputMaybe<Order_By>;
   original_edition_id?: InputMaybe<Order_By>;
   owned_copies?: InputMaybe<Order_By>;
   privacy_setting_id?: InputMaybe<Order_By>;
   rating?: InputMaybe<Order_By>;
   read_count?: InputMaybe<Order_By>;
-  reading_format_id?: InputMaybe<Order_By>;
   referrer_user_id?: InputMaybe<Order_By>;
   review_length?: InputMaybe<Order_By>;
   status_id?: InputMaybe<Order_By>;
@@ -17876,17 +18525,16 @@ export type User_Books_Var_Pop_Order_By = {
 export type User_Books_Var_Samp_Fields = {
   __typename?: 'user_books_var_samp_fields';
   book_id?: Maybe<Scalars['Float']['output']>;
-  cached_match_score?: Maybe<Scalars['Float']['output']>;
   edition_id?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   likes_count?: Maybe<Scalars['Float']['output']>;
+  mod_status?: Maybe<Scalars['Float']['output']>;
   original_book_id?: Maybe<Scalars['Float']['output']>;
   original_edition_id?: Maybe<Scalars['Float']['output']>;
   owned_copies?: Maybe<Scalars['Float']['output']>;
   privacy_setting_id?: Maybe<Scalars['Float']['output']>;
   rating?: Maybe<Scalars['Float']['output']>;
   read_count?: Maybe<Scalars['Float']['output']>;
-  reading_format_id?: Maybe<Scalars['Float']['output']>;
   referrer_user_id?: Maybe<Scalars['Float']['output']>;
   review_length?: Maybe<Scalars['Float']['output']>;
   status_id?: Maybe<Scalars['Float']['output']>;
@@ -17896,17 +18544,16 @@ export type User_Books_Var_Samp_Fields = {
 /** order by var_samp() on columns of table "user_books" */
 export type User_Books_Var_Samp_Order_By = {
   book_id?: InputMaybe<Order_By>;
-  cached_match_score?: InputMaybe<Order_By>;
   edition_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   likes_count?: InputMaybe<Order_By>;
+  mod_status?: InputMaybe<Order_By>;
   original_book_id?: InputMaybe<Order_By>;
   original_edition_id?: InputMaybe<Order_By>;
   owned_copies?: InputMaybe<Order_By>;
   privacy_setting_id?: InputMaybe<Order_By>;
   rating?: InputMaybe<Order_By>;
   read_count?: InputMaybe<Order_By>;
-  reading_format_id?: InputMaybe<Order_By>;
   referrer_user_id?: InputMaybe<Order_By>;
   review_length?: InputMaybe<Order_By>;
   status_id?: InputMaybe<Order_By>;
@@ -17917,17 +18564,16 @@ export type User_Books_Var_Samp_Order_By = {
 export type User_Books_Variance_Fields = {
   __typename?: 'user_books_variance_fields';
   book_id?: Maybe<Scalars['Float']['output']>;
-  cached_match_score?: Maybe<Scalars['Float']['output']>;
   edition_id?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   likes_count?: Maybe<Scalars['Float']['output']>;
+  mod_status?: Maybe<Scalars['Float']['output']>;
   original_book_id?: Maybe<Scalars['Float']['output']>;
   original_edition_id?: Maybe<Scalars['Float']['output']>;
   owned_copies?: Maybe<Scalars['Float']['output']>;
   privacy_setting_id?: Maybe<Scalars['Float']['output']>;
   rating?: Maybe<Scalars['Float']['output']>;
   read_count?: Maybe<Scalars['Float']['output']>;
-  reading_format_id?: Maybe<Scalars['Float']['output']>;
   referrer_user_id?: Maybe<Scalars['Float']['output']>;
   review_length?: Maybe<Scalars['Float']['output']>;
   status_id?: Maybe<Scalars['Float']['output']>;
@@ -17937,17 +18583,16 @@ export type User_Books_Variance_Fields = {
 /** order by variance() on columns of table "user_books" */
 export type User_Books_Variance_Order_By = {
   book_id?: InputMaybe<Order_By>;
-  cached_match_score?: InputMaybe<Order_By>;
   edition_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   likes_count?: InputMaybe<Order_By>;
+  mod_status?: InputMaybe<Order_By>;
   original_book_id?: InputMaybe<Order_By>;
   original_edition_id?: InputMaybe<Order_By>;
   owned_copies?: InputMaybe<Order_By>;
   privacy_setting_id?: InputMaybe<Order_By>;
   rating?: InputMaybe<Order_By>;
   read_count?: InputMaybe<Order_By>;
-  reading_format_id?: InputMaybe<Order_By>;
   referrer_user_id?: InputMaybe<Order_By>;
   review_length?: InputMaybe<Order_By>;
   status_id?: InputMaybe<Order_By>;
@@ -18022,7 +18667,7 @@ export enum User_Flags_Constraint {
   /** unique or primary key constraint on columns "id" */
   UserFlagsIdKey = 'user_flags_id_key',
   /** unique or primary key constraint on columns "id" */
-  UserFlagsPkey = 'user_flags_pkey',
+  UserFlagsPkey = 'user_flags_pkey'
 }
 
 /** input type for inserting data into table "user_flags" */
@@ -18112,7 +18757,7 @@ export enum User_Flags_Select_Column {
   /** column name */
   ReportedUserId = 'reported_user_id',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** order by stddev() on columns of table "user_flags" */
@@ -18175,7 +18820,7 @@ export type User_Flags_Sum_Order_By = {
 /** placeholder for update columns of table "user_flags" (current role has no relevant permissions) */
 export enum User_Flags_Update_Column {
   /** placeholder (do not use) */
-  Placeholder = '_PLACEHOLDER',
+  Placeholder = '_PLACEHOLDER'
 }
 
 /** order by var_pop() on columns of table "user_flags" */
@@ -18260,7 +18905,7 @@ export enum User_Referrals_Select_Column {
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
-  UserId = 'user_id',
+  UserId = 'user_id'
 }
 
 /** Streaming cursor of the table "user_referrals" */
@@ -18289,6 +18934,7 @@ export type User_Statuses = {
   /** An array relationship */
   users: Array<Users>;
 };
+
 
 /** columns and relationships of "user_statuses" */
 export type User_StatusesUsersArgs = {
@@ -18321,7 +18967,7 @@ export enum User_Statuses_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
-  Status = 'status',
+  Status = 'status'
 }
 
 /** Streaming cursor of the table "user_statuses" */
@@ -18375,6 +19021,10 @@ export type Users = {
   followed_users_count: Scalars['Int']['output'];
   followers_count: Scalars['Int']['output'];
   /** An array relationship */
+  follows: Array<Follows>;
+  /** An aggregate relationship */
+  follows_aggregate: Follows_Aggregate;
+  /** An array relationship */
   goals: Array<Goals>;
   id: Scalars['Int']['output'];
   /** An object relationship */
@@ -18384,13 +19034,14 @@ export type Users = {
   last_sign_in_at?: Maybe<Scalars['timestamp']['output']>;
   librarian_roles: Scalars['jsonb']['output'];
   link?: Maybe<Scalars['String']['output']>;
+  /** An object relationship */
+  links?: Maybe<Links>;
   /** An array relationship */
   lists: Array<Lists>;
   /** An aggregate relationship */
   lists_aggregate: Lists_Aggregate;
   location?: Maybe<Scalars['String']['output']>;
   locked_at?: Maybe<Scalars['timestamp']['output']>;
-  match_updated_at?: Maybe<Scalars['timestamp']['output']>;
   membership?: Maybe<Scalars['String']['output']>;
   membership_ends_at?: Maybe<Scalars['timestamp']['output']>;
   name?: Maybe<Scalars['String']['output']>;
@@ -18410,10 +19061,6 @@ export type Users = {
   prompts: Array<Prompts>;
   pronoun_personal: Scalars['String']['output'];
   pronoun_possessive: Scalars['String']['output'];
-  /** An array relationship */
-  recommendations: Array<Recommendations>;
-  /** An array relationship */
-  recommended: Array<Recommendations>;
   referrer_id?: Maybe<Scalars['Int']['output']>;
   referrer_url?: Maybe<Scalars['String']['output']>;
   /** An array relationship */
@@ -18441,6 +19088,7 @@ export type Users = {
   username?: Maybe<Scalars['citext']['output']>;
 };
 
+
 /** columns and relationships of "users" */
 export type UsersActivitiesArgs = {
   distinct_on?: InputMaybe<Array<Activities_Select_Column>>;
@@ -18449,6 +19097,7 @@ export type UsersActivitiesArgs = {
   order_by?: InputMaybe<Array<Activities_Order_By>>;
   where?: InputMaybe<Activities_Bool_Exp>;
 };
+
 
 /** columns and relationships of "users" */
 export type UsersBlocked_UsersArgs = {
@@ -18459,20 +19108,24 @@ export type UsersBlocked_UsersArgs = {
   where?: InputMaybe<User_Blocks_Bool_Exp>;
 };
 
+
 /** columns and relationships of "users" */
 export type UsersCached_CoverArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** columns and relationships of "users" */
 export type UsersCached_GenresArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
 
+
 /** columns and relationships of "users" */
 export type UsersCached_ImageArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** columns and relationships of "users" */
 export type UsersCollection_ImportsArgs = {
@@ -18483,6 +19136,7 @@ export type UsersCollection_ImportsArgs = {
   where?: InputMaybe<Collection_Imports_Bool_Exp>;
 };
 
+
 /** columns and relationships of "users" */
 export type UsersFollowed_By_UsersArgs = {
   distinct_on?: InputMaybe<Array<Followed_Users_Select_Column>>;
@@ -18491,6 +19145,7 @@ export type UsersFollowed_By_UsersArgs = {
   order_by?: InputMaybe<Array<Followed_Users_Order_By>>;
   where?: InputMaybe<Followed_Users_Bool_Exp>;
 };
+
 
 /** columns and relationships of "users" */
 export type UsersFollowed_ListsArgs = {
@@ -18501,6 +19156,7 @@ export type UsersFollowed_ListsArgs = {
   where?: InputMaybe<Followed_Lists_Bool_Exp>;
 };
 
+
 /** columns and relationships of "users" */
 export type UsersFollowed_PromptsArgs = {
   distinct_on?: InputMaybe<Array<Followed_Prompts_Select_Column>>;
@@ -18509,6 +19165,7 @@ export type UsersFollowed_PromptsArgs = {
   order_by?: InputMaybe<Array<Followed_Prompts_Order_By>>;
   where?: InputMaybe<Followed_Prompts_Bool_Exp>;
 };
+
 
 /** columns and relationships of "users" */
 export type UsersFollowed_UsersArgs = {
@@ -18519,6 +19176,27 @@ export type UsersFollowed_UsersArgs = {
   where?: InputMaybe<Followed_Users_Bool_Exp>;
 };
 
+
+/** columns and relationships of "users" */
+export type UsersFollowsArgs = {
+  distinct_on?: InputMaybe<Array<Follows_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Follows_Order_By>>;
+  where?: InputMaybe<Follows_Bool_Exp>;
+};
+
+
+/** columns and relationships of "users" */
+export type UsersFollows_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Follows_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Follows_Order_By>>;
+  where?: InputMaybe<Follows_Bool_Exp>;
+};
+
+
 /** columns and relationships of "users" */
 export type UsersGoalsArgs = {
   distinct_on?: InputMaybe<Array<Goals_Select_Column>>;
@@ -18528,10 +19206,12 @@ export type UsersGoalsArgs = {
   where?: InputMaybe<Goals_Bool_Exp>;
 };
 
+
 /** columns and relationships of "users" */
 export type UsersLibrarian_RolesArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 /** columns and relationships of "users" */
 export type UsersListsArgs = {
@@ -18542,6 +19222,7 @@ export type UsersListsArgs = {
   where?: InputMaybe<Lists_Bool_Exp>;
 };
 
+
 /** columns and relationships of "users" */
 export type UsersLists_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Lists_Select_Column>>;
@@ -18550,6 +19231,7 @@ export type UsersLists_AggregateArgs = {
   order_by?: InputMaybe<Array<Lists_Order_By>>;
   where?: InputMaybe<Lists_Bool_Exp>;
 };
+
 
 /** columns and relationships of "users" */
 export type UsersNotification_DeliveriesArgs = {
@@ -18560,6 +19242,7 @@ export type UsersNotification_DeliveriesArgs = {
   where?: InputMaybe<Notification_Deliveries_Bool_Exp>;
 };
 
+
 /** columns and relationships of "users" */
 export type UsersNotification_Deliveries_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Notification_Deliveries_Select_Column>>;
@@ -18568,6 +19251,7 @@ export type UsersNotification_Deliveries_AggregateArgs = {
   order_by?: InputMaybe<Array<Notification_Deliveries_Order_By>>;
   where?: InputMaybe<Notification_Deliveries_Bool_Exp>;
 };
+
 
 /** columns and relationships of "users" */
 export type UsersPrompt_AnswersArgs = {
@@ -18578,6 +19262,7 @@ export type UsersPrompt_AnswersArgs = {
   where?: InputMaybe<Prompt_Answers_Bool_Exp>;
 };
 
+
 /** columns and relationships of "users" */
 export type UsersPrompt_Answers_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Prompt_Answers_Select_Column>>;
@@ -18586,6 +19271,7 @@ export type UsersPrompt_Answers_AggregateArgs = {
   order_by?: InputMaybe<Array<Prompt_Answers_Order_By>>;
   where?: InputMaybe<Prompt_Answers_Bool_Exp>;
 };
+
 
 /** columns and relationships of "users" */
 export type UsersPromptsArgs = {
@@ -18596,23 +19282,6 @@ export type UsersPromptsArgs = {
   where?: InputMaybe<Prompts_Bool_Exp>;
 };
 
-/** columns and relationships of "users" */
-export type UsersRecommendationsArgs = {
-  distinct_on?: InputMaybe<Array<Recommendations_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Recommendations_Order_By>>;
-  where?: InputMaybe<Recommendations_Bool_Exp>;
-};
-
-/** columns and relationships of "users" */
-export type UsersRecommendedArgs = {
-  distinct_on?: InputMaybe<Array<Recommendations_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Recommendations_Order_By>>;
-  where?: InputMaybe<Recommendations_Bool_Exp>;
-};
 
 /** columns and relationships of "users" */
 export type UsersReferrered_UsersArgs = {
@@ -18623,6 +19292,7 @@ export type UsersReferrered_UsersArgs = {
   where?: InputMaybe<User_Books_Bool_Exp>;
 };
 
+
 /** columns and relationships of "users" */
 export type UsersReferrered_Users_AggregateArgs = {
   distinct_on?: InputMaybe<Array<User_Books_Select_Column>>;
@@ -18631,6 +19301,7 @@ export type UsersReferrered_Users_AggregateArgs = {
   order_by?: InputMaybe<Array<User_Books_Order_By>>;
   where?: InputMaybe<User_Books_Bool_Exp>;
 };
+
 
 /** columns and relationships of "users" */
 export type UsersReported_User_FlagsArgs = {
@@ -18641,6 +19312,7 @@ export type UsersReported_User_FlagsArgs = {
   where?: InputMaybe<User_Flags_Bool_Exp>;
 };
 
+
 /** columns and relationships of "users" */
 export type UsersTaggingsArgs = {
   distinct_on?: InputMaybe<Array<Taggings_Select_Column>>;
@@ -18649,6 +19321,7 @@ export type UsersTaggingsArgs = {
   order_by?: InputMaybe<Array<Taggings_Order_By>>;
   where?: InputMaybe<Taggings_Bool_Exp>;
 };
+
 
 /** columns and relationships of "users" */
 export type UsersTaggings_AggregateArgs = {
@@ -18659,6 +19332,7 @@ export type UsersTaggings_AggregateArgs = {
   where?: InputMaybe<Taggings_Bool_Exp>;
 };
 
+
 /** columns and relationships of "users" */
 export type UsersUser_BooksArgs = {
   distinct_on?: InputMaybe<Array<User_Books_Select_Column>>;
@@ -18668,6 +19342,7 @@ export type UsersUser_BooksArgs = {
   where?: InputMaybe<User_Books_Bool_Exp>;
 };
 
+
 /** columns and relationships of "users" */
 export type UsersUser_Books_AggregateArgs = {
   distinct_on?: InputMaybe<Array<User_Books_Select_Column>>;
@@ -18676,6 +19351,7 @@ export type UsersUser_Books_AggregateArgs = {
   order_by?: InputMaybe<Array<User_Books_Order_By>>;
   where?: InputMaybe<User_Books_Bool_Exp>;
 };
+
 
 /** columns and relationships of "users" */
 export type UsersUser_FlagsArgs = {
@@ -18713,7 +19389,7 @@ export enum Users_Aggregate_By_Created_At_Date_Select_Column {
   /** column name */
   Count = 'count',
   /** column name */
-  CreatedAt = 'created_at',
+  CreatedAt = 'created_at'
 }
 
 /** Streaming cursor of the table "users_aggregate_by_created_at_date" */
@@ -18792,6 +19468,8 @@ export type Users_Bool_Exp = {
   followed_users?: InputMaybe<Followed_Users_Bool_Exp>;
   followed_users_count?: InputMaybe<Int_Comparison_Exp>;
   followers_count?: InputMaybe<Int_Comparison_Exp>;
+  follows?: InputMaybe<Follows_Bool_Exp>;
+  follows_aggregate?: InputMaybe<Follows_Aggregate_Bool_Exp>;
   goals?: InputMaybe<Goals_Bool_Exp>;
   id?: InputMaybe<Int_Comparison_Exp>;
   image?: InputMaybe<Images_Bool_Exp>;
@@ -18800,11 +19478,11 @@ export type Users_Bool_Exp = {
   last_sign_in_at?: InputMaybe<Timestamp_Comparison_Exp>;
   librarian_roles?: InputMaybe<Jsonb_Comparison_Exp>;
   link?: InputMaybe<String_Comparison_Exp>;
+  links?: InputMaybe<Links_Bool_Exp>;
   lists?: InputMaybe<Lists_Bool_Exp>;
   lists_aggregate?: InputMaybe<Lists_Aggregate_Bool_Exp>;
   location?: InputMaybe<String_Comparison_Exp>;
   locked_at?: InputMaybe<Timestamp_Comparison_Exp>;
-  match_updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
   membership?: InputMaybe<String_Comparison_Exp>;
   membership_ends_at?: InputMaybe<Timestamp_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
@@ -18819,8 +19497,6 @@ export type Users_Bool_Exp = {
   prompts?: InputMaybe<Prompts_Bool_Exp>;
   pronoun_personal?: InputMaybe<String_Comparison_Exp>;
   pronoun_possessive?: InputMaybe<String_Comparison_Exp>;
-  recommendations?: InputMaybe<Recommendations_Bool_Exp>;
-  recommended?: InputMaybe<Recommendations_Bool_Exp>;
   referrer_id?: InputMaybe<Int_Comparison_Exp>;
   referrer_url?: InputMaybe<String_Comparison_Exp>;
   referrered_users?: InputMaybe<User_Books_Bool_Exp>;
@@ -18864,7 +19540,6 @@ export type Users_Max_Order_By = {
   link?: InputMaybe<Order_By>;
   location?: InputMaybe<Order_By>;
   locked_at?: InputMaybe<Order_By>;
-  match_updated_at?: InputMaybe<Order_By>;
   membership?: InputMaybe<Order_By>;
   membership_ends_at?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
@@ -18907,7 +19582,6 @@ export type Users_Min_Order_By = {
   link?: InputMaybe<Order_By>;
   location?: InputMaybe<Order_By>;
   locked_at?: InputMaybe<Order_By>;
-  match_updated_at?: InputMaybe<Order_By>;
   membership?: InputMaybe<Order_By>;
   membership_ends_at?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
@@ -18954,6 +19628,7 @@ export type Users_Order_By = {
   followed_users_aggregate?: InputMaybe<Followed_Users_Aggregate_Order_By>;
   followed_users_count?: InputMaybe<Order_By>;
   followers_count?: InputMaybe<Order_By>;
+  follows_aggregate?: InputMaybe<Follows_Aggregate_Order_By>;
   goals_aggregate?: InputMaybe<Goals_Aggregate_Order_By>;
   id?: InputMaybe<Order_By>;
   image?: InputMaybe<Images_Order_By>;
@@ -18962,10 +19637,10 @@ export type Users_Order_By = {
   last_sign_in_at?: InputMaybe<Order_By>;
   librarian_roles?: InputMaybe<Order_By>;
   link?: InputMaybe<Order_By>;
+  links?: InputMaybe<Links_Order_By>;
   lists_aggregate?: InputMaybe<Lists_Aggregate_Order_By>;
   location?: InputMaybe<Order_By>;
   locked_at?: InputMaybe<Order_By>;
-  match_updated_at?: InputMaybe<Order_By>;
   membership?: InputMaybe<Order_By>;
   membership_ends_at?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
@@ -18978,8 +19653,6 @@ export type Users_Order_By = {
   prompts_aggregate?: InputMaybe<Prompts_Aggregate_Order_By>;
   pronoun_personal?: InputMaybe<Order_By>;
   pronoun_possessive?: InputMaybe<Order_By>;
-  recommendations_aggregate?: InputMaybe<Recommendations_Aggregate_Order_By>;
-  recommended_aggregate?: InputMaybe<Recommendations_Aggregate_Order_By>;
   referrer_id?: InputMaybe<Order_By>;
   referrer_url?: InputMaybe<Order_By>;
   referrered_users_aggregate?: InputMaybe<User_Books_Aggregate_Order_By>;
@@ -19053,8 +19726,6 @@ export enum Users_Select_Column {
   /** column name */
   LockedAt = 'locked_at',
   /** column name */
-  MatchUpdatedAt = 'match_updated_at',
-  /** column name */
   Membership = 'membership',
   /** column name */
   MembershipEndsAt = 'membership_ends_at',
@@ -19089,7 +19760,7 @@ export enum Users_Select_Column {
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
-  Username = 'username',
+  Username = 'username'
 }
 
 /** order by stddev() on columns of table "users" */
@@ -19177,7 +19848,6 @@ export type Users_Stream_Cursor_Value_Input = {
   link?: InputMaybe<Scalars['String']['input']>;
   location?: InputMaybe<Scalars['String']['input']>;
   locked_at?: InputMaybe<Scalars['timestamp']['input']>;
-  match_updated_at?: InputMaybe<Scalars['timestamp']['input']>;
   membership?: InputMaybe<Scalars['String']['input']>;
   membership_ends_at?: InputMaybe<Scalars['timestamp']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
@@ -19262,14 +19932,15 @@ export type Users_Variance_Order_By = {
   status_id?: InputMaybe<Order_By>;
 };
 
+
+
 export type ResolverTypeWrapper<T> = Promise<T> | T;
+
 
 export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
 };
-export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
-  | ResolverFn<TResult, TParent, TContext, TArgs>
-  | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
+export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> = ResolverFn<TResult, TParent, TContext, TArgs> | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
 
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -19292,13 +19963,7 @@ export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
-export interface SubscriptionSubscriberObject<
-  TResult,
-  TKey extends string,
-  TParent,
-  TContext,
-  TArgs,
-> {
+export interface SubscriptionSubscriberObject<TResult, TKey extends string, TParent, TContext, TArgs> {
   subscribe: SubscriptionSubscribeFn<{ [key in TKey]: TResult }, TParent, TContext, TArgs>;
   resolve?: SubscriptionResolveFn<TResult, { [key in TKey]: TResult }, TContext, TArgs>;
 }
@@ -19312,13 +19977,7 @@ export type SubscriptionObject<TResult, TKey extends string, TParent, TContext, 
   | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>
   | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;
 
-export type SubscriptionResolver<
-  TResult,
-  TKey extends string,
-  TParent = {},
-  TContext = {},
-  TArgs = {},
-> =
+export type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TContext = {}, TArgs = {}> =
   | ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
   | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>;
 
@@ -19328,11 +19987,7 @@ export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
   info: GraphQLResolveInfo
 ) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
 
-export type IsTypeOfResolverFn<T = {}, TContext = {}> = (
-  obj: T,
-  context: TContext,
-  info: GraphQLResolveInfo
-) => boolean | Promise<boolean>;
+export type IsTypeOfResolverFn<T = {}, TContext = {}> = (obj: T, context: TContext, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
 
 export type NextResolverFn<T> = () => Promise<T>;
 
@@ -19343,6 +19998,8 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   context: TContext,
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
+
+
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
@@ -19377,6 +20034,8 @@ export type ResolversTypes = {
   EditionIdType: ResolverTypeWrapper<EditionIdType>;
   EditionInput: EditionInput;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
+  FollowDeleteType: ResolverTypeWrapper<FollowDeleteType>;
+  FollowType: ResolverTypeWrapper<FollowType>;
   FollowedListType: ResolverTypeWrapper<FollowedListType>;
   FollowedPromptType: ResolverTypeWrapper<FollowedPromptType>;
   FollowedUserType: ResolverTypeWrapper<FollowedUserType>;
@@ -19390,6 +20049,7 @@ export type ResolversTypes = {
   Int_comparison_exp: Int_Comparison_Exp;
   LikeDeleteType: ResolverTypeWrapper<LikeDeleteType>;
   LikeType: ResolverTypeWrapper<LikeType>;
+  LinkInput: LinkInput;
   ListBookDeleteType: ResolverTypeWrapper<ListBookDeleteType>;
   ListBookIdType: ResolverTypeWrapper<ListBookIdType>;
   ListBookInput: ListBookInput;
@@ -19826,13 +20486,43 @@ export type ResolversTypes = {
   following_user_books_var_pop_fields: ResolverTypeWrapper<Following_User_Books_Var_Pop_Fields>;
   following_user_books_var_samp_fields: ResolverTypeWrapper<Following_User_Books_Var_Samp_Fields>;
   following_user_books_variance_fields: ResolverTypeWrapper<Following_User_Books_Variance_Fields>;
+  follows: ResolverTypeWrapper<Follows>;
+  follows_aggregate: ResolverTypeWrapper<Follows_Aggregate>;
+  follows_aggregate_bool_exp: Follows_Aggregate_Bool_Exp;
+  follows_aggregate_bool_exp_count: Follows_Aggregate_Bool_Exp_Count;
+  follows_aggregate_fields: ResolverTypeWrapper<Follows_Aggregate_Fields>;
+  follows_aggregate_order_by: Follows_Aggregate_Order_By;
+  follows_avg_fields: ResolverTypeWrapper<Follows_Avg_Fields>;
+  follows_avg_order_by: Follows_Avg_Order_By;
+  follows_bool_exp: Follows_Bool_Exp;
+  follows_max_fields: ResolverTypeWrapper<Follows_Max_Fields>;
+  follows_max_order_by: Follows_Max_Order_By;
+  follows_min_fields: ResolverTypeWrapper<Follows_Min_Fields>;
+  follows_min_order_by: Follows_Min_Order_By;
+  follows_order_by: Follows_Order_By;
+  follows_select_column: Follows_Select_Column;
+  follows_stddev_fields: ResolverTypeWrapper<Follows_Stddev_Fields>;
+  follows_stddev_order_by: Follows_Stddev_Order_By;
+  follows_stddev_pop_fields: ResolverTypeWrapper<Follows_Stddev_Pop_Fields>;
+  follows_stddev_pop_order_by: Follows_Stddev_Pop_Order_By;
+  follows_stddev_samp_fields: ResolverTypeWrapper<Follows_Stddev_Samp_Fields>;
+  follows_stddev_samp_order_by: Follows_Stddev_Samp_Order_By;
+  follows_stream_cursor_input: Follows_Stream_Cursor_Input;
+  follows_stream_cursor_value_input: Follows_Stream_Cursor_Value_Input;
+  follows_sum_fields: ResolverTypeWrapper<Follows_Sum_Fields>;
+  follows_sum_order_by: Follows_Sum_Order_By;
+  follows_var_pop_fields: ResolverTypeWrapper<Follows_Var_Pop_Fields>;
+  follows_var_pop_order_by: Follows_Var_Pop_Order_By;
+  follows_var_samp_fields: ResolverTypeWrapper<Follows_Var_Samp_Fields>;
+  follows_var_samp_order_by: Follows_Var_Samp_Order_By;
+  follows_variance_fields: ResolverTypeWrapper<Follows_Variance_Fields>;
+  follows_variance_order_by: Follows_Variance_Order_By;
   goals: ResolverTypeWrapper<Goals>;
   goals_aggregate_order_by: Goals_Aggregate_Order_By;
   goals_avg_order_by: Goals_Avg_Order_By;
   goals_bool_exp: Goals_Bool_Exp;
   goals_max_order_by: Goals_Max_Order_By;
   goals_min_order_by: Goals_Min_Order_By;
-  goals_mutation_response: ResolverTypeWrapper<Goals_Mutation_Response>;
   goals_order_by: Goals_Order_By;
   goals_select_column: Goals_Select_Column;
   goals_stddev_order_by: Goals_Stddev_Order_By;
@@ -19889,6 +20579,12 @@ export type ResolversTypes = {
   likes_var_pop_order_by: Likes_Var_Pop_Order_By;
   likes_var_samp_order_by: Likes_Var_Samp_Order_By;
   likes_variance_order_by: Likes_Variance_Order_By;
+  links: ResolverTypeWrapper<Links>;
+  links_bool_exp: Links_Bool_Exp;
+  links_order_by: Links_Order_By;
+  links_select_column: Links_Select_Column;
+  links_stream_cursor_input: Links_Stream_Cursor_Input;
+  links_stream_cursor_value_input: Links_Stream_Cursor_Value_Input;
   list_books: ResolverTypeWrapper<List_Books>;
   list_books_aggregate: ResolverTypeWrapper<List_Books_Aggregate>;
   list_books_aggregate_bool_exp: List_Books_Aggregate_Bool_Exp;
@@ -20168,23 +20864,6 @@ export type ResolversTypes = {
   reading_journals_var_pop_order_by: Reading_Journals_Var_Pop_Order_By;
   reading_journals_var_samp_order_by: Reading_Journals_Var_Samp_Order_By;
   reading_journals_variance_order_by: Reading_Journals_Variance_Order_By;
-  recommendations: ResolverTypeWrapper<Recommendations>;
-  recommendations_aggregate_order_by: Recommendations_Aggregate_Order_By;
-  recommendations_avg_order_by: Recommendations_Avg_Order_By;
-  recommendations_bool_exp: Recommendations_Bool_Exp;
-  recommendations_max_order_by: Recommendations_Max_Order_By;
-  recommendations_min_order_by: Recommendations_Min_Order_By;
-  recommendations_order_by: Recommendations_Order_By;
-  recommendations_select_column: Recommendations_Select_Column;
-  recommendations_stddev_order_by: Recommendations_Stddev_Order_By;
-  recommendations_stddev_pop_order_by: Recommendations_Stddev_Pop_Order_By;
-  recommendations_stddev_samp_order_by: Recommendations_Stddev_Samp_Order_By;
-  recommendations_stream_cursor_input: Recommendations_Stream_Cursor_Input;
-  recommendations_stream_cursor_value_input: Recommendations_Stream_Cursor_Value_Input;
-  recommendations_sum_order_by: Recommendations_Sum_Order_By;
-  recommendations_var_pop_order_by: Recommendations_Var_Pop_Order_By;
-  recommendations_var_samp_order_by: Recommendations_Var_Samp_Order_By;
-  recommendations_variance_order_by: Recommendations_Variance_Order_By;
   series: ResolverTypeWrapper<Series>;
   series_bool_exp: Series_Bool_Exp;
   series_order_by: Series_Order_By;
@@ -20380,19 +21059,9 @@ export type ResolversTypes = {
   user_books: ResolverTypeWrapper<User_Books>;
   user_books_aggregate: ResolverTypeWrapper<User_Books_Aggregate>;
   user_books_aggregate_bool_exp: User_Books_Aggregate_Bool_Exp;
-  user_books_aggregate_bool_exp_avg: User_Books_Aggregate_Bool_Exp_Avg;
   user_books_aggregate_bool_exp_bool_and: User_Books_Aggregate_Bool_Exp_Bool_And;
   user_books_aggregate_bool_exp_bool_or: User_Books_Aggregate_Bool_Exp_Bool_Or;
-  user_books_aggregate_bool_exp_corr: User_Books_Aggregate_Bool_Exp_Corr;
-  user_books_aggregate_bool_exp_corr_arguments: User_Books_Aggregate_Bool_Exp_Corr_Arguments;
   user_books_aggregate_bool_exp_count: User_Books_Aggregate_Bool_Exp_Count;
-  user_books_aggregate_bool_exp_covar_samp: User_Books_Aggregate_Bool_Exp_Covar_Samp;
-  user_books_aggregate_bool_exp_covar_samp_arguments: User_Books_Aggregate_Bool_Exp_Covar_Samp_Arguments;
-  user_books_aggregate_bool_exp_max: User_Books_Aggregate_Bool_Exp_Max;
-  user_books_aggregate_bool_exp_min: User_Books_Aggregate_Bool_Exp_Min;
-  user_books_aggregate_bool_exp_stddev_samp: User_Books_Aggregate_Bool_Exp_Stddev_Samp;
-  user_books_aggregate_bool_exp_sum: User_Books_Aggregate_Bool_Exp_Sum;
-  user_books_aggregate_bool_exp_var_samp: User_Books_Aggregate_Bool_Exp_Var_Samp;
   user_books_aggregate_fields: ResolverTypeWrapper<User_Books_Aggregate_Fields>;
   user_books_aggregate_order_by: User_Books_Aggregate_Order_By;
   user_books_avg_fields: ResolverTypeWrapper<User_Books_Avg_Fields>;
@@ -20404,16 +21073,8 @@ export type ResolversTypes = {
   user_books_min_order_by: User_Books_Min_Order_By;
   user_books_order_by: User_Books_Order_By;
   user_books_select_column: User_Books_Select_Column;
-  user_books_select_column_user_books_aggregate_bool_exp_avg_arguments_columns: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Avg_Arguments_Columns;
   user_books_select_column_user_books_aggregate_bool_exp_bool_and_arguments_columns: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
   user_books_select_column_user_books_aggregate_bool_exp_bool_or_arguments_columns: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
-  user_books_select_column_user_books_aggregate_bool_exp_corr_arguments_columns: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Corr_Arguments_Columns;
-  user_books_select_column_user_books_aggregate_bool_exp_covar_samp_arguments_columns: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
-  user_books_select_column_user_books_aggregate_bool_exp_max_arguments_columns: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Max_Arguments_Columns;
-  user_books_select_column_user_books_aggregate_bool_exp_min_arguments_columns: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Min_Arguments_Columns;
-  user_books_select_column_user_books_aggregate_bool_exp_stddev_samp_arguments_columns: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
-  user_books_select_column_user_books_aggregate_bool_exp_sum_arguments_columns: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Sum_Arguments_Columns;
-  user_books_select_column_user_books_aggregate_bool_exp_var_samp_arguments_columns: User_Books_Select_Column_User_Books_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
   user_books_stddev_fields: ResolverTypeWrapper<User_Books_Stddev_Fields>;
   user_books_stddev_order_by: User_Books_Stddev_Order_By;
   user_books_stddev_pop_fields: ResolverTypeWrapper<User_Books_Stddev_Pop_Fields>;
@@ -20522,6 +21183,8 @@ export type ResolversParentTypes = {
   EditionIdType: EditionIdType;
   EditionInput: EditionInput;
   Float: Scalars['Float']['output'];
+  FollowDeleteType: FollowDeleteType;
+  FollowType: FollowType;
   FollowedListType: FollowedListType;
   FollowedPromptType: FollowedPromptType;
   FollowedUserType: FollowedUserType;
@@ -20535,6 +21198,7 @@ export type ResolversParentTypes = {
   Int_comparison_exp: Int_Comparison_Exp;
   LikeDeleteType: LikeDeleteType;
   LikeType: LikeType;
+  LinkInput: LinkInput;
   ListBookDeleteType: ListBookDeleteType;
   ListBookIdType: ListBookIdType;
   ListBookInput: ListBookInput;
@@ -20934,13 +21598,42 @@ export type ResolversParentTypes = {
   following_user_books_var_pop_fields: Following_User_Books_Var_Pop_Fields;
   following_user_books_var_samp_fields: Following_User_Books_Var_Samp_Fields;
   following_user_books_variance_fields: Following_User_Books_Variance_Fields;
+  follows: Follows;
+  follows_aggregate: Follows_Aggregate;
+  follows_aggregate_bool_exp: Follows_Aggregate_Bool_Exp;
+  follows_aggregate_bool_exp_count: Follows_Aggregate_Bool_Exp_Count;
+  follows_aggregate_fields: Follows_Aggregate_Fields;
+  follows_aggregate_order_by: Follows_Aggregate_Order_By;
+  follows_avg_fields: Follows_Avg_Fields;
+  follows_avg_order_by: Follows_Avg_Order_By;
+  follows_bool_exp: Follows_Bool_Exp;
+  follows_max_fields: Follows_Max_Fields;
+  follows_max_order_by: Follows_Max_Order_By;
+  follows_min_fields: Follows_Min_Fields;
+  follows_min_order_by: Follows_Min_Order_By;
+  follows_order_by: Follows_Order_By;
+  follows_stddev_fields: Follows_Stddev_Fields;
+  follows_stddev_order_by: Follows_Stddev_Order_By;
+  follows_stddev_pop_fields: Follows_Stddev_Pop_Fields;
+  follows_stddev_pop_order_by: Follows_Stddev_Pop_Order_By;
+  follows_stddev_samp_fields: Follows_Stddev_Samp_Fields;
+  follows_stddev_samp_order_by: Follows_Stddev_Samp_Order_By;
+  follows_stream_cursor_input: Follows_Stream_Cursor_Input;
+  follows_stream_cursor_value_input: Follows_Stream_Cursor_Value_Input;
+  follows_sum_fields: Follows_Sum_Fields;
+  follows_sum_order_by: Follows_Sum_Order_By;
+  follows_var_pop_fields: Follows_Var_Pop_Fields;
+  follows_var_pop_order_by: Follows_Var_Pop_Order_By;
+  follows_var_samp_fields: Follows_Var_Samp_Fields;
+  follows_var_samp_order_by: Follows_Var_Samp_Order_By;
+  follows_variance_fields: Follows_Variance_Fields;
+  follows_variance_order_by: Follows_Variance_Order_By;
   goals: Goals;
   goals_aggregate_order_by: Goals_Aggregate_Order_By;
   goals_avg_order_by: Goals_Avg_Order_By;
   goals_bool_exp: Goals_Bool_Exp;
   goals_max_order_by: Goals_Max_Order_By;
   goals_min_order_by: Goals_Min_Order_By;
-  goals_mutation_response: Goals_Mutation_Response;
   goals_order_by: Goals_Order_By;
   goals_stddev_order_by: Goals_Stddev_Order_By;
   goals_stddev_pop_order_by: Goals_Stddev_Pop_Order_By;
@@ -20993,6 +21686,11 @@ export type ResolversParentTypes = {
   likes_var_pop_order_by: Likes_Var_Pop_Order_By;
   likes_var_samp_order_by: Likes_Var_Samp_Order_By;
   likes_variance_order_by: Likes_Variance_Order_By;
+  links: Links;
+  links_bool_exp: Links_Bool_Exp;
+  links_order_by: Links_Order_By;
+  links_stream_cursor_input: Links_Stream_Cursor_Input;
+  links_stream_cursor_value_input: Links_Stream_Cursor_Value_Input;
   list_books: List_Books;
   list_books_aggregate: List_Books_Aggregate;
   list_books_aggregate_bool_exp: List_Books_Aggregate_Bool_Exp;
@@ -21247,22 +21945,6 @@ export type ResolversParentTypes = {
   reading_journals_var_pop_order_by: Reading_Journals_Var_Pop_Order_By;
   reading_journals_var_samp_order_by: Reading_Journals_Var_Samp_Order_By;
   reading_journals_variance_order_by: Reading_Journals_Variance_Order_By;
-  recommendations: Recommendations;
-  recommendations_aggregate_order_by: Recommendations_Aggregate_Order_By;
-  recommendations_avg_order_by: Recommendations_Avg_Order_By;
-  recommendations_bool_exp: Recommendations_Bool_Exp;
-  recommendations_max_order_by: Recommendations_Max_Order_By;
-  recommendations_min_order_by: Recommendations_Min_Order_By;
-  recommendations_order_by: Recommendations_Order_By;
-  recommendations_stddev_order_by: Recommendations_Stddev_Order_By;
-  recommendations_stddev_pop_order_by: Recommendations_Stddev_Pop_Order_By;
-  recommendations_stddev_samp_order_by: Recommendations_Stddev_Samp_Order_By;
-  recommendations_stream_cursor_input: Recommendations_Stream_Cursor_Input;
-  recommendations_stream_cursor_value_input: Recommendations_Stream_Cursor_Value_Input;
-  recommendations_sum_order_by: Recommendations_Sum_Order_By;
-  recommendations_var_pop_order_by: Recommendations_Var_Pop_Order_By;
-  recommendations_var_samp_order_by: Recommendations_Var_Samp_Order_By;
-  recommendations_variance_order_by: Recommendations_Variance_Order_By;
   series: Series;
   series_bool_exp: Series_Bool_Exp;
   series_order_by: Series_Order_By;
@@ -21438,19 +22120,9 @@ export type ResolversParentTypes = {
   user_books: User_Books;
   user_books_aggregate: User_Books_Aggregate;
   user_books_aggregate_bool_exp: User_Books_Aggregate_Bool_Exp;
-  user_books_aggregate_bool_exp_avg: User_Books_Aggregate_Bool_Exp_Avg;
   user_books_aggregate_bool_exp_bool_and: User_Books_Aggregate_Bool_Exp_Bool_And;
   user_books_aggregate_bool_exp_bool_or: User_Books_Aggregate_Bool_Exp_Bool_Or;
-  user_books_aggregate_bool_exp_corr: User_Books_Aggregate_Bool_Exp_Corr;
-  user_books_aggregate_bool_exp_corr_arguments: User_Books_Aggregate_Bool_Exp_Corr_Arguments;
   user_books_aggregate_bool_exp_count: User_Books_Aggregate_Bool_Exp_Count;
-  user_books_aggregate_bool_exp_covar_samp: User_Books_Aggregate_Bool_Exp_Covar_Samp;
-  user_books_aggregate_bool_exp_covar_samp_arguments: User_Books_Aggregate_Bool_Exp_Covar_Samp_Arguments;
-  user_books_aggregate_bool_exp_max: User_Books_Aggregate_Bool_Exp_Max;
-  user_books_aggregate_bool_exp_min: User_Books_Aggregate_Bool_Exp_Min;
-  user_books_aggregate_bool_exp_stddev_samp: User_Books_Aggregate_Bool_Exp_Stddev_Samp;
-  user_books_aggregate_bool_exp_sum: User_Books_Aggregate_Bool_Exp_Sum;
-  user_books_aggregate_bool_exp_var_samp: User_Books_Aggregate_Bool_Exp_Var_Samp;
   user_books_aggregate_fields: User_Books_Aggregate_Fields;
   user_books_aggregate_order_by: User_Books_Aggregate_Order_By;
   user_books_avg_fields: User_Books_Avg_Fields;
@@ -21534,27 +22206,16 @@ export type CachedDirectiveArgs = {
   ttl?: Scalars['Int']['input'];
 };
 
-export type CachedDirectiveResolver<
-  Result,
-  Parent,
-  ContextType = any,
-  Args = CachedDirectiveArgs,
-> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+export type CachedDirectiveResolver<Result, Parent, ContextType = any, Args = CachedDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
-export type AuthorIdTypeResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['AuthorIdType'] = ResolversParentTypes['AuthorIdType'],
-> = {
+export type AuthorIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthorIdType'] = ResolversParentTypes['AuthorIdType']> = {
   author?: Resolver<Maybe<ResolversTypes['authors']>, ParentType, ContextType>;
   errors?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type BasicTagTypeResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['BasicTagType'] = ResolversParentTypes['BasicTagType'],
-> = {
+export type BasicTagTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['BasicTagType'] = ResolversParentTypes['BasicTagType']> = {
   category?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   categorySlug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -21564,139 +22225,96 @@ export type BasicTagTypeResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type BookIdTypeResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['BookIdType'] = ResolversParentTypes['BookIdType'],
-> = {
+export type BookIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['BookIdType'] = ResolversParentTypes['BookIdType']> = {
   book?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType>;
   errors?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type BookMappingIdTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['BookMappingIdType'] = ResolversParentTypes['BookMappingIdType'],
-> = {
+export type BookMappingIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['BookMappingIdType'] = ResolversParentTypes['BookMappingIdType']> = {
   book_mapping?: Resolver<Maybe<ResolversTypes['book_mappings']>, ParentType, ContextType>;
   errors?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type CharacterIdTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['CharacterIdType'] = ResolversParentTypes['CharacterIdType'],
-> = {
+export type CharacterIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['CharacterIdType'] = ResolversParentTypes['CharacterIdType']> = {
   character?: Resolver<Maybe<ResolversTypes['characters']>, ParentType, ContextType>;
   errors?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type CollectionImportIdTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['CollectionImportIdType'] = ResolversParentTypes['CollectionImportIdType'],
-> = {
-  collection_import?: Resolver<
-    Maybe<ResolversTypes['collection_imports']>,
-    ParentType,
-    ContextType
-  >;
+export type CollectionImportIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['CollectionImportIdType'] = ResolversParentTypes['CollectionImportIdType']> = {
+  collection_import?: Resolver<Maybe<ResolversTypes['collection_imports']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type CollectionImportResultIdTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['CollectionImportResultIdType'] = ResolversParentTypes['CollectionImportResultIdType'],
-> = {
-  collection_import_result?: Resolver<
-    Maybe<ResolversTypes['collection_import_results']>,
-    ParentType,
-    ContextType
-  >;
+export type CollectionImportResultIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['CollectionImportResultIdType'] = ResolversParentTypes['CollectionImportResultIdType']> = {
+  collection_import_result?: Resolver<Maybe<ResolversTypes['collection_import_results']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type DeleteFollowedPromptTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['DeleteFollowedPromptType'] = ResolversParentTypes['DeleteFollowedPromptType'],
-> = {
+export type DeleteFollowedPromptTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['DeleteFollowedPromptType'] = ResolversParentTypes['DeleteFollowedPromptType']> = {
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type DeleteListTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['DeleteListType'] = ResolversParentTypes['DeleteListType'],
-> = {
+export type DeleteListTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['DeleteListType'] = ResolversParentTypes['DeleteListType']> = {
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type DeleteReadingJournalOutputResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['DeleteReadingJournalOutput'] = ResolversParentTypes['DeleteReadingJournalOutput'],
-> = {
+export type DeleteReadingJournalOutputResolvers<ContextType = any, ParentType extends ResolversParentTypes['DeleteReadingJournalOutput'] = ResolversParentTypes['DeleteReadingJournalOutput']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type DeleteReadingJournalsOutputResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['DeleteReadingJournalsOutput'] = ResolversParentTypes['DeleteReadingJournalsOutput'],
-> = {
+export type DeleteReadingJournalsOutputResolvers<ContextType = any, ParentType extends ResolversParentTypes['DeleteReadingJournalsOutput'] = ResolversParentTypes['DeleteReadingJournalsOutput']> = {
   ids?: Resolver<Maybe<Array<Maybe<ResolversTypes['Int']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type EditionIdTypeResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['EditionIdType'] = ResolversParentTypes['EditionIdType'],
-> = {
+export type EditionIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['EditionIdType'] = ResolversParentTypes['EditionIdType']> = {
   edition?: Resolver<Maybe<ResolversTypes['editions']>, ParentType, ContextType>;
   errors?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type FollowedListTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['FollowedListType'] = ResolversParentTypes['FollowedListType'],
-> = {
+export type FollowDeleteTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['FollowDeleteType'] = ResolversParentTypes['FollowDeleteType']> = {
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type FollowTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['FollowType'] = ResolversParentTypes['FollowType']> = {
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  follow?: Resolver<Maybe<ResolversTypes['follows']>, ParentType, ContextType>;
+  followable_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  followable_type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type FollowedListTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['FollowedListType'] = ResolversParentTypes['FollowedListType']> = {
   errors?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   followed_list?: Resolver<Maybe<ResolversTypes['followed_lists']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type FollowedPromptTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['FollowedPromptType'] = ResolversParentTypes['FollowedPromptType'],
-> = {
+export type FollowedPromptTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['FollowedPromptType'] = ResolversParentTypes['FollowedPromptType']> = {
   errors?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   followed_prompt?: Resolver<Maybe<ResolversTypes['followed_prompts']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type FollowedUserTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['FollowedUserType'] = ResolversParentTypes['FollowedUserType'],
-> = {
+export type FollowedUserTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['FollowedUserType'] = ResolversParentTypes['FollowedUserType']> = {
   error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   followed_user?: Resolver<Maybe<ResolversTypes['users']>, ParentType, ContextType>;
   followed_user_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -21707,99 +22325,64 @@ export type FollowedUserTypeResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type GoalIdTypeResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['GoalIdType'] = ResolversParentTypes['GoalIdType'],
-> = {
+export type GoalIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['GoalIdType'] = ResolversParentTypes['GoalIdType']> = {
   errors?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   goal?: Resolver<Maybe<ResolversTypes['goals']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ImageIdTypeResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['ImageIdType'] = ResolversParentTypes['ImageIdType'],
-> = {
+export type ImageIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImageIdType'] = ResolversParentTypes['ImageIdType']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   image?: Resolver<Maybe<ResolversTypes['images']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type InsertBlockOutputResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['InsertBlockOutput'] = ResolversParentTypes['InsertBlockOutput'],
-> = {
+export type InsertBlockOutputResolvers<ContextType = any, ParentType extends ResolversParentTypes['InsertBlockOutput'] = ResolversParentTypes['InsertBlockOutput']> = {
   error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   user_block?: Resolver<Maybe<ResolversTypes['user_blocks']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type LikeDeleteTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['LikeDeleteType'] = ResolversParentTypes['LikeDeleteType'],
-> = {
+export type LikeDeleteTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['LikeDeleteType'] = ResolversParentTypes['LikeDeleteType']> = {
   likes_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type LikeTypeResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['LikeType'] = ResolversParentTypes['LikeType'],
-> = {
+export type LikeTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['LikeType'] = ResolversParentTypes['LikeType']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   like?: Resolver<Maybe<ResolversTypes['likes']>, ParentType, ContextType>;
   likes_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ListBookDeleteTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['ListBookDeleteType'] = ResolversParentTypes['ListBookDeleteType'],
-> = {
+export type ListBookDeleteTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['ListBookDeleteType'] = ResolversParentTypes['ListBookDeleteType']> = {
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   list?: Resolver<Maybe<ResolversTypes['lists']>, ParentType, ContextType>;
   list_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ListBookIdTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['ListBookIdType'] = ResolversParentTypes['ListBookIdType'],
-> = {
+export type ListBookIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['ListBookIdType'] = ResolversParentTypes['ListBookIdType']> = {
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   list_book?: Resolver<Maybe<ResolversTypes['list_books']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ListDeleteTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['ListDeleteType'] = ResolversParentTypes['ListDeleteType'],
-> = {
+export type ListDeleteTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['ListDeleteType'] = ResolversParentTypes['ListDeleteType']> = {
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ListIdTypeResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['ListIdType'] = ResolversParentTypes['ListIdType'],
-> = {
+export type ListIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['ListIdType'] = ResolversParentTypes['ListIdType']> = {
   errors?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   list?: Resolver<Maybe<ResolversTypes['lists']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type NewBookIdTypeResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['NewBookIdType'] = ResolversParentTypes['NewBookIdType'],
-> = {
+export type NewBookIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['NewBookIdType'] = ResolversParentTypes['NewBookIdType']> = {
   book?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType>;
   edition?: Resolver<Maybe<ResolversTypes['editions']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -21808,31 +22391,19 @@ export type NewBookIdTypeResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type NewsletterStatusTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['NewsletterStatusType'] = ResolversParentTypes['NewsletterStatusType'],
-> = {
+export type NewsletterStatusTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['NewsletterStatusType'] = ResolversParentTypes['NewsletterStatusType']> = {
   subscribed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type OptionalEditionIdTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['OptionalEditionIdType'] = ResolversParentTypes['OptionalEditionIdType'],
-> = {
+export type OptionalEditionIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['OptionalEditionIdType'] = ResolversParentTypes['OptionalEditionIdType']> = {
   edition?: Resolver<Maybe<ResolversTypes['editions']>, ParentType, ContextType>;
   errors?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type PromptAnswerIdTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['PromptAnswerIdType'] = ResolversParentTypes['PromptAnswerIdType'],
-> = {
+export type PromptAnswerIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['PromptAnswerIdType'] = ResolversParentTypes['PromptAnswerIdType']> = {
   book_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   prompt_answer?: Resolver<Maybe<ResolversTypes['prompt_answers']>, ParentType, ContextType>;
@@ -21842,62 +22413,42 @@ export type PromptAnswerIdTypeResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type PromptIdTypeResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['PromptIdType'] = ResolversParentTypes['PromptIdType'],
-> = {
+export type PromptIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['PromptIdType'] = ResolversParentTypes['PromptIdType']> = {
   error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   prompt?: Resolver<Maybe<ResolversTypes['prompts']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type PublisherIdTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['PublisherIdType'] = ResolversParentTypes['PublisherIdType'],
-> = {
+export type PublisherIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['PublisherIdType'] = ResolversParentTypes['PublisherIdType']> = {
   errors?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   publisher?: Resolver<Maybe<ResolversTypes['publishers']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ReadingJournalOutputResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['ReadingJournalOutput'] = ResolversParentTypes['ReadingJournalOutput'],
-> = {
+export type ReadingJournalOutputResolvers<ContextType = any, ParentType extends ResolversParentTypes['ReadingJournalOutput'] = ResolversParentTypes['ReadingJournalOutput']> = {
   errors?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   reading_journal?: Resolver<Maybe<ResolversTypes['reading_journals']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ReferralTypeResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['ReferralType'] = ResolversParentTypes['ReferralType'],
-> = {
+export type ReferralTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['ReferralType'] = ResolversParentTypes['ReferralType']> = {
   book?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType>;
   book_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ReportOutputResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['ReportOutput'] = ResolversParentTypes['ReportOutput'],
-> = {
+export type ReportOutputResolvers<ContextType = any, ParentType extends ResolversParentTypes['ReportOutput'] = ResolversParentTypes['ReportOutput']> = {
   complete?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   created?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   errors?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type SearchOutputResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['SearchOutput'] = ResolversParentTypes['SearchOutput'],
-> = {
+export type SearchOutputResolvers<ContextType = any, ParentType extends ResolversParentTypes['SearchOutput'] = ResolversParentTypes['SearchOutput']> = {
   error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   ids?: Resolver<Maybe<Array<Maybe<ResolversTypes['Int']>>>, ParentType, ContextType>;
   page?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -21908,21 +22459,14 @@ export type SearchOutputResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type SeriesIdTypeResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['SeriesIdType'] = ResolversParentTypes['SeriesIdType'],
-> = {
+export type SeriesIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['SeriesIdType'] = ResolversParentTypes['SeriesIdType']> = {
   errors?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   series?: Resolver<Maybe<ResolversTypes['series']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type SubscriptionsTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['SubscriptionsType'] = ResolversParentTypes['SubscriptionsType'],
-> = {
+export type SubscriptionsTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['SubscriptionsType'] = ResolversParentTypes['SubscriptionsType']> = {
   billing_portal_url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   membership?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   membership_ends_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
@@ -21934,37 +22478,23 @@ export type SubscriptionsTypeResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type SuccessTypeResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['SuccessType'] = ResolversParentTypes['SuccessType'],
-> = {
+export type SuccessTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['SuccessType'] = ResolversParentTypes['SuccessType']> = {
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type TagsTypeResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['TagsType'] = ResolversParentTypes['TagsType'],
-> = {
+export type TagsTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['TagsType'] = ResolversParentTypes['TagsType']> = {
   tags?: Resolver<Array<Maybe<ResolversTypes['BasicTagType']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type TrendingBookTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['TrendingBookType'] = ResolversParentTypes['TrendingBookType'],
-> = {
+export type TrendingBookTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['TrendingBookType'] = ResolversParentTypes['TrendingBookType']> = {
   error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   ids?: Resolver<Maybe<Array<Maybe<ResolversTypes['Int']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserBookDeleteTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['UserBookDeleteType'] = ResolversParentTypes['UserBookDeleteType'],
-> = {
+export type UserBookDeleteTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserBookDeleteType'] = ResolversParentTypes['UserBookDeleteType']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   user_book?: Resolver<Maybe<ResolversTypes['user_books']>, ParentType, ContextType>;
@@ -21972,81 +22502,49 @@ export type UserBookDeleteTypeResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserBookIdTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['UserBookIdType'] = ResolversParentTypes['UserBookIdType'],
-> = {
+export type UserBookIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserBookIdType'] = ResolversParentTypes['UserBookIdType']> = {
   error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   user_book?: Resolver<Maybe<ResolversTypes['user_books']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserBookReadIdTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['UserBookReadIdType'] = ResolversParentTypes['UserBookReadIdType'],
-> = {
+export type UserBookReadIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserBookReadIdType'] = ResolversParentTypes['UserBookReadIdType']> = {
   error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   user_book_read?: Resolver<Maybe<ResolversTypes['user_book_reads']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserBooksReadUpsertTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['UserBooksReadUpsertType'] = ResolversParentTypes['UserBooksReadUpsertType'],
-> = {
+export type UserBooksReadUpsertTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserBooksReadUpsertType'] = ResolversParentTypes['UserBooksReadUpsertType']> = {
   error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   user_book?: Resolver<Maybe<ResolversTypes['user_books']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserIdTypeResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['UserIdType'] = ResolversParentTypes['UserIdType'],
-> = {
+export type UserIdTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserIdType'] = ResolversParentTypes['UserIdType']> = {
   errors?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['users']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ValidateReceiptTypeResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['ValidateReceiptType'] = ResolversParentTypes['ValidateReceiptType'],
-> = {
+export type ValidateReceiptTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['ValidateReceiptType'] = ResolversParentTypes['ValidateReceiptType']> = {
   result?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType>;
   supporter?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ActivitiesResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['activities'] = ResolversParentTypes['activities'],
-> = {
+export type ActivitiesResolvers<ContextType = any, ParentType extends ResolversParentTypes['activities'] = ResolversParentTypes['activities']> = {
   book?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType>;
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
   data?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType, Partial<ActivitiesDataArgs>>;
   event?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  followers?: Resolver<
-    Array<ResolversTypes['followed_users']>,
-    ParentType,
-    ContextType,
-    Partial<ActivitiesFollowersArgs>
-  >;
+  followers?: Resolver<Array<ResolversTypes['followed_users']>, ParentType, ContextType, Partial<ActivitiesFollowersArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  likes?: Resolver<
-    Array<ResolversTypes['likes']>,
-    ParentType,
-    ContextType,
-    Partial<ActivitiesLikesArgs>
-  >;
+  likes?: Resolver<Array<ResolversTypes['likes']>, ParentType, ContextType, Partial<ActivitiesLikesArgs>>;
   likes_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   object_type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -22058,68 +22556,31 @@ export type ActivitiesResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Activities_Mutation_ResponseResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['activities_mutation_response'] = ResolversParentTypes['activities_mutation_response'],
-> = {
+export type Activities_Mutation_ResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['activities_mutation_response'] = ResolversParentTypes['activities_mutation_response']> = {
   affected_rows?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   returning?: Resolver<Array<ResolversTypes['activities']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type AuthorsResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['authors'] = ResolversParentTypes['authors'],
-> = {
-  alias?: Resolver<
-    Array<ResolversTypes['authors']>,
-    ParentType,
-    ContextType,
-    Partial<AuthorsAliasArgs>
-  >;
+export type AuthorsResolvers<ContextType = any, ParentType extends ResolversParentTypes['authors'] = ResolversParentTypes['authors']> = {
+  alias?: Resolver<Array<ResolversTypes['authors']>, ParentType, ContextType, Partial<AuthorsAliasArgs>>;
   alias_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  alternate_names?: Resolver<
-    ResolversTypes['jsonb'],
-    ParentType,
-    ContextType,
-    Partial<AuthorsAlternate_NamesArgs>
-  >;
+  alternate_names?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType, Partial<AuthorsAlternate_NamesArgs>>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   books_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   born_date?: Resolver<Maybe<ResolversTypes['date']>, ParentType, ContextType>;
   born_year?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  cached_image?: Resolver<
-    ResolversTypes['jsonb'],
-    ParentType,
-    ContextType,
-    Partial<AuthorsCached_ImageArgs>
-  >;
+  cached_image?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType, Partial<AuthorsCached_ImageArgs>>;
   canonical?: Resolver<Maybe<ResolversTypes['authors']>, ParentType, ContextType>;
   canonical_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  contributions?: Resolver<
-    Array<ResolversTypes['contributions']>,
-    ParentType,
-    ContextType,
-    Partial<AuthorsContributionsArgs>
-  >;
-  contributions_aggregate?: Resolver<
-    ResolversTypes['contributions_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<AuthorsContributions_AggregateArgs>
-  >;
+  contributions?: Resolver<Array<ResolversTypes['contributions']>, ParentType, ContextType, Partial<AuthorsContributionsArgs>>;
+  contributions_aggregate?: Resolver<ResolversTypes['contributions_aggregate'], ParentType, ContextType, Partial<AuthorsContributions_AggregateArgs>>;
   creator?: Resolver<Maybe<ResolversTypes['users']>, ParentType, ContextType>;
   death_date?: Resolver<Maybe<ResolversTypes['date']>, ParentType, ContextType>;
   death_year?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   gender_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  identifiers?: Resolver<
-    ResolversTypes['jsonb'],
-    ParentType,
-    ContextType,
-    Partial<AuthorsIdentifiersArgs>
-  >;
+  identifiers?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType, Partial<AuthorsIdentifiersArgs>>;
   image?: Resolver<Maybe<ResolversTypes['images']>, ParentType, ContextType>;
   image_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   is_bipoc?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
@@ -22129,6 +22590,7 @@ export type AuthorsResolvers<
   locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name_personal?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  object_type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   state?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -22141,21 +22603,13 @@ export interface BigintScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
   name: 'bigint';
 }
 
-export type Book_CategoriesResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['book_categories'] = ResolversParentTypes['book_categories'],
-> = {
+export type Book_CategoriesResolvers<ContextType = any, ParentType extends ResolversParentTypes['book_categories'] = ResolversParentTypes['book_categories']> = {
   id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Book_CharactersResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['book_characters'] = ResolversParentTypes['book_characters'],
-> = {
+export type Book_CharactersResolvers<ContextType = any, ParentType extends ResolversParentTypes['book_characters'] = ResolversParentTypes['book_characters']> = {
   book?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType>;
   book_id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
   character?: Resolver<Maybe<ResolversTypes['characters']>, ParentType, ContextType>;
@@ -22167,11 +22621,7 @@ export type Book_CharactersResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Book_CollectionsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['book_collections'] = ResolversParentTypes['book_collections'],
-> = {
+export type Book_CollectionsResolvers<ContextType = any, ParentType extends ResolversParentTypes['book_collections'] = ResolversParentTypes['book_collections']> = {
   book_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   child_book_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
@@ -22179,20 +22629,11 @@ export type Book_CollectionsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Book_MappingsResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['book_mappings'] = ResolversParentTypes['book_mappings'],
-> = {
+export type Book_MappingsResolvers<ContextType = any, ParentType extends ResolversParentTypes['book_mappings'] = ResolversParentTypes['book_mappings']> = {
   attempts?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   book?: Resolver<ResolversTypes['books'], ParentType, ContextType>;
   book_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
-  dto_external?: Resolver<
-    ResolversTypes['json'],
-    ParentType,
-    ContextType,
-    Partial<Book_MappingsDto_ExternalArgs>
-  >;
   edition?: Resolver<Maybe<ResolversTypes['editions']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   external_data_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -22211,12 +22652,10 @@ export type Book_MappingsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Book_SeriesResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['book_series'] = ResolversParentTypes['book_series'],
-> = {
+export type Book_SeriesResolvers<ContextType = any, ParentType extends ResolversParentTypes['book_series'] = ResolversParentTypes['book_series']> = {
   book?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType>;
   book_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  compilation?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   created_at?: Resolver<ResolversTypes['timestamp'], ParentType, ContextType>;
   details?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   featured?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -22228,65 +22667,28 @@ export type Book_SeriesResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Book_Series_AggregateResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['book_series_aggregate'] = ResolversParentTypes['book_series_aggregate'],
-> = {
-  aggregate?: Resolver<
-    Maybe<ResolversTypes['book_series_aggregate_fields']>,
-    ParentType,
-    ContextType
-  >;
+export type Book_Series_AggregateResolvers<ContextType = any, ParentType extends ResolversParentTypes['book_series_aggregate'] = ResolversParentTypes['book_series_aggregate']> = {
+  aggregate?: Resolver<Maybe<ResolversTypes['book_series_aggregate_fields']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['book_series']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Book_Series_Aggregate_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['book_series_aggregate_fields'] = ResolversParentTypes['book_series_aggregate_fields'],
-> = {
+export type Book_Series_Aggregate_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['book_series_aggregate_fields'] = ResolversParentTypes['book_series_aggregate_fields']> = {
   avg?: Resolver<Maybe<ResolversTypes['book_series_avg_fields']>, ParentType, ContextType>;
-  count?: Resolver<
-    ResolversTypes['Int'],
-    ParentType,
-    ContextType,
-    Partial<Book_Series_Aggregate_FieldsCountArgs>
-  >;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<Book_Series_Aggregate_FieldsCountArgs>>;
   max?: Resolver<Maybe<ResolversTypes['book_series_max_fields']>, ParentType, ContextType>;
   min?: Resolver<Maybe<ResolversTypes['book_series_min_fields']>, ParentType, ContextType>;
   stddev?: Resolver<Maybe<ResolversTypes['book_series_stddev_fields']>, ParentType, ContextType>;
-  stddev_pop?: Resolver<
-    Maybe<ResolversTypes['book_series_stddev_pop_fields']>,
-    ParentType,
-    ContextType
-  >;
-  stddev_samp?: Resolver<
-    Maybe<ResolversTypes['book_series_stddev_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
+  stddev_pop?: Resolver<Maybe<ResolversTypes['book_series_stddev_pop_fields']>, ParentType, ContextType>;
+  stddev_samp?: Resolver<Maybe<ResolversTypes['book_series_stddev_samp_fields']>, ParentType, ContextType>;
   sum?: Resolver<Maybe<ResolversTypes['book_series_sum_fields']>, ParentType, ContextType>;
   var_pop?: Resolver<Maybe<ResolversTypes['book_series_var_pop_fields']>, ParentType, ContextType>;
-  var_samp?: Resolver<
-    Maybe<ResolversTypes['book_series_var_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
-  variance?: Resolver<
-    Maybe<ResolversTypes['book_series_variance_fields']>,
-    ParentType,
-    ContextType
-  >;
+  var_samp?: Resolver<Maybe<ResolversTypes['book_series_var_samp_fields']>, ParentType, ContextType>;
+  variance?: Resolver<Maybe<ResolversTypes['book_series_variance_fields']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Book_Series_Avg_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['book_series_avg_fields'] = ResolversParentTypes['book_series_avg_fields'],
-> = {
+export type Book_Series_Avg_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['book_series_avg_fields'] = ResolversParentTypes['book_series_avg_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   position?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -22294,11 +22696,7 @@ export type Book_Series_Avg_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Book_Series_Max_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['book_series_max_fields'] = ResolversParentTypes['book_series_max_fields'],
-> = {
+export type Book_Series_Max_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['book_series_max_fields'] = ResolversParentTypes['book_series_max_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   details?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -22309,11 +22707,7 @@ export type Book_Series_Max_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Book_Series_Min_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['book_series_min_fields'] = ResolversParentTypes['book_series_min_fields'],
-> = {
+export type Book_Series_Min_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['book_series_min_fields'] = ResolversParentTypes['book_series_min_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   details?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -22324,11 +22718,7 @@ export type Book_Series_Min_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Book_Series_Stddev_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['book_series_stddev_fields'] = ResolversParentTypes['book_series_stddev_fields'],
-> = {
+export type Book_Series_Stddev_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['book_series_stddev_fields'] = ResolversParentTypes['book_series_stddev_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   position?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -22336,11 +22726,7 @@ export type Book_Series_Stddev_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Book_Series_Stddev_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['book_series_stddev_pop_fields'] = ResolversParentTypes['book_series_stddev_pop_fields'],
-> = {
+export type Book_Series_Stddev_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['book_series_stddev_pop_fields'] = ResolversParentTypes['book_series_stddev_pop_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   position?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -22348,11 +22734,7 @@ export type Book_Series_Stddev_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Book_Series_Stddev_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['book_series_stddev_samp_fields'] = ResolversParentTypes['book_series_stddev_samp_fields'],
-> = {
+export type Book_Series_Stddev_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['book_series_stddev_samp_fields'] = ResolversParentTypes['book_series_stddev_samp_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   position?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -22360,11 +22742,7 @@ export type Book_Series_Stddev_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Book_Series_Sum_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['book_series_sum_fields'] = ResolversParentTypes['book_series_sum_fields'],
-> = {
+export type Book_Series_Sum_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['book_series_sum_fields'] = ResolversParentTypes['book_series_sum_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
   position?: Resolver<Maybe<ResolversTypes['float8']>, ParentType, ContextType>;
@@ -22372,11 +22750,7 @@ export type Book_Series_Sum_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Book_Series_Var_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['book_series_var_pop_fields'] = ResolversParentTypes['book_series_var_pop_fields'],
-> = {
+export type Book_Series_Var_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['book_series_var_pop_fields'] = ResolversParentTypes['book_series_var_pop_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   position?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -22384,11 +22758,7 @@ export type Book_Series_Var_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Book_Series_Var_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['book_series_var_samp_fields'] = ResolversParentTypes['book_series_var_samp_fields'],
-> = {
+export type Book_Series_Var_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['book_series_var_samp_fields'] = ResolversParentTypes['book_series_var_samp_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   position?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -22396,11 +22766,7 @@ export type Book_Series_Var_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Book_Series_Variance_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['book_series_variance_fields'] = ResolversParentTypes['book_series_variance_fields'],
-> = {
+export type Book_Series_Variance_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['book_series_variance_fields'] = ResolversParentTypes['book_series_variance_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   position?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -22408,31 +22774,15 @@ export type Book_Series_Variance_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Book_StatusesResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['book_statuses'] = ResolversParentTypes['book_statuses'],
-> = {
-  books?: Resolver<
-    Array<ResolversTypes['books']>,
-    ParentType,
-    ContextType,
-    Partial<Book_StatusesBooksArgs>
-  >;
-  books_aggregate?: Resolver<
-    ResolversTypes['books_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<Book_StatusesBooks_AggregateArgs>
-  >;
+export type Book_StatusesResolvers<ContextType = any, ParentType extends ResolversParentTypes['book_statuses'] = ResolversParentTypes['book_statuses']> = {
+  books?: Resolver<Array<ResolversTypes['books']>, ParentType, ContextType, Partial<Book_StatusesBooksArgs>>;
+  books_aggregate?: Resolver<ResolversTypes['books_aggregate'], ParentType, ContextType, Partial<Book_StatusesBooks_AggregateArgs>>;
   id?: Resolver<ResolversTypes['smallint'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type BooklesResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['bookles'] = ResolversParentTypes['bookles'],
-> = {
+export type BooklesResolvers<ContextType = any, ParentType extends ResolversParentTypes['bookles'] = ResolversParentTypes['bookles']> = {
   book?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType>;
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
@@ -22441,98 +22791,31 @@ export type BooklesResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type BooksResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['books'] = ResolversParentTypes['books'],
-> = {
+export type BooksResolvers<ContextType = any, ParentType extends ResolversParentTypes['books'] = ResolversParentTypes['books']> = {
   activities_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  alternative_titles?: Resolver<
-    ResolversTypes['json'],
-    ParentType,
-    ContextType,
-    Partial<BooksAlternative_TitlesArgs>
-  >;
+  alternative_titles?: Resolver<ResolversTypes['json'], ParentType, ContextType, Partial<BooksAlternative_TitlesArgs>>;
   audio_seconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   book_category_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  book_characters?: Resolver<
-    Array<ResolversTypes['book_characters']>,
-    ParentType,
-    ContextType,
-    Partial<BooksBook_CharactersArgs>
-  >;
-  book_mappings?: Resolver<
-    Array<ResolversTypes['book_mappings']>,
-    ParentType,
-    ContextType,
-    Partial<BooksBook_MappingsArgs>
-  >;
-  book_series?: Resolver<
-    Array<ResolversTypes['book_series']>,
-    ParentType,
-    ContextType,
-    Partial<BooksBook_SeriesArgs>
-  >;
-  book_series_aggregate?: Resolver<
-    ResolversTypes['book_series_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<BooksBook_Series_AggregateArgs>
-  >;
+  book_characters?: Resolver<Array<ResolversTypes['book_characters']>, ParentType, ContextType, Partial<BooksBook_CharactersArgs>>;
+  book_mappings?: Resolver<Array<ResolversTypes['book_mappings']>, ParentType, ContextType, Partial<BooksBook_MappingsArgs>>;
+  book_series?: Resolver<Array<ResolversTypes['book_series']>, ParentType, ContextType, Partial<BooksBook_SeriesArgs>>;
+  book_series_aggregate?: Resolver<ResolversTypes['book_series_aggregate'], ParentType, ContextType, Partial<BooksBook_Series_AggregateArgs>>;
   book_status?: Resolver<ResolversTypes['book_statuses'], ParentType, ContextType>;
   book_status_id?: Resolver<ResolversTypes['smallint'], ParentType, ContextType>;
-  cached_contributors?: Resolver<
-    ResolversTypes['json'],
-    ParentType,
-    ContextType,
-    Partial<BooksCached_ContributorsArgs>
-  >;
-  cached_featured_series?: Resolver<
-    Maybe<ResolversTypes['jsonb']>,
-    ParentType,
-    ContextType,
-    Partial<BooksCached_Featured_SeriesArgs>
-  >;
-  cached_header_image?: Resolver<
-    ResolversTypes['jsonb'],
-    ParentType,
-    ContextType,
-    Partial<BooksCached_Header_ImageArgs>
-  >;
-  cached_image?: Resolver<
-    ResolversTypes['jsonb'],
-    ParentType,
-    ContextType,
-    Partial<BooksCached_ImageArgs>
-  >;
-  cached_tags?: Resolver<
-    ResolversTypes['json'],
-    ParentType,
-    ContextType,
-    Partial<BooksCached_TagsArgs>
-  >;
+  cached_contributors?: Resolver<ResolversTypes['json'], ParentType, ContextType, Partial<BooksCached_ContributorsArgs>>;
+  cached_featured_series?: Resolver<Maybe<ResolversTypes['jsonb']>, ParentType, ContextType, Partial<BooksCached_Featured_SeriesArgs>>;
+  cached_header_image?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType, Partial<BooksCached_Header_ImageArgs>>;
+  cached_image?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType, Partial<BooksCached_ImageArgs>>;
+  cached_tags?: Resolver<ResolversTypes['json'], ParentType, ContextType, Partial<BooksCached_TagsArgs>>;
   canonical?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType>;
   canonical_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  collection_import_results?: Resolver<
-    Array<ResolversTypes['collection_import_results']>,
-    ParentType,
-    ContextType,
-    Partial<BooksCollection_Import_ResultsArgs>
-  >;
+  collection_import_results?: Resolver<Array<ResolversTypes['collection_import_results']>, ParentType, ContextType, Partial<BooksCollection_Import_ResultsArgs>>;
   compilation?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  contributions?: Resolver<
-    Array<ResolversTypes['contributions']>,
-    ParentType,
-    ContextType,
-    Partial<BooksContributionsArgs>
-  >;
-  contributions_aggregate?: Resolver<
-    ResolversTypes['contributions_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<BooksContributions_AggregateArgs>
-  >;
+  contributions?: Resolver<Array<ResolversTypes['contributions']>, ParentType, ContextType, Partial<BooksContributionsArgs>>;
+  contributions_aggregate?: Resolver<ResolversTypes['contributions_aggregate'], ParentType, ContextType, Partial<BooksContributions_AggregateArgs>>;
   created_at?: Resolver<ResolversTypes['timestamp'], ParentType, ContextType>;
   created_by_user_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  curation_status?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   default_audio_edition?: Resolver<Maybe<ResolversTypes['editions']>, ParentType, ContextType>;
   default_audio_edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   default_cover_edition?: Resolver<Maybe<ResolversTypes['editions']>, ParentType, ContextType>;
@@ -22542,25 +22825,7 @@ export type BooksResolvers<
   default_physical_edition?: Resolver<Maybe<ResolversTypes['editions']>, ParentType, ContextType>;
   default_physical_edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  dto?: Resolver<Maybe<ResolversTypes['json']>, ParentType, ContextType, Partial<BooksDtoArgs>>;
-  dto_combined?: Resolver<
-    Maybe<ResolversTypes['json']>,
-    ParentType,
-    ContextType,
-    Partial<BooksDto_CombinedArgs>
-  >;
-  dto_external?: Resolver<
-    Maybe<ResolversTypes['json']>,
-    ParentType,
-    ContextType,
-    Partial<BooksDto_ExternalArgs>
-  >;
-  editions?: Resolver<
-    Array<ResolversTypes['editions']>,
-    ParentType,
-    ContextType,
-    Partial<BooksEditionsArgs>
-  >;
+  editions?: Resolver<Array<ResolversTypes['editions']>, ParentType, ContextType, Partial<BooksEditionsArgs>>;
   editions_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   featured_book_series?: Resolver<Maybe<ResolversTypes['book_series']>, ParentType, ContextType>;
   featured_book_series_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -22569,139 +22834,55 @@ export type BooksResolvers<
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   image?: Resolver<Maybe<ResolversTypes['images']>, ParentType, ContextType>;
   image_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  images?: Resolver<
-    Array<ResolversTypes['images']>,
-    ParentType,
-    ContextType,
-    Partial<BooksImagesArgs>
-  >;
+  images?: Resolver<Array<ResolversTypes['images']>, ParentType, ContextType, Partial<BooksImagesArgs>>;
   import_platform_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   journals_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   links?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType, Partial<BooksLinksArgs>>;
-  list_books?: Resolver<
-    Array<ResolversTypes['list_books']>,
-    ParentType,
-    ContextType,
-    Partial<BooksList_BooksArgs>
-  >;
-  list_books_aggregate?: Resolver<
-    ResolversTypes['list_books_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<BooksList_Books_AggregateArgs>
-  >;
+  list_books?: Resolver<Array<ResolversTypes['list_books']>, ParentType, ContextType, Partial<BooksList_BooksArgs>>;
+  list_books_aggregate?: Resolver<ResolversTypes['list_books_aggregate'], ParentType, ContextType, Partial<BooksList_Books_AggregateArgs>>;
   lists_count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   literary_type_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   pages?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  prompt_answers?: Resolver<
-    Array<ResolversTypes['prompt_answers']>,
-    ParentType,
-    ContextType,
-    Partial<BooksPrompt_AnswersArgs>
-  >;
-  prompt_answers_aggregate?: Resolver<
-    ResolversTypes['prompt_answers_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<BooksPrompt_Answers_AggregateArgs>
-  >;
-  prompt_summaries?: Resolver<
-    Array<ResolversTypes['prompt_books_summary']>,
-    ParentType,
-    ContextType,
-    Partial<BooksPrompt_SummariesArgs>
-  >;
+  prompt_answers?: Resolver<Array<ResolversTypes['prompt_answers']>, ParentType, ContextType, Partial<BooksPrompt_AnswersArgs>>;
+  prompt_answers_aggregate?: Resolver<ResolversTypes['prompt_answers_aggregate'], ParentType, ContextType, Partial<BooksPrompt_Answers_AggregateArgs>>;
+  prompt_summaries?: Resolver<Array<ResolversTypes['prompt_books_summary']>, ParentType, ContextType, Partial<BooksPrompt_SummariesArgs>>;
   prompts_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   rating?: Resolver<Maybe<ResolversTypes['numeric']>, ParentType, ContextType>;
   ratings_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  ratings_distribution?: Resolver<
-    ResolversTypes['jsonb'],
-    ParentType,
-    ContextType,
-    Partial<BooksRatings_DistributionArgs>
-  >;
-  recommendations?: Resolver<
-    Array<ResolversTypes['recommendations']>,
-    ParentType,
-    ContextType,
-    Partial<BooksRecommendationsArgs>
-  >;
+  ratings_distribution?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType, Partial<BooksRatings_DistributionArgs>>;
   release_date?: Resolver<Maybe<ResolversTypes['date']>, ParentType, ContextType>;
   release_year?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   reviews_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   state?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   subtitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  taggable_counts?: Resolver<
-    Array<ResolversTypes['taggable_counts']>,
-    ParentType,
-    ContextType,
-    Partial<BooksTaggable_CountsArgs>
-  >;
-  taggings?: Resolver<
-    Array<ResolversTypes['taggings']>,
-    ParentType,
-    ContextType,
-    Partial<BooksTaggingsArgs>
-  >;
-  taggings_aggregate?: Resolver<
-    ResolversTypes['taggings_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<BooksTaggings_AggregateArgs>
-  >;
+  taggable_counts?: Resolver<Array<ResolversTypes['taggable_counts']>, ParentType, ContextType, Partial<BooksTaggable_CountsArgs>>;
+  taggings?: Resolver<Array<ResolversTypes['taggings']>, ParentType, ContextType, Partial<BooksTaggingsArgs>>;
+  taggings_aggregate?: Resolver<ResolversTypes['taggings_aggregate'], ParentType, ContextType, Partial<BooksTaggings_AggregateArgs>>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updated_at?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
-  user_added?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  user_books?: Resolver<
-    Array<ResolversTypes['user_books']>,
-    ParentType,
-    ContextType,
-    Partial<BooksUser_BooksArgs>
-  >;
-  user_books_aggregate?: Resolver<
-    ResolversTypes['user_books_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<BooksUser_Books_AggregateArgs>
-  >;
+  user_books?: Resolver<Array<ResolversTypes['user_books']>, ParentType, ContextType, Partial<BooksUser_BooksArgs>>;
+  user_books_aggregate?: Resolver<ResolversTypes['user_books_aggregate'], ParentType, ContextType, Partial<BooksUser_Books_AggregateArgs>>;
   users_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   users_read_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Books_AggregateResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['books_aggregate'] = ResolversParentTypes['books_aggregate'],
-> = {
+export type Books_AggregateResolvers<ContextType = any, ParentType extends ResolversParentTypes['books_aggregate'] = ResolversParentTypes['books_aggregate']> = {
   aggregate?: Resolver<Maybe<ResolversTypes['books_aggregate_fields']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['books']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Books_Aggregate_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['books_aggregate_fields'] = ResolversParentTypes['books_aggregate_fields'],
-> = {
+export type Books_Aggregate_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['books_aggregate_fields'] = ResolversParentTypes['books_aggregate_fields']> = {
   avg?: Resolver<Maybe<ResolversTypes['books_avg_fields']>, ParentType, ContextType>;
-  count?: Resolver<
-    ResolversTypes['Int'],
-    ParentType,
-    ContextType,
-    Partial<Books_Aggregate_FieldsCountArgs>
-  >;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<Books_Aggregate_FieldsCountArgs>>;
   max?: Resolver<Maybe<ResolversTypes['books_max_fields']>, ParentType, ContextType>;
   min?: Resolver<Maybe<ResolversTypes['books_min_fields']>, ParentType, ContextType>;
   stddev?: Resolver<Maybe<ResolversTypes['books_stddev_fields']>, ParentType, ContextType>;
   stddev_pop?: Resolver<Maybe<ResolversTypes['books_stddev_pop_fields']>, ParentType, ContextType>;
-  stddev_samp?: Resolver<
-    Maybe<ResolversTypes['books_stddev_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
+  stddev_samp?: Resolver<Maybe<ResolversTypes['books_stddev_samp_fields']>, ParentType, ContextType>;
   sum?: Resolver<Maybe<ResolversTypes['books_sum_fields']>, ParentType, ContextType>;
   var_pop?: Resolver<Maybe<ResolversTypes['books_var_pop_fields']>, ParentType, ContextType>;
   var_samp?: Resolver<Maybe<ResolversTypes['books_var_samp_fields']>, ParentType, ContextType>;
@@ -22709,17 +22890,14 @@ export type Books_Aggregate_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Books_Avg_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['books_avg_fields'] = ResolversParentTypes['books_avg_fields'],
-> = {
+export type Books_Avg_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['books_avg_fields'] = ResolversParentTypes['books_avg_fields']> = {
   activities_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   audio_seconds?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   book_category_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   book_status_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   canonical_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   created_by_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  curation_status?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_audio_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_cover_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_ebook_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -22744,11 +22922,7 @@ export type Books_Avg_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Books_Max_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['books_max_fields'] = ResolversParentTypes['books_max_fields'],
-> = {
+export type Books_Max_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['books_max_fields'] = ResolversParentTypes['books_max_fields']> = {
   activities_count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   audio_seconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   book_category_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -22756,6 +22930,7 @@ export type Books_Max_FieldsResolvers<
   canonical_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   created_by_user_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  curation_status?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   default_audio_edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   default_cover_edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   default_ebook_edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -22788,11 +22963,7 @@ export type Books_Max_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Books_Min_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['books_min_fields'] = ResolversParentTypes['books_min_fields'],
-> = {
+export type Books_Min_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['books_min_fields'] = ResolversParentTypes['books_min_fields']> = {
   activities_count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   audio_seconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   book_category_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -22800,6 +22971,7 @@ export type Books_Min_FieldsResolvers<
   canonical_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   created_by_user_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  curation_status?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   default_audio_edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   default_cover_edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   default_ebook_edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -22832,17 +23004,14 @@ export type Books_Min_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Books_Stddev_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['books_stddev_fields'] = ResolversParentTypes['books_stddev_fields'],
-> = {
+export type Books_Stddev_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['books_stddev_fields'] = ResolversParentTypes['books_stddev_fields']> = {
   activities_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   audio_seconds?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   book_category_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   book_status_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   canonical_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   created_by_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  curation_status?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_audio_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_cover_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_ebook_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -22867,17 +23036,14 @@ export type Books_Stddev_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Books_Stddev_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['books_stddev_pop_fields'] = ResolversParentTypes['books_stddev_pop_fields'],
-> = {
+export type Books_Stddev_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['books_stddev_pop_fields'] = ResolversParentTypes['books_stddev_pop_fields']> = {
   activities_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   audio_seconds?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   book_category_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   book_status_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   canonical_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   created_by_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  curation_status?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_audio_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_cover_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_ebook_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -22902,17 +23068,14 @@ export type Books_Stddev_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Books_Stddev_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['books_stddev_samp_fields'] = ResolversParentTypes['books_stddev_samp_fields'],
-> = {
+export type Books_Stddev_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['books_stddev_samp_fields'] = ResolversParentTypes['books_stddev_samp_fields']> = {
   activities_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   audio_seconds?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   book_category_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   book_status_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   canonical_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   created_by_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  curation_status?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_audio_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_cover_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_ebook_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -22937,17 +23100,14 @@ export type Books_Stddev_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Books_Sum_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['books_sum_fields'] = ResolversParentTypes['books_sum_fields'],
-> = {
+export type Books_Sum_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['books_sum_fields'] = ResolversParentTypes['books_sum_fields']> = {
   activities_count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   audio_seconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   book_category_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   book_status_id?: Resolver<Maybe<ResolversTypes['smallint']>, ParentType, ContextType>;
   canonical_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   created_by_user_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  curation_status?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   default_audio_edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   default_cover_edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   default_ebook_edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -22972,17 +23132,14 @@ export type Books_Sum_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Books_Var_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['books_var_pop_fields'] = ResolversParentTypes['books_var_pop_fields'],
-> = {
+export type Books_Var_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['books_var_pop_fields'] = ResolversParentTypes['books_var_pop_fields']> = {
   activities_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   audio_seconds?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   book_category_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   book_status_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   canonical_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   created_by_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  curation_status?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_audio_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_cover_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_ebook_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -23007,17 +23164,14 @@ export type Books_Var_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Books_Var_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['books_var_samp_fields'] = ResolversParentTypes['books_var_samp_fields'],
-> = {
+export type Books_Var_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['books_var_samp_fields'] = ResolversParentTypes['books_var_samp_fields']> = {
   activities_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   audio_seconds?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   book_category_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   book_status_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   canonical_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   created_by_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  curation_status?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_audio_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_cover_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_ebook_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -23042,17 +23196,14 @@ export type Books_Var_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Books_Variance_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['books_variance_fields'] = ResolversParentTypes['books_variance_fields'],
-> = {
+export type Books_Variance_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['books_variance_fields'] = ResolversParentTypes['books_variance_fields']> = {
   activities_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   audio_seconds?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   book_category_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   book_status_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   canonical_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   created_by_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  curation_status?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_audio_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_cover_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   default_ebook_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -23077,39 +23228,16 @@ export type Books_Variance_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type CharactersResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['characters'] = ResolversParentTypes['characters'],
-> = {
+export type CharactersResolvers<ContextType = any, ParentType extends ResolversParentTypes['characters'] = ResolversParentTypes['characters']> = {
   biography?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  book_characters?: Resolver<
-    Array<ResolversTypes['book_characters']>,
-    ParentType,
-    ContextType,
-    Partial<CharactersBook_CharactersArgs>
-  >;
+  book_characters?: Resolver<Array<ResolversTypes['book_characters']>, ParentType, ContextType, Partial<CharactersBook_CharactersArgs>>;
   books_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  cached_tags?: Resolver<
-    ResolversTypes['json'],
-    ParentType,
-    ContextType,
-    Partial<CharactersCached_TagsArgs>
-  >;
+  cached_tags?: Resolver<ResolversTypes['json'], ParentType, ContextType, Partial<CharactersCached_TagsArgs>>;
   canonical?: Resolver<Maybe<ResolversTypes['characters']>, ParentType, ContextType>;
   canonical_books_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   canonical_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  contributions?: Resolver<
-    Array<ResolversTypes['contributions']>,
-    ParentType,
-    ContextType,
-    Partial<CharactersContributionsArgs>
-  >;
-  contributions_aggregate?: Resolver<
-    ResolversTypes['contributions_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<CharactersContributions_AggregateArgs>
-  >;
+  contributions?: Resolver<Array<ResolversTypes['contributions']>, ParentType, ContextType, Partial<CharactersContributionsArgs>>;
+  contributions_aggregate?: Resolver<ResolversTypes['contributions_aggregate'], ParentType, ContextType, Partial<CharactersContributions_AggregateArgs>>;
   created_at?: Resolver<ResolversTypes['timestamp'], ParentType, ContextType>;
   gender_id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
   has_disability?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
@@ -23132,23 +23260,14 @@ export interface CitextScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
   name: 'citext';
 }
 
-export type Collection_Import_ResultsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['collection_import_results'] = ResolversParentTypes['collection_import_results'],
-> = {
+export type Collection_Import_ResultsResolvers<ContextType = any, ParentType extends ResolversParentTypes['collection_import_results'] = ResolversParentTypes['collection_import_results']> = {
   author?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   book?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType>;
   book_found_method?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   collection_import?: Resolver<ResolversTypes['collection_imports'], ParentType, ContextType>;
   collection_import_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  contents?: Resolver<
-    ResolversTypes['jsonb'],
-    ParentType,
-    ContextType,
-    Partial<Collection_Import_ResultsContentsArgs>
-  >;
+  contents?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType, Partial<Collection_Import_ResultsContentsArgs>>;
   external_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   report?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -23157,27 +23276,14 @@ export type Collection_Import_ResultsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Collection_Import_Results_Mutation_ResponseResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['collection_import_results_mutation_response'] = ResolversParentTypes['collection_import_results_mutation_response'],
-> = {
+export type Collection_Import_Results_Mutation_ResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['collection_import_results_mutation_response'] = ResolversParentTypes['collection_import_results_mutation_response']> = {
   affected_rows?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   returning?: Resolver<Array<ResolversTypes['collection_import_results']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Collection_ImportsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['collection_imports'] = ResolversParentTypes['collection_imports'],
-> = {
-  collection_import_results?: Resolver<
-    Array<ResolversTypes['collection_import_results']>,
-    ParentType,
-    ContextType,
-    Partial<Collection_ImportsCollection_Import_ResultsArgs>
-  >;
+export type Collection_ImportsResolvers<ContextType = any, ParentType extends ResolversParentTypes['collection_imports'] = ResolversParentTypes['collection_imports']> = {
+  collection_import_results?: Resolver<Array<ResolversTypes['collection_import_results']>, ParentType, ContextType, Partial<Collection_ImportsCollection_Import_ResultsArgs>>;
   completed_at?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
   contents_key?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
@@ -23202,10 +23308,7 @@ export type Collection_ImportsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ContributionsResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['contributions'] = ResolversParentTypes['contributions'],
-> = {
+export type ContributionsResolvers<ContextType = any, ParentType extends ResolversParentTypes['contributions'] = ResolversParentTypes['contributions']> = {
   author?: Resolver<Maybe<ResolversTypes['authors']>, ParentType, ContextType>;
   author_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   book?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType>;
@@ -23218,80 +23321,35 @@ export type ContributionsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Contributions_AggregateResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['contributions_aggregate'] = ResolversParentTypes['contributions_aggregate'],
-> = {
-  aggregate?: Resolver<
-    Maybe<ResolversTypes['contributions_aggregate_fields']>,
-    ParentType,
-    ContextType
-  >;
+export type Contributions_AggregateResolvers<ContextType = any, ParentType extends ResolversParentTypes['contributions_aggregate'] = ResolversParentTypes['contributions_aggregate']> = {
+  aggregate?: Resolver<Maybe<ResolversTypes['contributions_aggregate_fields']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['contributions']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Contributions_Aggregate_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['contributions_aggregate_fields'] = ResolversParentTypes['contributions_aggregate_fields'],
-> = {
+export type Contributions_Aggregate_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['contributions_aggregate_fields'] = ResolversParentTypes['contributions_aggregate_fields']> = {
   avg?: Resolver<Maybe<ResolversTypes['contributions_avg_fields']>, ParentType, ContextType>;
-  count?: Resolver<
-    ResolversTypes['Int'],
-    ParentType,
-    ContextType,
-    Partial<Contributions_Aggregate_FieldsCountArgs>
-  >;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<Contributions_Aggregate_FieldsCountArgs>>;
   max?: Resolver<Maybe<ResolversTypes['contributions_max_fields']>, ParentType, ContextType>;
   min?: Resolver<Maybe<ResolversTypes['contributions_min_fields']>, ParentType, ContextType>;
   stddev?: Resolver<Maybe<ResolversTypes['contributions_stddev_fields']>, ParentType, ContextType>;
-  stddev_pop?: Resolver<
-    Maybe<ResolversTypes['contributions_stddev_pop_fields']>,
-    ParentType,
-    ContextType
-  >;
-  stddev_samp?: Resolver<
-    Maybe<ResolversTypes['contributions_stddev_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
+  stddev_pop?: Resolver<Maybe<ResolversTypes['contributions_stddev_pop_fields']>, ParentType, ContextType>;
+  stddev_samp?: Resolver<Maybe<ResolversTypes['contributions_stddev_samp_fields']>, ParentType, ContextType>;
   sum?: Resolver<Maybe<ResolversTypes['contributions_sum_fields']>, ParentType, ContextType>;
-  var_pop?: Resolver<
-    Maybe<ResolversTypes['contributions_var_pop_fields']>,
-    ParentType,
-    ContextType
-  >;
-  var_samp?: Resolver<
-    Maybe<ResolversTypes['contributions_var_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
-  variance?: Resolver<
-    Maybe<ResolversTypes['contributions_variance_fields']>,
-    ParentType,
-    ContextType
-  >;
+  var_pop?: Resolver<Maybe<ResolversTypes['contributions_var_pop_fields']>, ParentType, ContextType>;
+  var_samp?: Resolver<Maybe<ResolversTypes['contributions_var_samp_fields']>, ParentType, ContextType>;
+  variance?: Resolver<Maybe<ResolversTypes['contributions_variance_fields']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Contributions_Avg_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['contributions_avg_fields'] = ResolversParentTypes['contributions_avg_fields'],
-> = {
+export type Contributions_Avg_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['contributions_avg_fields'] = ResolversParentTypes['contributions_avg_fields']> = {
   author_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   contributable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Contributions_Max_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['contributions_max_fields'] = ResolversParentTypes['contributions_max_fields'],
-> = {
+export type Contributions_Max_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['contributions_max_fields'] = ResolversParentTypes['contributions_max_fields']> = {
   author_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   contributable_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   contributable_type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -23302,11 +23360,7 @@ export type Contributions_Max_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Contributions_Min_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['contributions_min_fields'] = ResolversParentTypes['contributions_min_fields'],
-> = {
+export type Contributions_Min_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['contributions_min_fields'] = ResolversParentTypes['contributions_min_fields']> = {
   author_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   contributable_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   contributable_type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -23317,96 +23371,60 @@ export type Contributions_Min_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Contributions_Stddev_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['contributions_stddev_fields'] = ResolversParentTypes['contributions_stddev_fields'],
-> = {
+export type Contributions_Stddev_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['contributions_stddev_fields'] = ResolversParentTypes['contributions_stddev_fields']> = {
   author_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   contributable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Contributions_Stddev_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['contributions_stddev_pop_fields'] = ResolversParentTypes['contributions_stddev_pop_fields'],
-> = {
+export type Contributions_Stddev_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['contributions_stddev_pop_fields'] = ResolversParentTypes['contributions_stddev_pop_fields']> = {
   author_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   contributable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Contributions_Stddev_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['contributions_stddev_samp_fields'] = ResolversParentTypes['contributions_stddev_samp_fields'],
-> = {
+export type Contributions_Stddev_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['contributions_stddev_samp_fields'] = ResolversParentTypes['contributions_stddev_samp_fields']> = {
   author_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   contributable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Contributions_Sum_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['contributions_sum_fields'] = ResolversParentTypes['contributions_sum_fields'],
-> = {
+export type Contributions_Sum_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['contributions_sum_fields'] = ResolversParentTypes['contributions_sum_fields']> = {
   author_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   contributable_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Contributions_Var_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['contributions_var_pop_fields'] = ResolversParentTypes['contributions_var_pop_fields'],
-> = {
+export type Contributions_Var_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['contributions_var_pop_fields'] = ResolversParentTypes['contributions_var_pop_fields']> = {
   author_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   contributable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Contributions_Var_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['contributions_var_samp_fields'] = ResolversParentTypes['contributions_var_samp_fields'],
-> = {
+export type Contributions_Var_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['contributions_var_samp_fields'] = ResolversParentTypes['contributions_var_samp_fields']> = {
   author_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   contributable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Contributions_Variance_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['contributions_variance_fields'] = ResolversParentTypes['contributions_variance_fields'],
-> = {
+export type Contributions_Variance_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['contributions_variance_fields'] = ResolversParentTypes['contributions_variance_fields']> = {
   author_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   contributable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type CountriesResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['countries'] = ResolversParentTypes['countries'],
-> = {
+export type CountriesResolvers<ContextType = any, ParentType extends ResolversParentTypes['countries'] = ResolversParentTypes['countries']> = {
   code2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   code3?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   created_at?: Resolver<ResolversTypes['timestamp'], ParentType, ContextType>;
-  editions?: Resolver<
-    Array<ResolversTypes['editions']>,
-    ParentType,
-    ContextType,
-    Partial<CountriesEditionsArgs>
-  >;
+  editions?: Resolver<Array<ResolversTypes['editions']>, ParentType, ContextType, Partial<CountriesEditionsArgs>>;
   id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
   intermediate_region?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   intermediate_region_code?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -23425,108 +23443,37 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
   name: 'date';
 }
 
-export type EditionsResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['editions'] = ResolversParentTypes['editions'],
-> = {
-  alternative_titles?: Resolver<
-    ResolversTypes['json'],
-    ParentType,
-    ContextType,
-    Partial<EditionsAlternative_TitlesArgs>
-  >;
+export type EditionsResolvers<ContextType = any, ParentType extends ResolversParentTypes['editions'] = ResolversParentTypes['editions']> = {
+  alternative_titles?: Resolver<ResolversTypes['json'], ParentType, ContextType, Partial<EditionsAlternative_TitlesArgs>>;
   asin?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   audio_seconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   book?: Resolver<ResolversTypes['books'], ParentType, ContextType>;
   book_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  book_mappings?: Resolver<
-    Array<ResolversTypes['book_mappings']>,
-    ParentType,
-    ContextType,
-    Partial<EditionsBook_MappingsArgs>
-  >;
-  cached_contributors?: Resolver<
-    ResolversTypes['json'],
-    ParentType,
-    ContextType,
-    Partial<EditionsCached_ContributorsArgs>
-  >;
-  cached_image?: Resolver<
-    ResolversTypes['jsonb'],
-    ParentType,
-    ContextType,
-    Partial<EditionsCached_ImageArgs>
-  >;
-  cached_tags?: Resolver<
-    ResolversTypes['json'],
-    ParentType,
-    ContextType,
-    Partial<EditionsCached_TagsArgs>
-  >;
+  book_mappings?: Resolver<Array<ResolversTypes['book_mappings']>, ParentType, ContextType, Partial<EditionsBook_MappingsArgs>>;
+  cached_contributors?: Resolver<ResolversTypes['json'], ParentType, ContextType, Partial<EditionsCached_ContributorsArgs>>;
+  cached_image?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType, Partial<EditionsCached_ImageArgs>>;
+  cached_tags?: Resolver<ResolversTypes['json'], ParentType, ContextType, Partial<EditionsCached_TagsArgs>>;
+  canonical_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   compilation?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  contributions?: Resolver<
-    Array<ResolversTypes['contributions']>,
-    ParentType,
-    ContextType,
-    Partial<EditionsContributionsArgs>
-  >;
-  contributions_aggregate?: Resolver<
-    ResolversTypes['contributions_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<EditionsContributions_AggregateArgs>
-  >;
+  contributions?: Resolver<Array<ResolversTypes['contributions']>, ParentType, ContextType, Partial<EditionsContributionsArgs>>;
+  contributions_aggregate?: Resolver<ResolversTypes['contributions_aggregate'], ParentType, ContextType, Partial<EditionsContributions_AggregateArgs>>;
   country?: Resolver<Maybe<ResolversTypes['countries']>, ParentType, ContextType>;
   country_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   created_at?: Resolver<ResolversTypes['timestamp'], ParentType, ContextType>;
   created_by_user_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  dto?: Resolver<ResolversTypes['json'], ParentType, ContextType, Partial<EditionsDtoArgs>>;
-  dto_combined?: Resolver<
-    ResolversTypes['json'],
-    ParentType,
-    ContextType,
-    Partial<EditionsDto_CombinedArgs>
-  >;
-  dto_external?: Resolver<
-    ResolversTypes['json'],
-    ParentType,
-    ContextType,
-    Partial<EditionsDto_ExternalArgs>
-  >;
+  curation_status?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   edition_format?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   edition_information?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  identifiers?: Resolver<
-    Maybe<ResolversTypes['jsonb']>,
-    ParentType,
-    ContextType,
-    Partial<EditionsIdentifiersArgs>
-  >;
   image?: Resolver<Maybe<ResolversTypes['images']>, ParentType, ContextType>;
   image_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  images?: Resolver<
-    Array<ResolversTypes['images']>,
-    ParentType,
-    ContextType,
-    Partial<EditionsImagesArgs>
-  >;
+  images?: Resolver<Array<ResolversTypes['images']>, ParentType, ContextType, Partial<EditionsImagesArgs>>;
   isbn_10?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   isbn_13?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   language?: Resolver<Maybe<ResolversTypes['languages']>, ParentType, ContextType>;
   language_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  list_books?: Resolver<
-    Array<ResolversTypes['list_books']>,
-    ParentType,
-    ContextType,
-    Partial<EditionsList_BooksArgs>
-  >;
-  list_books_aggregate?: Resolver<
-    ResolversTypes['list_books_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<EditionsList_Books_AggregateArgs>
-  >;
+  list_books?: Resolver<Array<ResolversTypes['list_books']>, ParentType, ContextType, Partial<EditionsList_BooksArgs>>;
+  list_books_aggregate?: Resolver<ResolversTypes['list_books_aggregate'], ParentType, ContextType, Partial<EditionsList_Books_AggregateArgs>>;
   lists_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   normalized_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
@@ -23548,24 +23495,15 @@ export type EditionsResolvers<
   subtitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updated_at?: Resolver<ResolversTypes['timestamp'], ParentType, ContextType>;
-  user_added?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   users_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   users_read_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Flag_StatusesResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['flag_statuses'] = ResolversParentTypes['flag_statuses'],
-> = {
+export type Flag_StatusesResolvers<ContextType = any, ParentType extends ResolversParentTypes['flag_statuses'] = ResolversParentTypes['flag_statuses']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user_flags?: Resolver<
-    Array<ResolversTypes['user_flags']>,
-    ParentType,
-    ContextType,
-    Partial<Flag_StatusesUser_FlagsArgs>
-  >;
+  user_flags?: Resolver<Array<ResolversTypes['user_flags']>, ParentType, ContextType, Partial<Flag_StatusesUser_FlagsArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -23573,11 +23511,7 @@ export interface Float8ScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
   name: 'float8';
 }
 
-export type Followed_ListsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['followed_lists'] = ResolversParentTypes['followed_lists'],
-> = {
+export type Followed_ListsResolvers<ContextType = any, ParentType extends ResolversParentTypes['followed_lists'] = ResolversParentTypes['followed_lists']> = {
   created_at?: Resolver<ResolversTypes['timestamptz'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   list?: Resolver<ResolversTypes['lists'], ParentType, ContextType>;
@@ -23587,11 +23521,7 @@ export type Followed_ListsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Followed_PromptsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['followed_prompts'] = ResolversParentTypes['followed_prompts'],
-> = {
+export type Followed_PromptsResolvers<ContextType = any, ParentType extends ResolversParentTypes['followed_prompts'] = ResolversParentTypes['followed_prompts']> = {
   created_at?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   order?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -23602,21 +23532,13 @@ export type Followed_PromptsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Followed_Prompts_Mutation_ResponseResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['followed_prompts_mutation_response'] = ResolversParentTypes['followed_prompts_mutation_response'],
-> = {
+export type Followed_Prompts_Mutation_ResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['followed_prompts_mutation_response'] = ResolversParentTypes['followed_prompts_mutation_response']> = {
   affected_rows?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   returning?: Resolver<Array<ResolversTypes['followed_prompts']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Followed_User_BooksResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['followed_user_books'] = ResolversParentTypes['followed_user_books'],
-> = {
+export type Followed_User_BooksResolvers<ContextType = any, ParentType extends ResolversParentTypes['followed_user_books'] = ResolversParentTypes['followed_user_books']> = {
   book?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType>;
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   follower_user?: Resolver<Maybe<ResolversTypes['users']>, ParentType, ContextType>;
@@ -23628,73 +23550,28 @@ export type Followed_User_BooksResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Followed_User_Books_AggregateResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['followed_user_books_aggregate'] = ResolversParentTypes['followed_user_books_aggregate'],
-> = {
-  aggregate?: Resolver<
-    Maybe<ResolversTypes['followed_user_books_aggregate_fields']>,
-    ParentType,
-    ContextType
-  >;
+export type Followed_User_Books_AggregateResolvers<ContextType = any, ParentType extends ResolversParentTypes['followed_user_books_aggregate'] = ResolversParentTypes['followed_user_books_aggregate']> = {
+  aggregate?: Resolver<Maybe<ResolversTypes['followed_user_books_aggregate_fields']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['followed_user_books']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Followed_User_Books_Aggregate_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['followed_user_books_aggregate_fields'] = ResolversParentTypes['followed_user_books_aggregate_fields'],
-> = {
+export type Followed_User_Books_Aggregate_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['followed_user_books_aggregate_fields'] = ResolversParentTypes['followed_user_books_aggregate_fields']> = {
   avg?: Resolver<Maybe<ResolversTypes['followed_user_books_avg_fields']>, ParentType, ContextType>;
-  count?: Resolver<
-    ResolversTypes['Int'],
-    ParentType,
-    ContextType,
-    Partial<Followed_User_Books_Aggregate_FieldsCountArgs>
-  >;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<Followed_User_Books_Aggregate_FieldsCountArgs>>;
   max?: Resolver<Maybe<ResolversTypes['followed_user_books_max_fields']>, ParentType, ContextType>;
   min?: Resolver<Maybe<ResolversTypes['followed_user_books_min_fields']>, ParentType, ContextType>;
-  stddev?: Resolver<
-    Maybe<ResolversTypes['followed_user_books_stddev_fields']>,
-    ParentType,
-    ContextType
-  >;
-  stddev_pop?: Resolver<
-    Maybe<ResolversTypes['followed_user_books_stddev_pop_fields']>,
-    ParentType,
-    ContextType
-  >;
-  stddev_samp?: Resolver<
-    Maybe<ResolversTypes['followed_user_books_stddev_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
+  stddev?: Resolver<Maybe<ResolversTypes['followed_user_books_stddev_fields']>, ParentType, ContextType>;
+  stddev_pop?: Resolver<Maybe<ResolversTypes['followed_user_books_stddev_pop_fields']>, ParentType, ContextType>;
+  stddev_samp?: Resolver<Maybe<ResolversTypes['followed_user_books_stddev_samp_fields']>, ParentType, ContextType>;
   sum?: Resolver<Maybe<ResolversTypes['followed_user_books_sum_fields']>, ParentType, ContextType>;
-  var_pop?: Resolver<
-    Maybe<ResolversTypes['followed_user_books_var_pop_fields']>,
-    ParentType,
-    ContextType
-  >;
-  var_samp?: Resolver<
-    Maybe<ResolversTypes['followed_user_books_var_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
-  variance?: Resolver<
-    Maybe<ResolversTypes['followed_user_books_variance_fields']>,
-    ParentType,
-    ContextType
-  >;
+  var_pop?: Resolver<Maybe<ResolversTypes['followed_user_books_var_pop_fields']>, ParentType, ContextType>;
+  var_samp?: Resolver<Maybe<ResolversTypes['followed_user_books_var_samp_fields']>, ParentType, ContextType>;
+  variance?: Resolver<Maybe<ResolversTypes['followed_user_books_variance_fields']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Followed_User_Books_Avg_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['followed_user_books_avg_fields'] = ResolversParentTypes['followed_user_books_avg_fields'],
-> = {
+export type Followed_User_Books_Avg_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['followed_user_books_avg_fields'] = ResolversParentTypes['followed_user_books_avg_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   follower_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -23702,11 +23579,7 @@ export type Followed_User_Books_Avg_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Followed_User_Books_Max_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['followed_user_books_max_fields'] = ResolversParentTypes['followed_user_books_max_fields'],
-> = {
+export type Followed_User_Books_Max_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['followed_user_books_max_fields'] = ResolversParentTypes['followed_user_books_max_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   follower_user_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -23714,11 +23587,7 @@ export type Followed_User_Books_Max_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Followed_User_Books_Min_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['followed_user_books_min_fields'] = ResolversParentTypes['followed_user_books_min_fields'],
-> = {
+export type Followed_User_Books_Min_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['followed_user_books_min_fields'] = ResolversParentTypes['followed_user_books_min_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   follower_user_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -23726,11 +23595,7 @@ export type Followed_User_Books_Min_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Followed_User_Books_Stddev_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['followed_user_books_stddev_fields'] = ResolversParentTypes['followed_user_books_stddev_fields'],
-> = {
+export type Followed_User_Books_Stddev_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['followed_user_books_stddev_fields'] = ResolversParentTypes['followed_user_books_stddev_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   follower_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -23738,11 +23603,7 @@ export type Followed_User_Books_Stddev_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Followed_User_Books_Stddev_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['followed_user_books_stddev_pop_fields'] = ResolversParentTypes['followed_user_books_stddev_pop_fields'],
-> = {
+export type Followed_User_Books_Stddev_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['followed_user_books_stddev_pop_fields'] = ResolversParentTypes['followed_user_books_stddev_pop_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   follower_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -23750,11 +23611,7 @@ export type Followed_User_Books_Stddev_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Followed_User_Books_Stddev_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['followed_user_books_stddev_samp_fields'] = ResolversParentTypes['followed_user_books_stddev_samp_fields'],
-> = {
+export type Followed_User_Books_Stddev_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['followed_user_books_stddev_samp_fields'] = ResolversParentTypes['followed_user_books_stddev_samp_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   follower_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -23762,11 +23619,7 @@ export type Followed_User_Books_Stddev_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Followed_User_Books_Sum_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['followed_user_books_sum_fields'] = ResolversParentTypes['followed_user_books_sum_fields'],
-> = {
+export type Followed_User_Books_Sum_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['followed_user_books_sum_fields'] = ResolversParentTypes['followed_user_books_sum_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   follower_user_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -23774,11 +23627,7 @@ export type Followed_User_Books_Sum_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Followed_User_Books_Var_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['followed_user_books_var_pop_fields'] = ResolversParentTypes['followed_user_books_var_pop_fields'],
-> = {
+export type Followed_User_Books_Var_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['followed_user_books_var_pop_fields'] = ResolversParentTypes['followed_user_books_var_pop_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   follower_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -23786,11 +23635,7 @@ export type Followed_User_Books_Var_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Followed_User_Books_Var_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['followed_user_books_var_samp_fields'] = ResolversParentTypes['followed_user_books_var_samp_fields'],
-> = {
+export type Followed_User_Books_Var_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['followed_user_books_var_samp_fields'] = ResolversParentTypes['followed_user_books_var_samp_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   follower_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -23798,11 +23643,7 @@ export type Followed_User_Books_Var_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Followed_User_Books_Variance_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['followed_user_books_variance_fields'] = ResolversParentTypes['followed_user_books_variance_fields'],
-> = {
+export type Followed_User_Books_Variance_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['followed_user_books_variance_fields'] = ResolversParentTypes['followed_user_books_variance_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   follower_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -23810,11 +23651,7 @@ export type Followed_User_Books_Variance_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Followed_UsersResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['followed_users'] = ResolversParentTypes['followed_users'],
-> = {
+export type Followed_UsersResolvers<ContextType = any, ParentType extends ResolversParentTypes['followed_users'] = ResolversParentTypes['followed_users']> = {
   created_at?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
   followed_user?: Resolver<ResolversTypes['users'], ParentType, ContextType>;
   followed_user_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -23824,21 +23661,13 @@ export type Followed_UsersResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Followed_Users_Mutation_ResponseResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['followed_users_mutation_response'] = ResolversParentTypes['followed_users_mutation_response'],
-> = {
+export type Followed_Users_Mutation_ResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['followed_users_mutation_response'] = ResolversParentTypes['followed_users_mutation_response']> = {
   affected_rows?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   returning?: Resolver<Array<ResolversTypes['followed_users']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Following_User_BooksResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['following_user_books'] = ResolversParentTypes['following_user_books'],
-> = {
+export type Following_User_BooksResolvers<ContextType = any, ParentType extends ResolversParentTypes['following_user_books'] = ResolversParentTypes['following_user_books']> = {
   book?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType>;
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   followed_user_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -23850,73 +23679,28 @@ export type Following_User_BooksResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Following_User_Books_AggregateResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['following_user_books_aggregate'] = ResolversParentTypes['following_user_books_aggregate'],
-> = {
-  aggregate?: Resolver<
-    Maybe<ResolversTypes['following_user_books_aggregate_fields']>,
-    ParentType,
-    ContextType
-  >;
+export type Following_User_Books_AggregateResolvers<ContextType = any, ParentType extends ResolversParentTypes['following_user_books_aggregate'] = ResolversParentTypes['following_user_books_aggregate']> = {
+  aggregate?: Resolver<Maybe<ResolversTypes['following_user_books_aggregate_fields']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['following_user_books']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Following_User_Books_Aggregate_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['following_user_books_aggregate_fields'] = ResolversParentTypes['following_user_books_aggregate_fields'],
-> = {
+export type Following_User_Books_Aggregate_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['following_user_books_aggregate_fields'] = ResolversParentTypes['following_user_books_aggregate_fields']> = {
   avg?: Resolver<Maybe<ResolversTypes['following_user_books_avg_fields']>, ParentType, ContextType>;
-  count?: Resolver<
-    ResolversTypes['Int'],
-    ParentType,
-    ContextType,
-    Partial<Following_User_Books_Aggregate_FieldsCountArgs>
-  >;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<Following_User_Books_Aggregate_FieldsCountArgs>>;
   max?: Resolver<Maybe<ResolversTypes['following_user_books_max_fields']>, ParentType, ContextType>;
   min?: Resolver<Maybe<ResolversTypes['following_user_books_min_fields']>, ParentType, ContextType>;
-  stddev?: Resolver<
-    Maybe<ResolversTypes['following_user_books_stddev_fields']>,
-    ParentType,
-    ContextType
-  >;
-  stddev_pop?: Resolver<
-    Maybe<ResolversTypes['following_user_books_stddev_pop_fields']>,
-    ParentType,
-    ContextType
-  >;
-  stddev_samp?: Resolver<
-    Maybe<ResolversTypes['following_user_books_stddev_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
+  stddev?: Resolver<Maybe<ResolversTypes['following_user_books_stddev_fields']>, ParentType, ContextType>;
+  stddev_pop?: Resolver<Maybe<ResolversTypes['following_user_books_stddev_pop_fields']>, ParentType, ContextType>;
+  stddev_samp?: Resolver<Maybe<ResolversTypes['following_user_books_stddev_samp_fields']>, ParentType, ContextType>;
   sum?: Resolver<Maybe<ResolversTypes['following_user_books_sum_fields']>, ParentType, ContextType>;
-  var_pop?: Resolver<
-    Maybe<ResolversTypes['following_user_books_var_pop_fields']>,
-    ParentType,
-    ContextType
-  >;
-  var_samp?: Resolver<
-    Maybe<ResolversTypes['following_user_books_var_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
-  variance?: Resolver<
-    Maybe<ResolversTypes['following_user_books_variance_fields']>,
-    ParentType,
-    ContextType
-  >;
+  var_pop?: Resolver<Maybe<ResolversTypes['following_user_books_var_pop_fields']>, ParentType, ContextType>;
+  var_samp?: Resolver<Maybe<ResolversTypes['following_user_books_var_samp_fields']>, ParentType, ContextType>;
+  variance?: Resolver<Maybe<ResolversTypes['following_user_books_variance_fields']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Following_User_Books_Avg_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['following_user_books_avg_fields'] = ResolversParentTypes['following_user_books_avg_fields'],
-> = {
+export type Following_User_Books_Avg_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['following_user_books_avg_fields'] = ResolversParentTypes['following_user_books_avg_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   followed_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -23924,11 +23708,7 @@ export type Following_User_Books_Avg_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Following_User_Books_Max_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['following_user_books_max_fields'] = ResolversParentTypes['following_user_books_max_fields'],
-> = {
+export type Following_User_Books_Max_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['following_user_books_max_fields'] = ResolversParentTypes['following_user_books_max_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   followed_user_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -23936,11 +23716,7 @@ export type Following_User_Books_Max_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Following_User_Books_Min_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['following_user_books_min_fields'] = ResolversParentTypes['following_user_books_min_fields'],
-> = {
+export type Following_User_Books_Min_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['following_user_books_min_fields'] = ResolversParentTypes['following_user_books_min_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   followed_user_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -23948,11 +23724,7 @@ export type Following_User_Books_Min_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Following_User_Books_Stddev_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['following_user_books_stddev_fields'] = ResolversParentTypes['following_user_books_stddev_fields'],
-> = {
+export type Following_User_Books_Stddev_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['following_user_books_stddev_fields'] = ResolversParentTypes['following_user_books_stddev_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   followed_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -23960,11 +23732,7 @@ export type Following_User_Books_Stddev_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Following_User_Books_Stddev_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['following_user_books_stddev_pop_fields'] = ResolversParentTypes['following_user_books_stddev_pop_fields'],
-> = {
+export type Following_User_Books_Stddev_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['following_user_books_stddev_pop_fields'] = ResolversParentTypes['following_user_books_stddev_pop_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   followed_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -23972,11 +23740,7 @@ export type Following_User_Books_Stddev_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Following_User_Books_Stddev_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['following_user_books_stddev_samp_fields'] = ResolversParentTypes['following_user_books_stddev_samp_fields'],
-> = {
+export type Following_User_Books_Stddev_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['following_user_books_stddev_samp_fields'] = ResolversParentTypes['following_user_books_stddev_samp_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   followed_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -23984,11 +23748,7 @@ export type Following_User_Books_Stddev_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Following_User_Books_Sum_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['following_user_books_sum_fields'] = ResolversParentTypes['following_user_books_sum_fields'],
-> = {
+export type Following_User_Books_Sum_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['following_user_books_sum_fields'] = ResolversParentTypes['following_user_books_sum_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   followed_user_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -23996,11 +23756,7 @@ export type Following_User_Books_Sum_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Following_User_Books_Var_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['following_user_books_var_pop_fields'] = ResolversParentTypes['following_user_books_var_pop_fields'],
-> = {
+export type Following_User_Books_Var_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['following_user_books_var_pop_fields'] = ResolversParentTypes['following_user_books_var_pop_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   followed_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -24008,11 +23764,7 @@ export type Following_User_Books_Var_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Following_User_Books_Var_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['following_user_books_var_samp_fields'] = ResolversParentTypes['following_user_books_var_samp_fields'],
-> = {
+export type Following_User_Books_Var_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['following_user_books_var_samp_fields'] = ResolversParentTypes['following_user_books_var_samp_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   followed_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -24020,11 +23772,7 @@ export type Following_User_Books_Var_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Following_User_Books_Variance_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['following_user_books_variance_fields'] = ResolversParentTypes['following_user_books_variance_fields'],
-> = {
+export type Following_User_Books_Variance_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['following_user_books_variance_fields'] = ResolversParentTypes['following_user_books_variance_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   followed_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   user_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -24032,26 +23780,128 @@ export type Following_User_Books_Variance_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type GoalsResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['goals'] = ResolversParentTypes['goals'],
-> = {
+export type FollowsResolvers<ContextType = any, ParentType extends ResolversParentTypes['follows'] = ResolversParentTypes['follows']> = {
+  author?: Resolver<Maybe<ResolversTypes['authors']>, ParentType, ContextType>;
+  book?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType>;
+  character?: Resolver<Maybe<ResolversTypes['characters']>, ParentType, ContextType>;
+  created_at?: Resolver<ResolversTypes['timestamp'], ParentType, ContextType>;
+  edition?: Resolver<Maybe<ResolversTypes['editions']>, ParentType, ContextType>;
+  followable_id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
+  followable_type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
+  list?: Resolver<Maybe<ResolversTypes['lists']>, ParentType, ContextType>;
+  publisher?: Resolver<Maybe<ResolversTypes['publishers']>, ParentType, ContextType>;
+  series?: Resolver<Maybe<ResolversTypes['series']>, ParentType, ContextType>;
+  updated_at?: Resolver<ResolversTypes['timestamp'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['users'], ParentType, ContextType>;
+  user_id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type Follows_AggregateResolvers<ContextType = any, ParentType extends ResolversParentTypes['follows_aggregate'] = ResolversParentTypes['follows_aggregate']> = {
+  aggregate?: Resolver<Maybe<ResolversTypes['follows_aggregate_fields']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<ResolversTypes['follows']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type Follows_Aggregate_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['follows_aggregate_fields'] = ResolversParentTypes['follows_aggregate_fields']> = {
+  avg?: Resolver<Maybe<ResolversTypes['follows_avg_fields']>, ParentType, ContextType>;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<Follows_Aggregate_FieldsCountArgs>>;
+  max?: Resolver<Maybe<ResolversTypes['follows_max_fields']>, ParentType, ContextType>;
+  min?: Resolver<Maybe<ResolversTypes['follows_min_fields']>, ParentType, ContextType>;
+  stddev?: Resolver<Maybe<ResolversTypes['follows_stddev_fields']>, ParentType, ContextType>;
+  stddev_pop?: Resolver<Maybe<ResolversTypes['follows_stddev_pop_fields']>, ParentType, ContextType>;
+  stddev_samp?: Resolver<Maybe<ResolversTypes['follows_stddev_samp_fields']>, ParentType, ContextType>;
+  sum?: Resolver<Maybe<ResolversTypes['follows_sum_fields']>, ParentType, ContextType>;
+  var_pop?: Resolver<Maybe<ResolversTypes['follows_var_pop_fields']>, ParentType, ContextType>;
+  var_samp?: Resolver<Maybe<ResolversTypes['follows_var_samp_fields']>, ParentType, ContextType>;
+  variance?: Resolver<Maybe<ResolversTypes['follows_variance_fields']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type Follows_Avg_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['follows_avg_fields'] = ResolversParentTypes['follows_avg_fields']> = {
+  followable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type Follows_Max_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['follows_max_fields'] = ResolversParentTypes['follows_max_fields']> = {
+  created_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
+  followable_id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
+  followable_type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
+  updated_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
+  user_id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type Follows_Min_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['follows_min_fields'] = ResolversParentTypes['follows_min_fields']> = {
+  created_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
+  followable_id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
+  followable_type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
+  updated_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
+  user_id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type Follows_Stddev_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['follows_stddev_fields'] = ResolversParentTypes['follows_stddev_fields']> = {
+  followable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type Follows_Stddev_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['follows_stddev_pop_fields'] = ResolversParentTypes['follows_stddev_pop_fields']> = {
+  followable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type Follows_Stddev_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['follows_stddev_samp_fields'] = ResolversParentTypes['follows_stddev_samp_fields']> = {
+  followable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type Follows_Sum_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['follows_sum_fields'] = ResolversParentTypes['follows_sum_fields']> = {
+  followable_id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
+  user_id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type Follows_Var_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['follows_var_pop_fields'] = ResolversParentTypes['follows_var_pop_fields']> = {
+  followable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type Follows_Var_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['follows_var_samp_fields'] = ResolversParentTypes['follows_var_samp_fields']> = {
+  followable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type Follows_Variance_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['follows_variance_fields'] = ResolversParentTypes['follows_variance_fields']> = {
+  followable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GoalsResolvers<ContextType = any, ParentType extends ResolversParentTypes['goals'] = ResolversParentTypes['goals']> = {
   archived?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   completed_at?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
-  conditions?: Resolver<
-    ResolversTypes['jsonb'],
-    ParentType,
-    ContextType,
-    Partial<GoalsConditionsArgs>
-  >;
+  conditions?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType, Partial<GoalsConditionsArgs>>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   end_date?: Resolver<ResolversTypes['date'], ParentType, ContextType>;
-  followers?: Resolver<
-    Array<ResolversTypes['followed_users']>,
-    ParentType,
-    ContextType,
-    Partial<GoalsFollowersArgs>
-  >;
+  followers?: Resolver<Array<ResolversTypes['followed_users']>, ParentType, ContextType, Partial<GoalsFollowersArgs>>;
   goal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   metric?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -24064,27 +23914,9 @@ export type GoalsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Goals_Mutation_ResponseResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['goals_mutation_response'] = ResolversParentTypes['goals_mutation_response'],
-> = {
-  affected_rows?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  returning?: Resolver<Array<ResolversTypes['goals']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ImagesResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['images'] = ResolversParentTypes['images'],
-> = {
+export type ImagesResolvers<ContextType = any, ParentType extends ResolversParentTypes['images'] = ResolversParentTypes['images']> = {
   color?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  colors?: Resolver<
-    Maybe<ResolversTypes['jsonb']>,
-    ParentType,
-    ContextType,
-    Partial<ImagesColorsArgs>
-  >;
+  colors?: Resolver<Maybe<ResolversTypes['jsonb']>, ParentType, ContextType, Partial<ImagesColorsArgs>>;
   height?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
   imageable_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -24103,10 +23935,7 @@ export interface JsonbScalarConfig extends GraphQLScalarTypeConfig<ResolversType
   name: 'jsonb';
 }
 
-export type LanguagesResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['languages'] = ResolversParentTypes['languages'],
-> = {
+export type LanguagesResolvers<ContextType = any, ParentType extends ResolversParentTypes['languages'] = ResolversParentTypes['languages']> = {
   code2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   code3?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -24114,18 +23943,10 @@ export type LanguagesResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type LikesResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['likes'] = ResolversParentTypes['likes'],
-> = {
+export type LikesResolvers<ContextType = any, ParentType extends ResolversParentTypes['likes'] = ResolversParentTypes['likes']> = {
   activity?: Resolver<Maybe<ResolversTypes['activities']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
-  followers?: Resolver<
-    Array<ResolversTypes['followed_users']>,
-    ParentType,
-    ContextType,
-    Partial<LikesFollowersArgs>
-  >;
+  followers?: Resolver<Array<ResolversTypes['followed_users']>, ParentType, ContextType, Partial<LikesFollowersArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   likeable_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   likeable_type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -24136,10 +23957,20 @@ export type LikesResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type List_BooksResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['list_books'] = ResolversParentTypes['list_books'],
-> = {
+export type LinksResolvers<ContextType = any, ParentType extends ResolversParentTypes['links'] = ResolversParentTypes['links']> = {
+  created_at?: Resolver<ResolversTypes['timestamp'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
+  linkable_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  linkable_type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  social_type?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  updated_at?: Resolver<ResolversTypes['timestamp'], ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['users']>, ParentType, ContextType>;
+  username?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type List_BooksResolvers<ContextType = any, ParentType extends ResolversParentTypes['list_books'] = ResolversParentTypes['list_books']> = {
   book?: Resolver<ResolversTypes['books'], ParentType, ContextType>;
   book_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
@@ -24156,60 +23987,25 @@ export type List_BooksResolvers<
   position?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   reason?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updated_at?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
-  user_books?: Resolver<
-    Array<ResolversTypes['user_books']>,
-    ParentType,
-    ContextType,
-    Partial<List_BooksUser_BooksArgs>
-  >;
-  user_books_aggregate?: Resolver<
-    ResolversTypes['user_books_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<List_BooksUser_Books_AggregateArgs>
-  >;
+  user_books?: Resolver<Array<ResolversTypes['user_books']>, ParentType, ContextType, Partial<List_BooksUser_BooksArgs>>;
+  user_books_aggregate?: Resolver<ResolversTypes['user_books_aggregate'], ParentType, ContextType, Partial<List_BooksUser_Books_AggregateArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type List_Books_AggregateResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['list_books_aggregate'] = ResolversParentTypes['list_books_aggregate'],
-> = {
-  aggregate?: Resolver<
-    Maybe<ResolversTypes['list_books_aggregate_fields']>,
-    ParentType,
-    ContextType
-  >;
+export type List_Books_AggregateResolvers<ContextType = any, ParentType extends ResolversParentTypes['list_books_aggregate'] = ResolversParentTypes['list_books_aggregate']> = {
+  aggregate?: Resolver<Maybe<ResolversTypes['list_books_aggregate_fields']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['list_books']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type List_Books_Aggregate_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['list_books_aggregate_fields'] = ResolversParentTypes['list_books_aggregate_fields'],
-> = {
+export type List_Books_Aggregate_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['list_books_aggregate_fields'] = ResolversParentTypes['list_books_aggregate_fields']> = {
   avg?: Resolver<Maybe<ResolversTypes['list_books_avg_fields']>, ParentType, ContextType>;
-  count?: Resolver<
-    ResolversTypes['Int'],
-    ParentType,
-    ContextType,
-    Partial<List_Books_Aggregate_FieldsCountArgs>
-  >;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<List_Books_Aggregate_FieldsCountArgs>>;
   max?: Resolver<Maybe<ResolversTypes['list_books_max_fields']>, ParentType, ContextType>;
   min?: Resolver<Maybe<ResolversTypes['list_books_min_fields']>, ParentType, ContextType>;
   stddev?: Resolver<Maybe<ResolversTypes['list_books_stddev_fields']>, ParentType, ContextType>;
-  stddev_pop?: Resolver<
-    Maybe<ResolversTypes['list_books_stddev_pop_fields']>,
-    ParentType,
-    ContextType
-  >;
-  stddev_samp?: Resolver<
-    Maybe<ResolversTypes['list_books_stddev_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
+  stddev_pop?: Resolver<Maybe<ResolversTypes['list_books_stddev_pop_fields']>, ParentType, ContextType>;
+  stddev_samp?: Resolver<Maybe<ResolversTypes['list_books_stddev_samp_fields']>, ParentType, ContextType>;
   sum?: Resolver<Maybe<ResolversTypes['list_books_sum_fields']>, ParentType, ContextType>;
   var_pop?: Resolver<Maybe<ResolversTypes['list_books_var_pop_fields']>, ParentType, ContextType>;
   var_samp?: Resolver<Maybe<ResolversTypes['list_books_var_samp_fields']>, ParentType, ContextType>;
@@ -24217,11 +24013,7 @@ export type List_Books_Aggregate_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type List_Books_Avg_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['list_books_avg_fields'] = ResolversParentTypes['list_books_avg_fields'],
-> = {
+export type List_Books_Avg_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['list_books_avg_fields'] = ResolversParentTypes['list_books_avg_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -24232,11 +24024,7 @@ export type List_Books_Avg_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type List_Books_Max_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['list_books_max_fields'] = ResolversParentTypes['list_books_max_fields'],
-> = {
+export type List_Books_Max_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['list_books_max_fields'] = ResolversParentTypes['list_books_max_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   date_added?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
@@ -24252,11 +24040,7 @@ export type List_Books_Max_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type List_Books_Min_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['list_books_min_fields'] = ResolversParentTypes['list_books_min_fields'],
-> = {
+export type List_Books_Min_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['list_books_min_fields'] = ResolversParentTypes['list_books_min_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   date_added?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
@@ -24272,21 +24056,13 @@ export type List_Books_Min_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type List_Books_Mutation_ResponseResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['list_books_mutation_response'] = ResolversParentTypes['list_books_mutation_response'],
-> = {
+export type List_Books_Mutation_ResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['list_books_mutation_response'] = ResolversParentTypes['list_books_mutation_response']> = {
   affected_rows?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   returning?: Resolver<Array<ResolversTypes['list_books']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type List_Books_Stddev_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['list_books_stddev_fields'] = ResolversParentTypes['list_books_stddev_fields'],
-> = {
+export type List_Books_Stddev_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['list_books_stddev_fields'] = ResolversParentTypes['list_books_stddev_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -24297,11 +24073,7 @@ export type List_Books_Stddev_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type List_Books_Stddev_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['list_books_stddev_pop_fields'] = ResolversParentTypes['list_books_stddev_pop_fields'],
-> = {
+export type List_Books_Stddev_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['list_books_stddev_pop_fields'] = ResolversParentTypes['list_books_stddev_pop_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -24312,11 +24084,7 @@ export type List_Books_Stddev_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type List_Books_Stddev_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['list_books_stddev_samp_fields'] = ResolversParentTypes['list_books_stddev_samp_fields'],
-> = {
+export type List_Books_Stddev_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['list_books_stddev_samp_fields'] = ResolversParentTypes['list_books_stddev_samp_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -24327,11 +24095,7 @@ export type List_Books_Stddev_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type List_Books_Sum_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['list_books_sum_fields'] = ResolversParentTypes['list_books_sum_fields'],
-> = {
+export type List_Books_Sum_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['list_books_sum_fields'] = ResolversParentTypes['list_books_sum_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -24342,11 +24106,7 @@ export type List_Books_Sum_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type List_Books_Var_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['list_books_var_pop_fields'] = ResolversParentTypes['list_books_var_pop_fields'],
-> = {
+export type List_Books_Var_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['list_books_var_pop_fields'] = ResolversParentTypes['list_books_var_pop_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -24357,11 +24117,7 @@ export type List_Books_Var_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type List_Books_Var_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['list_books_var_samp_fields'] = ResolversParentTypes['list_books_var_samp_fields'],
-> = {
+export type List_Books_Var_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['list_books_var_samp_fields'] = ResolversParentTypes['list_books_var_samp_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -24372,11 +24128,7 @@ export type List_Books_Var_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type List_Books_Variance_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['list_books_variance_fields'] = ResolversParentTypes['list_books_variance_fields'],
-> = {
+export type List_Books_Variance_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['list_books_variance_fields'] = ResolversParentTypes['list_books_variance_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -24387,50 +24139,22 @@ export type List_Books_Variance_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ListsResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['lists'] = ResolversParentTypes['lists'],
-> = {
+export type ListsResolvers<ContextType = any, ParentType extends ResolversParentTypes['lists'] = ResolversParentTypes['lists']> = {
   books_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   default_view?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   featured?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   featured_profile?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  followed_lists?: Resolver<
-    Array<ResolversTypes['followed_lists']>,
-    ParentType,
-    ContextType,
-    Partial<ListsFollowed_ListsArgs>
-  >;
-  followers?: Resolver<
-    Array<ResolversTypes['followed_users']>,
-    ParentType,
-    ContextType,
-    Partial<ListsFollowersArgs>
-  >;
+  followed_lists?: Resolver<Array<ResolversTypes['followed_lists']>, ParentType, ContextType, Partial<ListsFollowed_ListsArgs>>;
+  followers?: Resolver<Array<ResolversTypes['followed_users']>, ParentType, ContextType, Partial<ListsFollowersArgs>>;
   followers_count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   imported?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  likes?: Resolver<
-    Array<ResolversTypes['likes']>,
-    ParentType,
-    ContextType,
-    Partial<ListsLikesArgs>
-  >;
+  likes?: Resolver<Array<ResolversTypes['likes']>, ParentType, ContextType, Partial<ListsLikesArgs>>;
   likes_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  list_books?: Resolver<
-    Array<ResolversTypes['list_books']>,
-    ParentType,
-    ContextType,
-    Partial<ListsList_BooksArgs>
-  >;
-  list_books_aggregate?: Resolver<
-    ResolversTypes['list_books_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<ListsList_Books_AggregateArgs>
-  >;
+  list_books?: Resolver<Array<ResolversTypes['list_books']>, ParentType, ContextType, Partial<ListsList_BooksArgs>>;
+  list_books_aggregate?: Resolver<ResolversTypes['list_books_aggregate'], ParentType, ContextType, Partial<ListsList_Books_AggregateArgs>>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   object_type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   privacy_setting?: Resolver<ResolversTypes['privacy_settings'], ParentType, ContextType>;
@@ -24445,37 +24169,20 @@ export type ListsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Lists_AggregateResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['lists_aggregate'] = ResolversParentTypes['lists_aggregate'],
-> = {
+export type Lists_AggregateResolvers<ContextType = any, ParentType extends ResolversParentTypes['lists_aggregate'] = ResolversParentTypes['lists_aggregate']> = {
   aggregate?: Resolver<Maybe<ResolversTypes['lists_aggregate_fields']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['lists']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Lists_Aggregate_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['lists_aggregate_fields'] = ResolversParentTypes['lists_aggregate_fields'],
-> = {
+export type Lists_Aggregate_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['lists_aggregate_fields'] = ResolversParentTypes['lists_aggregate_fields']> = {
   avg?: Resolver<Maybe<ResolversTypes['lists_avg_fields']>, ParentType, ContextType>;
-  count?: Resolver<
-    ResolversTypes['Int'],
-    ParentType,
-    ContextType,
-    Partial<Lists_Aggregate_FieldsCountArgs>
-  >;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<Lists_Aggregate_FieldsCountArgs>>;
   max?: Resolver<Maybe<ResolversTypes['lists_max_fields']>, ParentType, ContextType>;
   min?: Resolver<Maybe<ResolversTypes['lists_min_fields']>, ParentType, ContextType>;
   stddev?: Resolver<Maybe<ResolversTypes['lists_stddev_fields']>, ParentType, ContextType>;
   stddev_pop?: Resolver<Maybe<ResolversTypes['lists_stddev_pop_fields']>, ParentType, ContextType>;
-  stddev_samp?: Resolver<
-    Maybe<ResolversTypes['lists_stddev_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
+  stddev_samp?: Resolver<Maybe<ResolversTypes['lists_stddev_samp_fields']>, ParentType, ContextType>;
   sum?: Resolver<Maybe<ResolversTypes['lists_sum_fields']>, ParentType, ContextType>;
   var_pop?: Resolver<Maybe<ResolversTypes['lists_var_pop_fields']>, ParentType, ContextType>;
   var_samp?: Resolver<Maybe<ResolversTypes['lists_var_samp_fields']>, ParentType, ContextType>;
@@ -24483,11 +24190,7 @@ export type Lists_Aggregate_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Lists_Avg_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['lists_avg_fields'] = ResolversParentTypes['lists_avg_fields'],
-> = {
+export type Lists_Avg_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['lists_avg_fields'] = ResolversParentTypes['lists_avg_fields']> = {
   books_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   followers_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -24497,11 +24200,7 @@ export type Lists_Avg_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Lists_Max_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['lists_max_fields'] = ResolversParentTypes['lists_max_fields'],
-> = {
+export type Lists_Max_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['lists_max_fields'] = ResolversParentTypes['lists_max_fields']> = {
   books_count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   default_view?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -24519,11 +24218,7 @@ export type Lists_Max_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Lists_Min_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['lists_min_fields'] = ResolversParentTypes['lists_min_fields'],
-> = {
+export type Lists_Min_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['lists_min_fields'] = ResolversParentTypes['lists_min_fields']> = {
   books_count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   default_view?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -24541,11 +24236,7 @@ export type Lists_Min_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Lists_Stddev_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['lists_stddev_fields'] = ResolversParentTypes['lists_stddev_fields'],
-> = {
+export type Lists_Stddev_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['lists_stddev_fields'] = ResolversParentTypes['lists_stddev_fields']> = {
   books_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   followers_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -24555,11 +24246,7 @@ export type Lists_Stddev_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Lists_Stddev_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['lists_stddev_pop_fields'] = ResolversParentTypes['lists_stddev_pop_fields'],
-> = {
+export type Lists_Stddev_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['lists_stddev_pop_fields'] = ResolversParentTypes['lists_stddev_pop_fields']> = {
   books_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   followers_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -24569,11 +24256,7 @@ export type Lists_Stddev_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Lists_Stddev_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['lists_stddev_samp_fields'] = ResolversParentTypes['lists_stddev_samp_fields'],
-> = {
+export type Lists_Stddev_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['lists_stddev_samp_fields'] = ResolversParentTypes['lists_stddev_samp_fields']> = {
   books_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   followers_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -24583,11 +24266,7 @@ export type Lists_Stddev_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Lists_Sum_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['lists_sum_fields'] = ResolversParentTypes['lists_sum_fields'],
-> = {
+export type Lists_Sum_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['lists_sum_fields'] = ResolversParentTypes['lists_sum_fields']> = {
   books_count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   followers_count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -24597,11 +24276,7 @@ export type Lists_Sum_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Lists_Var_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['lists_var_pop_fields'] = ResolversParentTypes['lists_var_pop_fields'],
-> = {
+export type Lists_Var_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['lists_var_pop_fields'] = ResolversParentTypes['lists_var_pop_fields']> = {
   books_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   followers_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -24611,11 +24286,7 @@ export type Lists_Var_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Lists_Var_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['lists_var_samp_fields'] = ResolversParentTypes['lists_var_samp_fields'],
-> = {
+export type Lists_Var_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['lists_var_samp_fields'] = ResolversParentTypes['lists_var_samp_fields']> = {
   books_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   followers_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -24625,11 +24296,7 @@ export type Lists_Var_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Lists_Variance_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['lists_variance_fields'] = ResolversParentTypes['lists_variance_fields'],
-> = {
+export type Lists_Variance_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['lists_variance_fields'] = ResolversParentTypes['lists_variance_fields']> = {
   books_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   followers_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -24639,638 +24306,119 @@ export type Lists_Variance_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Mutation_RootResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['mutation_root'] = ResolversParentTypes['mutation_root'],
-> = {
-  book_mapping_normalize?: Resolver<
-    Maybe<ResolversTypes['BookMappingIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootBook_Mapping_NormalizeArgs, 'deep' | 'id'>
-  >;
-  book_normalize?: Resolver<
-    Maybe<ResolversTypes['BookIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootBook_NormalizeArgs, 'id'>
-  >;
-  collection_import_result_reimport?: Resolver<
-    Maybe<ResolversTypes['CollectionImportResultIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootCollection_Import_Result_ReimportArgs, 'id'>
-  >;
-  collection_import_retry?: Resolver<
-    Maybe<ResolversTypes['CollectionImportIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootCollection_Import_RetryArgs, 'id'>
-  >;
-  delete_activities?: Resolver<
-    Maybe<ResolversTypes['activities_mutation_response']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_ActivitiesArgs, 'where'>
-  >;
-  delete_activities_by_pk?: Resolver<
-    Maybe<ResolversTypes['activities']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_Activities_By_PkArgs, 'id'>
-  >;
-  delete_book_mapping?: Resolver<
-    Maybe<ResolversTypes['BookMappingIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_Book_MappingArgs, 'id'>
-  >;
-  delete_followed_list?: Resolver<
-    Maybe<ResolversTypes['DeleteListType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_Followed_ListArgs, 'list_id'>
-  >;
-  delete_followed_prompt?: Resolver<
-    Maybe<ResolversTypes['DeleteFollowedPromptType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_Followed_PromptArgs, 'prompt_id'>
-  >;
-  delete_followed_prompts?: Resolver<
-    Maybe<ResolversTypes['followed_prompts_mutation_response']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_Followed_PromptsArgs, 'where'>
-  >;
-  delete_followed_prompts_by_pk?: Resolver<
-    Maybe<ResolversTypes['followed_prompts']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_Followed_Prompts_By_PkArgs, 'id'>
-  >;
-  delete_followed_user?: Resolver<
-    Maybe<ResolversTypes['FollowedUserType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_Followed_UserArgs, 'user_id'>
-  >;
-  delete_followed_users?: Resolver<
-    Maybe<ResolversTypes['followed_users_mutation_response']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_Followed_UsersArgs, 'where'>
-  >;
-  delete_followed_users_by_pk?: Resolver<
-    Maybe<ResolversTypes['followed_users']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_Followed_Users_By_PkArgs, 'id'>
-  >;
-  delete_goals?: Resolver<
-    Maybe<ResolversTypes['goals_mutation_response']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_GoalsArgs, 'where'>
-  >;
-  delete_goals_by_pk?: Resolver<
-    Maybe<ResolversTypes['goals']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_Goals_By_PkArgs, 'id'>
-  >;
-  delete_like?: Resolver<
-    Maybe<ResolversTypes['LikeDeleteType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_LikeArgs, 'likeable_id' | 'likeable_type'>
-  >;
-  delete_list?: Resolver<
-    Maybe<ResolversTypes['ListDeleteType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_ListArgs, 'id'>
-  >;
-  delete_list_book?: Resolver<
-    Maybe<ResolversTypes['ListBookDeleteType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_List_BookArgs, 'id'>
-  >;
-  delete_prompt_answer?: Resolver<
-    Maybe<ResolversTypes['PromptAnswerIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_Prompt_AnswerArgs, 'id'>
-  >;
-  delete_prompts?: Resolver<
-    Maybe<ResolversTypes['prompts_mutation_response']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_PromptsArgs, 'where'>
-  >;
-  delete_prompts_by_pk?: Resolver<
-    Maybe<ResolversTypes['prompts']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_Prompts_By_PkArgs, 'id'>
-  >;
-  delete_reading_journal?: Resolver<
-    Maybe<ResolversTypes['DeleteReadingJournalOutput']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_Reading_JournalArgs, 'id'>
-  >;
-  delete_reading_journals_for_book?: Resolver<
-    Maybe<ResolversTypes['DeleteReadingJournalsOutput']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_Reading_Journals_For_BookArgs, 'book_id'>
-  >;
-  delete_user_blocks?: Resolver<
-    Maybe<ResolversTypes['user_blocks_mutation_response']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_User_BlocksArgs, 'where'>
-  >;
-  delete_user_blocks_by_pk?: Resolver<
-    Maybe<ResolversTypes['user_blocks']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_User_Blocks_By_PkArgs, 'id'>
-  >;
-  delete_user_book?: Resolver<
-    Maybe<ResolversTypes['UserBookDeleteType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_User_BookArgs, 'id'>
-  >;
-  delete_user_book_read?: Resolver<
-    Maybe<ResolversTypes['UserBookReadIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootDelete_User_Book_ReadArgs, 'id'>
-  >;
-  edition_normalize?: Resolver<
-    Maybe<ResolversTypes['EditionIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootEdition_NormalizeArgs, 'deep' | 'id'>
-  >;
-  edition_owned?: Resolver<
-    Maybe<ResolversTypes['ListBookIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootEdition_OwnedArgs, 'id'>
-  >;
-  email_user_delete_confirmation?: Resolver<
-    Maybe<ResolversTypes['SuccessType']>,
-    ParentType,
-    ContextType
-  >;
-  insert_author?: Resolver<
-    Maybe<ResolversTypes['AuthorIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_AuthorArgs, 'object'>
-  >;
-  insert_block?: Resolver<
-    Maybe<ResolversTypes['InsertBlockOutput']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_BlockArgs, 'blocked_user_id'>
-  >;
-  insert_book?: Resolver<
-    Maybe<ResolversTypes['OptionalEditionIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_BookArgs, 'edition'>
-  >;
-  insert_book_mapping?: Resolver<
-    Maybe<ResolversTypes['BookMappingIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_Book_MappingArgs, 'object'>
-  >;
-  insert_character?: Resolver<
-    Maybe<ResolversTypes['CharacterIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_CharacterArgs, 'character'>
-  >;
-  insert_collection_import?: Resolver<
-    Maybe<ResolversTypes['CollectionImportIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_Collection_ImportArgs, 'object'>
-  >;
-  insert_edition?: Resolver<
-    Maybe<ResolversTypes['EditionIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_EditionArgs, 'book_id' | 'edition'>
-  >;
-  insert_followed_prompts?: Resolver<
-    Maybe<ResolversTypes['followed_prompts_mutation_response']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_Followed_PromptsArgs, 'objects'>
-  >;
-  insert_followed_prompts_one?: Resolver<
-    Maybe<ResolversTypes['followed_prompts']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_Followed_Prompts_OneArgs, 'object'>
-  >;
-  insert_followed_user?: Resolver<
-    Maybe<ResolversTypes['FollowedUserType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_Followed_UserArgs, 'user_id'>
-  >;
-  insert_goal?: Resolver<
-    Maybe<ResolversTypes['GoalIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_GoalArgs, 'object'>
-  >;
-  insert_image?: Resolver<
-    Maybe<ResolversTypes['ImageIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_ImageArgs, 'image'>
-  >;
-  insert_list?: Resolver<
-    Maybe<ResolversTypes['ListIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_ListArgs, 'object'>
-  >;
-  insert_list_book?: Resolver<
-    Maybe<ResolversTypes['ListBookIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_List_BookArgs, 'object'>
-  >;
-  insert_notification_settings?: Resolver<
-    Maybe<ResolversTypes['notification_settings_mutation_response']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_Notification_SettingsArgs, 'objects'>
-  >;
-  insert_notification_settings_one?: Resolver<
-    Maybe<ResolversTypes['notification_settings']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_Notification_Settings_OneArgs, 'object'>
-  >;
-  insert_prompt?: Resolver<
-    Maybe<ResolversTypes['PromptIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_PromptArgs, 'object'>
-  >;
-  insert_prompt_answer?: Resolver<
-    Maybe<ResolversTypes['PromptAnswerIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_Prompt_AnswerArgs, 'object'>
-  >;
-  insert_publisher?: Resolver<
-    Maybe<ResolversTypes['PublisherIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_PublisherArgs, 'publisher'>
-  >;
-  insert_reading_journal?: Resolver<
-    Maybe<ResolversTypes['ReadingJournalOutput']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_Reading_JournalArgs, 'object'>
-  >;
-  insert_report?: Resolver<
-    Maybe<ResolversTypes['ReportOutput']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_ReportArgs, 'report'>
-  >;
-  insert_serie?: Resolver<
-    Maybe<ResolversTypes['SeriesIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_SerieArgs, 'object'>
-  >;
-  insert_user?: Resolver<
-    Maybe<ResolversTypes['UserIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_UserArgs, 'user'>
-  >;
-  insert_user_blocks?: Resolver<
-    Maybe<ResolversTypes['user_blocks_mutation_response']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_User_BlocksArgs, 'objects'>
-  >;
-  insert_user_blocks_one?: Resolver<
-    Maybe<ResolversTypes['user_blocks']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_User_Blocks_OneArgs, 'object'>
-  >;
-  insert_user_book?: Resolver<
-    Maybe<ResolversTypes['UserBookIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_User_BookArgs, 'object'>
-  >;
-  insert_user_book_read?: Resolver<
-    Maybe<ResolversTypes['UserBookReadIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_User_Book_ReadArgs, 'user_book_id' | 'user_book_read'>
-  >;
-  insert_user_flags?: Resolver<
-    Maybe<ResolversTypes['user_flags_mutation_response']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_User_FlagsArgs, 'objects'>
-  >;
-  insert_user_flags_one?: Resolver<
-    Maybe<ResolversTypes['user_flags']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootInsert_User_Flags_OneArgs, 'object'>
-  >;
-  receipt_validate?: Resolver<
-    Maybe<ResolversTypes['ValidateReceiptType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootReceipt_ValidateArgs, 'payment_system_id' | 'receipt'>
-  >;
-  update_author?: Resolver<
-    Maybe<ResolversTypes['AuthorIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_AuthorArgs, 'author' | 'id'>
-  >;
-  update_book?: Resolver<
-    Maybe<ResolversTypes['BookIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_BookArgs, 'book' | 'id'>
-  >;
-  update_character?: Resolver<
-    Maybe<ResolversTypes['CharacterIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_CharacterArgs, 'character' | 'id'>
-  >;
-  update_collection_import_results?: Resolver<
-    Maybe<ResolversTypes['collection_import_results_mutation_response']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_Collection_Import_ResultsArgs, 'where'>
-  >;
-  update_collection_import_results_by_pk?: Resolver<
-    Maybe<ResolversTypes['collection_import_results']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_Collection_Import_Results_By_PkArgs, 'pk_columns'>
-  >;
-  update_collection_import_results_many?: Resolver<
-    Maybe<Array<Maybe<ResolversTypes['collection_import_results_mutation_response']>>>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_Collection_Import_Results_ManyArgs, 'updates'>
-  >;
-  update_edition?: Resolver<
-    Maybe<ResolversTypes['EditionIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_EditionArgs, 'edition' | 'id'>
-  >;
-  update_followed_prompts?: Resolver<
-    Maybe<ResolversTypes['followed_prompts_mutation_response']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_Followed_PromptsArgs, 'where'>
-  >;
-  update_followed_prompts_by_pk?: Resolver<
-    Maybe<ResolversTypes['followed_prompts']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_Followed_Prompts_By_PkArgs, 'pk_columns'>
-  >;
-  update_followed_prompts_many?: Resolver<
-    Maybe<Array<Maybe<ResolversTypes['followed_prompts_mutation_response']>>>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_Followed_Prompts_ManyArgs, 'updates'>
-  >;
-  update_goal?: Resolver<
-    Maybe<ResolversTypes['GoalIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_GoalArgs, 'id' | 'object'>
-  >;
-  update_goal_progress?: Resolver<
-    Maybe<ResolversTypes['GoalIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_Goal_ProgressArgs, 'id'>
-  >;
-  update_list?: Resolver<
-    Maybe<ResolversTypes['ListIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_ListArgs, 'id' | 'object'>
-  >;
-  update_list_books?: Resolver<
-    Maybe<ResolversTypes['list_books_mutation_response']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_List_BooksArgs, 'where'>
-  >;
-  update_list_books_by_pk?: Resolver<
-    Maybe<ResolversTypes['list_books']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_List_Books_By_PkArgs, 'pk_columns'>
-  >;
-  update_list_books_many?: Resolver<
-    Maybe<Array<Maybe<ResolversTypes['list_books_mutation_response']>>>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_List_Books_ManyArgs, 'updates'>
-  >;
-  update_newsletter?: Resolver<
-    Maybe<ResolversTypes['NewsletterStatusType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_NewsletterArgs, 'subscribed'>
-  >;
-  update_notification_deliveries?: Resolver<
-    Maybe<ResolversTypes['notification_deliveries_mutation_response']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_Notification_DeliveriesArgs, 'where'>
-  >;
-  update_notification_deliveries_by_pk?: Resolver<
-    Maybe<ResolversTypes['notification_deliveries']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_Notification_Deliveries_By_PkArgs, 'pk_columns'>
-  >;
-  update_notification_deliveries_many?: Resolver<
-    Maybe<Array<Maybe<ResolversTypes['notification_deliveries_mutation_response']>>>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_Notification_Deliveries_ManyArgs, 'updates'>
-  >;
-  update_notification_settings?: Resolver<
-    Maybe<ResolversTypes['notification_settings_mutation_response']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_Notification_SettingsArgs, 'where'>
-  >;
-  update_notification_settings_by_pk?: Resolver<
-    Maybe<ResolversTypes['notification_settings']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_Notification_Settings_By_PkArgs, 'pk_columns'>
-  >;
-  update_notification_settings_many?: Resolver<
-    Maybe<Array<Maybe<ResolversTypes['notification_settings_mutation_response']>>>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_Notification_Settings_ManyArgs, 'updates'>
-  >;
-  update_prompt?: Resolver<
-    Maybe<ResolversTypes['PromptIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_PromptArgs, 'object'>
-  >;
-  update_prompt_answers?: Resolver<
-    Maybe<ResolversTypes['prompt_answers_mutation_response']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_Prompt_AnswersArgs, 'where'>
-  >;
-  update_prompt_answers_by_pk?: Resolver<
-    Maybe<ResolversTypes['prompt_answers']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_Prompt_Answers_By_PkArgs, 'pk_columns'>
-  >;
-  update_prompt_answers_many?: Resolver<
-    Maybe<Array<Maybe<ResolversTypes['prompt_answers_mutation_response']>>>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_Prompt_Answers_ManyArgs, 'updates'>
-  >;
-  update_publisher?: Resolver<
-    Maybe<ResolversTypes['PublisherIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_PublisherArgs, 'id' | 'publisher'>
-  >;
-  update_reading_journal?: Resolver<
-    Maybe<ResolversTypes['ReadingJournalOutput']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_Reading_JournalArgs, 'id' | 'object'>
-  >;
-  update_serie?: Resolver<
-    Maybe<ResolversTypes['SeriesIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_SerieArgs, 'id' | 'series'>
-  >;
-  update_user?: Resolver<
-    Maybe<ResolversTypes['UserIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_UserArgs, 'user'>
-  >;
-  update_user_book?: Resolver<
-    Maybe<ResolversTypes['UserBookIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_User_BookArgs, 'id' | 'object'>
-  >;
-  update_user_book_read?: Resolver<
-    Maybe<ResolversTypes['UserBookReadIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_User_Book_ReadArgs, 'id' | 'object'>
-  >;
-  update_user_privacy_setting?: Resolver<
-    Maybe<ResolversTypes['UserIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpdate_User_Privacy_SettingArgs, 'privacy_setting_id'>
-  >;
-  upsert_book?: Resolver<
-    Maybe<ResolversTypes['NewBookIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpsert_BookArgs, 'book'>
-  >;
-  upsert_followed_list?: Resolver<
-    Maybe<ResolversTypes['FollowedListType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpsert_Followed_ListArgs, 'list_id'>
-  >;
-  upsert_followed_prompt?: Resolver<
-    Maybe<ResolversTypes['FollowedPromptType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpsert_Followed_PromptArgs, 'prompt_id'>
-  >;
-  upsert_like?: Resolver<
-    Maybe<ResolversTypes['LikeType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpsert_LikeArgs, 'likeable_id'>
-  >;
-  upsert_tags?: Resolver<
-    Maybe<ResolversTypes['TagsType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpsert_TagsArgs, 'id' | 'tags' | 'type'>
-  >;
-  upsert_user_book_reads?: Resolver<
-    Maybe<ResolversTypes['UserBooksReadUpsertType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUpsert_User_Book_ReadsArgs, 'datesRead' | 'user_book_id'>
-  >;
-  user_login?: Resolver<
-    Maybe<ResolversTypes['UserIdType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Mutation_RootUser_LoginArgs, 'user'>
-  >;
+export type Mutation_RootResolvers<ContextType = any, ParentType extends ResolversParentTypes['mutation_root'] = ResolversParentTypes['mutation_root']> = {
+  book_mapping_normalize?: Resolver<Maybe<ResolversTypes['BookMappingIdType']>, ParentType, ContextType, RequireFields<Mutation_RootBook_Mapping_NormalizeArgs, 'deep' | 'id'>>;
+  book_normalize?: Resolver<Maybe<ResolversTypes['BookIdType']>, ParentType, ContextType, RequireFields<Mutation_RootBook_NormalizeArgs, 'id'>>;
+  collection_import_result_reimport?: Resolver<Maybe<ResolversTypes['CollectionImportResultIdType']>, ParentType, ContextType, RequireFields<Mutation_RootCollection_Import_Result_ReimportArgs, 'id'>>;
+  collection_import_retry?: Resolver<Maybe<ResolversTypes['CollectionImportIdType']>, ParentType, ContextType, RequireFields<Mutation_RootCollection_Import_RetryArgs, 'id'>>;
+  delete_activities?: Resolver<Maybe<ResolversTypes['activities_mutation_response']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_ActivitiesArgs, 'where'>>;
+  delete_activities_by_pk?: Resolver<Maybe<ResolversTypes['activities']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_Activities_By_PkArgs, 'id'>>;
+  delete_book_mapping?: Resolver<Maybe<ResolversTypes['BookMappingIdType']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_Book_MappingArgs, 'id'>>;
+  delete_follow?: Resolver<Maybe<ResolversTypes['FollowDeleteType']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_FollowArgs, 'followable_id' | 'followable_type'>>;
+  delete_followed_list?: Resolver<Maybe<ResolversTypes['DeleteListType']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_Followed_ListArgs, 'list_id'>>;
+  delete_followed_prompt?: Resolver<Maybe<ResolversTypes['DeleteFollowedPromptType']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_Followed_PromptArgs, 'prompt_id'>>;
+  delete_followed_prompts?: Resolver<Maybe<ResolversTypes['followed_prompts_mutation_response']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_Followed_PromptsArgs, 'where'>>;
+  delete_followed_prompts_by_pk?: Resolver<Maybe<ResolversTypes['followed_prompts']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_Followed_Prompts_By_PkArgs, 'id'>>;
+  delete_followed_user?: Resolver<Maybe<ResolversTypes['FollowedUserType']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_Followed_UserArgs, 'user_id'>>;
+  delete_followed_users?: Resolver<Maybe<ResolversTypes['followed_users_mutation_response']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_Followed_UsersArgs, 'where'>>;
+  delete_followed_users_by_pk?: Resolver<Maybe<ResolversTypes['followed_users']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_Followed_Users_By_PkArgs, 'id'>>;
+  delete_goal?: Resolver<Maybe<ResolversTypes['GoalIdType']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_GoalArgs, 'id'>>;
+  delete_like?: Resolver<Maybe<ResolversTypes['LikeDeleteType']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_LikeArgs, 'likeable_id' | 'likeable_type'>>;
+  delete_list?: Resolver<Maybe<ResolversTypes['ListDeleteType']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_ListArgs, 'id'>>;
+  delete_list_book?: Resolver<Maybe<ResolversTypes['ListBookDeleteType']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_List_BookArgs, 'id'>>;
+  delete_prompt_answer?: Resolver<Maybe<ResolversTypes['PromptAnswerIdType']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_Prompt_AnswerArgs, 'id'>>;
+  delete_prompts?: Resolver<Maybe<ResolversTypes['prompts_mutation_response']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_PromptsArgs, 'where'>>;
+  delete_prompts_by_pk?: Resolver<Maybe<ResolversTypes['prompts']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_Prompts_By_PkArgs, 'id'>>;
+  delete_reading_journal?: Resolver<Maybe<ResolversTypes['DeleteReadingJournalOutput']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_Reading_JournalArgs, 'id'>>;
+  delete_reading_journals_for_book?: Resolver<Maybe<ResolversTypes['DeleteReadingJournalsOutput']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_Reading_Journals_For_BookArgs, 'book_id'>>;
+  delete_user_blocks?: Resolver<Maybe<ResolversTypes['user_blocks_mutation_response']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_User_BlocksArgs, 'where'>>;
+  delete_user_blocks_by_pk?: Resolver<Maybe<ResolversTypes['user_blocks']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_User_Blocks_By_PkArgs, 'id'>>;
+  delete_user_book?: Resolver<Maybe<ResolversTypes['UserBookDeleteType']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_User_BookArgs, 'id'>>;
+  delete_user_book_read?: Resolver<Maybe<ResolversTypes['UserBookReadIdType']>, ParentType, ContextType, RequireFields<Mutation_RootDelete_User_Book_ReadArgs, 'id'>>;
+  edition_normalize?: Resolver<Maybe<ResolversTypes['EditionIdType']>, ParentType, ContextType, RequireFields<Mutation_RootEdition_NormalizeArgs, 'deep' | 'id'>>;
+  edition_owned?: Resolver<Maybe<ResolversTypes['ListBookIdType']>, ParentType, ContextType, RequireFields<Mutation_RootEdition_OwnedArgs, 'id'>>;
+  email_user_delete_confirmation?: Resolver<Maybe<ResolversTypes['SuccessType']>, ParentType, ContextType>;
+  insert_author?: Resolver<Maybe<ResolversTypes['AuthorIdType']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_AuthorArgs, 'object'>>;
+  insert_block?: Resolver<Maybe<ResolversTypes['InsertBlockOutput']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_BlockArgs, 'blocked_user_id'>>;
+  insert_book?: Resolver<Maybe<ResolversTypes['OptionalEditionIdType']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_BookArgs, 'edition'>>;
+  insert_book_mapping?: Resolver<Maybe<ResolversTypes['BookMappingIdType']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_Book_MappingArgs, 'object'>>;
+  insert_character?: Resolver<Maybe<ResolversTypes['CharacterIdType']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_CharacterArgs, 'character'>>;
+  insert_collection_import?: Resolver<Maybe<ResolversTypes['CollectionImportIdType']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_Collection_ImportArgs, 'object'>>;
+  insert_edition?: Resolver<Maybe<ResolversTypes['EditionIdType']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_EditionArgs, 'book_id' | 'edition'>>;
+  insert_follow?: Resolver<Maybe<ResolversTypes['FollowType']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_FollowArgs, 'followable_id' | 'followable_type'>>;
+  insert_followed_prompts?: Resolver<Maybe<ResolversTypes['followed_prompts_mutation_response']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_Followed_PromptsArgs, 'objects'>>;
+  insert_followed_prompts_one?: Resolver<Maybe<ResolversTypes['followed_prompts']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_Followed_Prompts_OneArgs, 'object'>>;
+  insert_followed_user?: Resolver<Maybe<ResolversTypes['FollowedUserType']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_Followed_UserArgs, 'user_id'>>;
+  insert_goal?: Resolver<Maybe<ResolversTypes['GoalIdType']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_GoalArgs, 'object'>>;
+  insert_image?: Resolver<Maybe<ResolversTypes['ImageIdType']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_ImageArgs, 'image'>>;
+  insert_list?: Resolver<Maybe<ResolversTypes['ListIdType']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_ListArgs, 'object'>>;
+  insert_list_book?: Resolver<Maybe<ResolversTypes['ListBookIdType']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_List_BookArgs, 'object'>>;
+  insert_notification_settings?: Resolver<Maybe<ResolversTypes['notification_settings_mutation_response']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_Notification_SettingsArgs, 'objects'>>;
+  insert_notification_settings_one?: Resolver<Maybe<ResolversTypes['notification_settings']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_Notification_Settings_OneArgs, 'object'>>;
+  insert_prompt?: Resolver<Maybe<ResolversTypes['PromptIdType']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_PromptArgs, 'object'>>;
+  insert_prompt_answer?: Resolver<Maybe<ResolversTypes['PromptAnswerIdType']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_Prompt_AnswerArgs, 'object'>>;
+  insert_publisher?: Resolver<Maybe<ResolversTypes['PublisherIdType']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_PublisherArgs, 'publisher'>>;
+  insert_reading_journal?: Resolver<Maybe<ResolversTypes['ReadingJournalOutput']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_Reading_JournalArgs, 'object'>>;
+  insert_report?: Resolver<Maybe<ResolversTypes['ReportOutput']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_ReportArgs, 'report'>>;
+  insert_serie?: Resolver<Maybe<ResolversTypes['SeriesIdType']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_SerieArgs, 'object'>>;
+  insert_user?: Resolver<Maybe<ResolversTypes['UserIdType']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_UserArgs, 'user'>>;
+  insert_user_blocks?: Resolver<Maybe<ResolversTypes['user_blocks_mutation_response']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_User_BlocksArgs, 'objects'>>;
+  insert_user_blocks_one?: Resolver<Maybe<ResolversTypes['user_blocks']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_User_Blocks_OneArgs, 'object'>>;
+  insert_user_book?: Resolver<Maybe<ResolversTypes['UserBookIdType']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_User_BookArgs, 'object'>>;
+  insert_user_book_read?: Resolver<Maybe<ResolversTypes['UserBookReadIdType']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_User_Book_ReadArgs, 'user_book_id' | 'user_book_read'>>;
+  insert_user_flags?: Resolver<Maybe<ResolversTypes['user_flags_mutation_response']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_User_FlagsArgs, 'objects'>>;
+  insert_user_flags_one?: Resolver<Maybe<ResolversTypes['user_flags']>, ParentType, ContextType, RequireFields<Mutation_RootInsert_User_Flags_OneArgs, 'object'>>;
+  receipt_validate?: Resolver<Maybe<ResolversTypes['ValidateReceiptType']>, ParentType, ContextType, RequireFields<Mutation_RootReceipt_ValidateArgs, 'payment_system_id' | 'receipt'>>;
+  update_author?: Resolver<Maybe<ResolversTypes['AuthorIdType']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_AuthorArgs, 'author' | 'id'>>;
+  update_book?: Resolver<Maybe<ResolversTypes['BookIdType']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_BookArgs, 'book' | 'id'>>;
+  update_character?: Resolver<Maybe<ResolversTypes['CharacterIdType']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_CharacterArgs, 'character' | 'id'>>;
+  update_collection_import_results?: Resolver<Maybe<ResolversTypes['collection_import_results_mutation_response']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_Collection_Import_ResultsArgs, 'where'>>;
+  update_collection_import_results_by_pk?: Resolver<Maybe<ResolversTypes['collection_import_results']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_Collection_Import_Results_By_PkArgs, 'pk_columns'>>;
+  update_collection_import_results_many?: Resolver<Maybe<Array<Maybe<ResolversTypes['collection_import_results_mutation_response']>>>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_Collection_Import_Results_ManyArgs, 'updates'>>;
+  update_edition?: Resolver<Maybe<ResolversTypes['EditionIdType']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_EditionArgs, 'edition' | 'id'>>;
+  update_followed_prompts?: Resolver<Maybe<ResolversTypes['followed_prompts_mutation_response']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_Followed_PromptsArgs, 'where'>>;
+  update_followed_prompts_by_pk?: Resolver<Maybe<ResolversTypes['followed_prompts']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_Followed_Prompts_By_PkArgs, 'pk_columns'>>;
+  update_followed_prompts_many?: Resolver<Maybe<Array<Maybe<ResolversTypes['followed_prompts_mutation_response']>>>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_Followed_Prompts_ManyArgs, 'updates'>>;
+  update_goal?: Resolver<Maybe<ResolversTypes['GoalIdType']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_GoalArgs, 'id' | 'object'>>;
+  update_goal_progress?: Resolver<Maybe<ResolversTypes['GoalIdType']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_Goal_ProgressArgs, 'id'>>;
+  update_list?: Resolver<Maybe<ResolversTypes['ListIdType']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_ListArgs, 'id' | 'object'>>;
+  update_list_books?: Resolver<Maybe<ResolversTypes['list_books_mutation_response']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_List_BooksArgs, 'where'>>;
+  update_list_books_by_pk?: Resolver<Maybe<ResolversTypes['list_books']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_List_Books_By_PkArgs, 'pk_columns'>>;
+  update_list_books_many?: Resolver<Maybe<Array<Maybe<ResolversTypes['list_books_mutation_response']>>>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_List_Books_ManyArgs, 'updates'>>;
+  update_newsletter?: Resolver<Maybe<ResolversTypes['NewsletterStatusType']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_NewsletterArgs, 'subscribed'>>;
+  update_notification_deliveries?: Resolver<Maybe<ResolversTypes['notification_deliveries_mutation_response']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_Notification_DeliveriesArgs, 'where'>>;
+  update_notification_deliveries_by_pk?: Resolver<Maybe<ResolversTypes['notification_deliveries']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_Notification_Deliveries_By_PkArgs, 'pk_columns'>>;
+  update_notification_deliveries_many?: Resolver<Maybe<Array<Maybe<ResolversTypes['notification_deliveries_mutation_response']>>>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_Notification_Deliveries_ManyArgs, 'updates'>>;
+  update_notification_settings?: Resolver<Maybe<ResolversTypes['notification_settings_mutation_response']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_Notification_SettingsArgs, 'where'>>;
+  update_notification_settings_by_pk?: Resolver<Maybe<ResolversTypes['notification_settings']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_Notification_Settings_By_PkArgs, 'pk_columns'>>;
+  update_notification_settings_many?: Resolver<Maybe<Array<Maybe<ResolversTypes['notification_settings_mutation_response']>>>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_Notification_Settings_ManyArgs, 'updates'>>;
+  update_prompt?: Resolver<Maybe<ResolversTypes['PromptIdType']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_PromptArgs, 'object'>>;
+  update_prompt_answers?: Resolver<Maybe<ResolversTypes['prompt_answers_mutation_response']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_Prompt_AnswersArgs, 'where'>>;
+  update_prompt_answers_by_pk?: Resolver<Maybe<ResolversTypes['prompt_answers']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_Prompt_Answers_By_PkArgs, 'pk_columns'>>;
+  update_prompt_answers_many?: Resolver<Maybe<Array<Maybe<ResolversTypes['prompt_answers_mutation_response']>>>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_Prompt_Answers_ManyArgs, 'updates'>>;
+  update_publisher?: Resolver<Maybe<ResolversTypes['PublisherIdType']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_PublisherArgs, 'id' | 'publisher'>>;
+  update_reading_journal?: Resolver<Maybe<ResolversTypes['ReadingJournalOutput']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_Reading_JournalArgs, 'id' | 'object'>>;
+  update_serie?: Resolver<Maybe<ResolversTypes['SeriesIdType']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_SerieArgs, 'id' | 'series'>>;
+  update_user?: Resolver<Maybe<ResolversTypes['UserIdType']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_UserArgs, 'user'>>;
+  update_user_book?: Resolver<Maybe<ResolversTypes['UserBookIdType']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_User_BookArgs, 'id' | 'object'>>;
+  update_user_book_read?: Resolver<Maybe<ResolversTypes['UserBookReadIdType']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_User_Book_ReadArgs, 'id' | 'object'>>;
+  update_user_privacy_setting?: Resolver<Maybe<ResolversTypes['UserIdType']>, ParentType, ContextType, RequireFields<Mutation_RootUpdate_User_Privacy_SettingArgs, 'privacy_setting_id'>>;
+  upsert_book?: Resolver<Maybe<ResolversTypes['NewBookIdType']>, ParentType, ContextType, RequireFields<Mutation_RootUpsert_BookArgs, 'book'>>;
+  upsert_followed_list?: Resolver<Maybe<ResolversTypes['FollowedListType']>, ParentType, ContextType, RequireFields<Mutation_RootUpsert_Followed_ListArgs, 'list_id'>>;
+  upsert_followed_prompt?: Resolver<Maybe<ResolversTypes['FollowedPromptType']>, ParentType, ContextType, RequireFields<Mutation_RootUpsert_Followed_PromptArgs, 'prompt_id'>>;
+  upsert_like?: Resolver<Maybe<ResolversTypes['LikeType']>, ParentType, ContextType, RequireFields<Mutation_RootUpsert_LikeArgs, 'likeable_id'>>;
+  upsert_tags?: Resolver<Maybe<ResolversTypes['TagsType']>, ParentType, ContextType, RequireFields<Mutation_RootUpsert_TagsArgs, 'id' | 'tags' | 'type'>>;
+  upsert_user_book_reads?: Resolver<Maybe<ResolversTypes['UserBooksReadUpsertType']>, ParentType, ContextType, RequireFields<Mutation_RootUpsert_User_Book_ReadsArgs, 'datesRead' | 'user_book_id'>>;
+  user_login?: Resolver<Maybe<ResolversTypes['UserIdType']>, ParentType, ContextType, RequireFields<Mutation_RootUser_LoginArgs, 'user'>>;
 };
 
-export type Notification_ChannelsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['notification_channels'] = ResolversParentTypes['notification_channels'],
-> = {
+export type Notification_ChannelsResolvers<ContextType = any, ParentType extends ResolversParentTypes['notification_channels'] = ResolversParentTypes['notification_channels']> = {
   channel?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Notification_DeliveriesResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['notification_deliveries'] = ResolversParentTypes['notification_deliveries'],
-> = {
+export type Notification_DeliveriesResolvers<ContextType = any, ParentType extends ResolversParentTypes['notification_deliveries'] = ResolversParentTypes['notification_deliveries']> = {
   channel?: Resolver<Maybe<ResolversTypes['notification_channels']>, ParentType, ContextType>;
   channel_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
@@ -25284,89 +24432,28 @@ export type Notification_DeliveriesResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Notification_Deliveries_AggregateResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['notification_deliveries_aggregate'] = ResolversParentTypes['notification_deliveries_aggregate'],
-> = {
-  aggregate?: Resolver<
-    Maybe<ResolversTypes['notification_deliveries_aggregate_fields']>,
-    ParentType,
-    ContextType
-  >;
+export type Notification_Deliveries_AggregateResolvers<ContextType = any, ParentType extends ResolversParentTypes['notification_deliveries_aggregate'] = ResolversParentTypes['notification_deliveries_aggregate']> = {
+  aggregate?: Resolver<Maybe<ResolversTypes['notification_deliveries_aggregate_fields']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['notification_deliveries']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Notification_Deliveries_Aggregate_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['notification_deliveries_aggregate_fields'] = ResolversParentTypes['notification_deliveries_aggregate_fields'],
-> = {
-  avg?: Resolver<
-    Maybe<ResolversTypes['notification_deliveries_avg_fields']>,
-    ParentType,
-    ContextType
-  >;
-  count?: Resolver<
-    ResolversTypes['Int'],
-    ParentType,
-    ContextType,
-    Partial<Notification_Deliveries_Aggregate_FieldsCountArgs>
-  >;
-  max?: Resolver<
-    Maybe<ResolversTypes['notification_deliveries_max_fields']>,
-    ParentType,
-    ContextType
-  >;
-  min?: Resolver<
-    Maybe<ResolversTypes['notification_deliveries_min_fields']>,
-    ParentType,
-    ContextType
-  >;
-  stddev?: Resolver<
-    Maybe<ResolversTypes['notification_deliveries_stddev_fields']>,
-    ParentType,
-    ContextType
-  >;
-  stddev_pop?: Resolver<
-    Maybe<ResolversTypes['notification_deliveries_stddev_pop_fields']>,
-    ParentType,
-    ContextType
-  >;
-  stddev_samp?: Resolver<
-    Maybe<ResolversTypes['notification_deliveries_stddev_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
-  sum?: Resolver<
-    Maybe<ResolversTypes['notification_deliveries_sum_fields']>,
-    ParentType,
-    ContextType
-  >;
-  var_pop?: Resolver<
-    Maybe<ResolversTypes['notification_deliveries_var_pop_fields']>,
-    ParentType,
-    ContextType
-  >;
-  var_samp?: Resolver<
-    Maybe<ResolversTypes['notification_deliveries_var_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
-  variance?: Resolver<
-    Maybe<ResolversTypes['notification_deliveries_variance_fields']>,
-    ParentType,
-    ContextType
-  >;
+export type Notification_Deliveries_Aggregate_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['notification_deliveries_aggregate_fields'] = ResolversParentTypes['notification_deliveries_aggregate_fields']> = {
+  avg?: Resolver<Maybe<ResolversTypes['notification_deliveries_avg_fields']>, ParentType, ContextType>;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<Notification_Deliveries_Aggregate_FieldsCountArgs>>;
+  max?: Resolver<Maybe<ResolversTypes['notification_deliveries_max_fields']>, ParentType, ContextType>;
+  min?: Resolver<Maybe<ResolversTypes['notification_deliveries_min_fields']>, ParentType, ContextType>;
+  stddev?: Resolver<Maybe<ResolversTypes['notification_deliveries_stddev_fields']>, ParentType, ContextType>;
+  stddev_pop?: Resolver<Maybe<ResolversTypes['notification_deliveries_stddev_pop_fields']>, ParentType, ContextType>;
+  stddev_samp?: Resolver<Maybe<ResolversTypes['notification_deliveries_stddev_samp_fields']>, ParentType, ContextType>;
+  sum?: Resolver<Maybe<ResolversTypes['notification_deliveries_sum_fields']>, ParentType, ContextType>;
+  var_pop?: Resolver<Maybe<ResolversTypes['notification_deliveries_var_pop_fields']>, ParentType, ContextType>;
+  var_samp?: Resolver<Maybe<ResolversTypes['notification_deliveries_var_samp_fields']>, ParentType, ContextType>;
+  variance?: Resolver<Maybe<ResolversTypes['notification_deliveries_variance_fields']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Notification_Deliveries_Avg_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['notification_deliveries_avg_fields'] = ResolversParentTypes['notification_deliveries_avg_fields'],
-> = {
+export type Notification_Deliveries_Avg_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['notification_deliveries_avg_fields'] = ResolversParentTypes['notification_deliveries_avg_fields']> = {
   channel_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   notification_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -25374,11 +24461,7 @@ export type Notification_Deliveries_Avg_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Notification_Deliveries_Max_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['notification_deliveries_max_fields'] = ResolversParentTypes['notification_deliveries_max_fields'],
-> = {
+export type Notification_Deliveries_Max_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['notification_deliveries_max_fields'] = ResolversParentTypes['notification_deliveries_max_fields']> = {
   channel_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
   notification_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -25388,11 +24471,7 @@ export type Notification_Deliveries_Max_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Notification_Deliveries_Min_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['notification_deliveries_min_fields'] = ResolversParentTypes['notification_deliveries_min_fields'],
-> = {
+export type Notification_Deliveries_Min_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['notification_deliveries_min_fields'] = ResolversParentTypes['notification_deliveries_min_fields']> = {
   channel_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
   notification_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -25402,21 +24481,13 @@ export type Notification_Deliveries_Min_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Notification_Deliveries_Mutation_ResponseResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['notification_deliveries_mutation_response'] = ResolversParentTypes['notification_deliveries_mutation_response'],
-> = {
+export type Notification_Deliveries_Mutation_ResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['notification_deliveries_mutation_response'] = ResolversParentTypes['notification_deliveries_mutation_response']> = {
   affected_rows?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   returning?: Resolver<Array<ResolversTypes['notification_deliveries']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Notification_Deliveries_Stddev_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['notification_deliveries_stddev_fields'] = ResolversParentTypes['notification_deliveries_stddev_fields'],
-> = {
+export type Notification_Deliveries_Stddev_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['notification_deliveries_stddev_fields'] = ResolversParentTypes['notification_deliveries_stddev_fields']> = {
   channel_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   notification_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -25424,11 +24495,7 @@ export type Notification_Deliveries_Stddev_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Notification_Deliveries_Stddev_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['notification_deliveries_stddev_pop_fields'] = ResolversParentTypes['notification_deliveries_stddev_pop_fields'],
-> = {
+export type Notification_Deliveries_Stddev_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['notification_deliveries_stddev_pop_fields'] = ResolversParentTypes['notification_deliveries_stddev_pop_fields']> = {
   channel_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   notification_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -25436,11 +24503,7 @@ export type Notification_Deliveries_Stddev_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Notification_Deliveries_Stddev_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['notification_deliveries_stddev_samp_fields'] = ResolversParentTypes['notification_deliveries_stddev_samp_fields'],
-> = {
+export type Notification_Deliveries_Stddev_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['notification_deliveries_stddev_samp_fields'] = ResolversParentTypes['notification_deliveries_stddev_samp_fields']> = {
   channel_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   notification_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -25448,11 +24511,7 @@ export type Notification_Deliveries_Stddev_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Notification_Deliveries_Sum_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['notification_deliveries_sum_fields'] = ResolversParentTypes['notification_deliveries_sum_fields'],
-> = {
+export type Notification_Deliveries_Sum_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['notification_deliveries_sum_fields'] = ResolversParentTypes['notification_deliveries_sum_fields']> = {
   channel_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
   notification_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -25460,11 +24519,7 @@ export type Notification_Deliveries_Sum_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Notification_Deliveries_Var_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['notification_deliveries_var_pop_fields'] = ResolversParentTypes['notification_deliveries_var_pop_fields'],
-> = {
+export type Notification_Deliveries_Var_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['notification_deliveries_var_pop_fields'] = ResolversParentTypes['notification_deliveries_var_pop_fields']> = {
   channel_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   notification_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -25472,11 +24527,7 @@ export type Notification_Deliveries_Var_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Notification_Deliveries_Var_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['notification_deliveries_var_samp_fields'] = ResolversParentTypes['notification_deliveries_var_samp_fields'],
-> = {
+export type Notification_Deliveries_Var_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['notification_deliveries_var_samp_fields'] = ResolversParentTypes['notification_deliveries_var_samp_fields']> = {
   channel_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   notification_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -25484,11 +24535,7 @@ export type Notification_Deliveries_Var_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Notification_Deliveries_Variance_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['notification_deliveries_variance_fields'] = ResolversParentTypes['notification_deliveries_variance_fields'],
-> = {
+export type Notification_Deliveries_Variance_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['notification_deliveries_variance_fields'] = ResolversParentTypes['notification_deliveries_variance_fields']> = {
   channel_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   notification_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -25496,17 +24543,8 @@ export type Notification_Deliveries_Variance_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Notification_SettingsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['notification_settings'] = ResolversParentTypes['notification_settings'],
-> = {
-  channel_ids?: Resolver<
-    ResolversTypes['json'],
-    ParentType,
-    ContextType,
-    Partial<Notification_SettingsChannel_IdsArgs>
-  >;
+export type Notification_SettingsResolvers<ContextType = any, ParentType extends ResolversParentTypes['notification_settings'] = ResolversParentTypes['notification_settings']> = {
+  channel_ids?: Resolver<ResolversTypes['json'], ParentType, ContextType, Partial<Notification_SettingsChannel_IdsArgs>>;
   id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
   notification_type_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['users']>, ParentType, ContextType>;
@@ -25514,63 +24552,32 @@ export type Notification_SettingsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Notification_Settings_Mutation_ResponseResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['notification_settings_mutation_response'] = ResolversParentTypes['notification_settings_mutation_response'],
-> = {
+export type Notification_Settings_Mutation_ResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['notification_settings_mutation_response'] = ResolversParentTypes['notification_settings_mutation_response']> = {
   affected_rows?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   returning?: Resolver<Array<ResolversTypes['notification_settings']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Notification_TypesResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['notification_types'] = ResolversParentTypes['notification_types'],
-> = {
+export type Notification_TypesResolvers<ContextType = any, ParentType extends ResolversParentTypes['notification_types'] = ResolversParentTypes['notification_types']> = {
   active?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  default_channel_ids?: Resolver<
-    ResolversTypes['json'],
-    ParentType,
-    ContextType,
-    Partial<Notification_TypesDefault_Channel_IdsArgs>
-  >;
+  default_channel_ids?: Resolver<ResolversTypes['json'], ParentType, ContextType, Partial<Notification_TypesDefault_Channel_IdsArgs>>;
   default_priority?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  notification_settings?: Resolver<
-    Array<ResolversTypes['notification_settings']>,
-    ParentType,
-    ContextType,
-    Partial<Notification_TypesNotification_SettingsArgs>
-  >;
+  notification_settings?: Resolver<Array<ResolversTypes['notification_settings']>, ParentType, ContextType, Partial<Notification_TypesNotification_SettingsArgs>>;
   uid?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type NotificationsResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['notifications'] = ResolversParentTypes['notifications'],
-> = {
+export type NotificationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['notifications'] = ResolversParentTypes['notifications']> = {
   created_at?: Resolver<ResolversTypes['timestamptz'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   link_text?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  notification_deliveries?: Resolver<
-    Array<ResolversTypes['notification_deliveries']>,
-    ParentType,
-    ContextType,
-    Partial<NotificationsNotification_DeliveriesArgs>
-  >;
-  notification_deliveries_aggregate?: Resolver<
-    ResolversTypes['notification_deliveries_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<NotificationsNotification_Deliveries_AggregateArgs>
-  >;
+  notification_deliveries?: Resolver<Array<ResolversTypes['notification_deliveries']>, ParentType, ContextType, Partial<NotificationsNotification_DeliveriesArgs>>;
+  notification_deliveries_aggregate?: Resolver<ResolversTypes['notification_deliveries_aggregate'], ParentType, ContextType, Partial<NotificationsNotification_Deliveries_AggregateArgs>>;
   notification_type_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   notifierUser?: Resolver<Maybe<ResolversTypes['users']>, ParentType, ContextType>;
   notifier_user_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -25580,90 +24587,33 @@ export type NotificationsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export interface NumericScalarConfig
-  extends GraphQLScalarTypeConfig<ResolversTypes['numeric'], any> {
+export interface NumericScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['numeric'], any> {
   name: 'numeric';
 }
 
-export type PlatformsResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['platforms'] = ResolversParentTypes['platforms'],
-> = {
-  book_mappings?: Resolver<
-    Array<ResolversTypes['book_mappings']>,
-    ParentType,
-    ContextType,
-    Partial<PlatformsBook_MappingsArgs>
-  >;
+export type PlatformsResolvers<ContextType = any, ParentType extends ResolversParentTypes['platforms'] = ResolversParentTypes['platforms']> = {
+  book_mappings?: Resolver<Array<ResolversTypes['book_mappings']>, ParentType, ContextType, Partial<PlatformsBook_MappingsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Privacy_SettingsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['privacy_settings'] = ResolversParentTypes['privacy_settings'],
-> = {
-  activities?: Resolver<
-    Array<ResolversTypes['activities']>,
-    ParentType,
-    ContextType,
-    Partial<Privacy_SettingsActivitiesArgs>
-  >;
+export type Privacy_SettingsResolvers<ContextType = any, ParentType extends ResolversParentTypes['privacy_settings'] = ResolversParentTypes['privacy_settings']> = {
+  activities?: Resolver<Array<ResolversTypes['activities']>, ParentType, ContextType, Partial<Privacy_SettingsActivitiesArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  lists?: Resolver<
-    Array<ResolversTypes['lists']>,
-    ParentType,
-    ContextType,
-    Partial<Privacy_SettingsListsArgs>
-  >;
-  lists_aggregate?: Resolver<
-    ResolversTypes['lists_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<Privacy_SettingsLists_AggregateArgs>
-  >;
-  prompts?: Resolver<
-    Array<ResolversTypes['prompts']>,
-    ParentType,
-    ContextType,
-    Partial<Privacy_SettingsPromptsArgs>
-  >;
+  lists?: Resolver<Array<ResolversTypes['lists']>, ParentType, ContextType, Partial<Privacy_SettingsListsArgs>>;
+  lists_aggregate?: Resolver<ResolversTypes['lists_aggregate'], ParentType, ContextType, Partial<Privacy_SettingsLists_AggregateArgs>>;
+  prompts?: Resolver<Array<ResolversTypes['prompts']>, ParentType, ContextType, Partial<Privacy_SettingsPromptsArgs>>;
   setting?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user_books?: Resolver<
-    Array<ResolversTypes['user_books']>,
-    ParentType,
-    ContextType,
-    Partial<Privacy_SettingsUser_BooksArgs>
-  >;
-  user_books_aggregate?: Resolver<
-    ResolversTypes['user_books_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<Privacy_SettingsUser_Books_AggregateArgs>
-  >;
-  users?: Resolver<
-    Array<ResolversTypes['users']>,
-    ParentType,
-    ContextType,
-    Partial<Privacy_SettingsUsersArgs>
-  >;
-  users_by_activity?: Resolver<
-    Array<ResolversTypes['users']>,
-    ParentType,
-    ContextType,
-    Partial<Privacy_SettingsUsers_By_ActivityArgs>
-  >;
+  user_books?: Resolver<Array<ResolversTypes['user_books']>, ParentType, ContextType, Partial<Privacy_SettingsUser_BooksArgs>>;
+  user_books_aggregate?: Resolver<ResolversTypes['user_books_aggregate'], ParentType, ContextType, Partial<Privacy_SettingsUser_Books_AggregateArgs>>;
+  users?: Resolver<Array<ResolversTypes['users']>, ParentType, ContextType, Partial<Privacy_SettingsUsersArgs>>;
+  users_by_activity?: Resolver<Array<ResolversTypes['users']>, ParentType, ContextType, Partial<Privacy_SettingsUsers_By_ActivityArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Prompt_AnswersResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['prompt_answers'] = ResolversParentTypes['prompt_answers'],
-> = {
+export type Prompt_AnswersResolvers<ContextType = any, ParentType extends ResolversParentTypes['prompt_answers'] = ResolversParentTypes['prompt_answers']> = {
   book?: Resolver<ResolversTypes['books'], ParentType, ContextType>;
   book_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
@@ -25679,69 +24629,28 @@ export type Prompt_AnswersResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Prompt_Answers_AggregateResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['prompt_answers_aggregate'] = ResolversParentTypes['prompt_answers_aggregate'],
-> = {
-  aggregate?: Resolver<
-    Maybe<ResolversTypes['prompt_answers_aggregate_fields']>,
-    ParentType,
-    ContextType
-  >;
+export type Prompt_Answers_AggregateResolvers<ContextType = any, ParentType extends ResolversParentTypes['prompt_answers_aggregate'] = ResolversParentTypes['prompt_answers_aggregate']> = {
+  aggregate?: Resolver<Maybe<ResolversTypes['prompt_answers_aggregate_fields']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['prompt_answers']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Prompt_Answers_Aggregate_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['prompt_answers_aggregate_fields'] = ResolversParentTypes['prompt_answers_aggregate_fields'],
-> = {
+export type Prompt_Answers_Aggregate_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['prompt_answers_aggregate_fields'] = ResolversParentTypes['prompt_answers_aggregate_fields']> = {
   avg?: Resolver<Maybe<ResolversTypes['prompt_answers_avg_fields']>, ParentType, ContextType>;
-  count?: Resolver<
-    ResolversTypes['Int'],
-    ParentType,
-    ContextType,
-    Partial<Prompt_Answers_Aggregate_FieldsCountArgs>
-  >;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<Prompt_Answers_Aggregate_FieldsCountArgs>>;
   max?: Resolver<Maybe<ResolversTypes['prompt_answers_max_fields']>, ParentType, ContextType>;
   min?: Resolver<Maybe<ResolversTypes['prompt_answers_min_fields']>, ParentType, ContextType>;
   stddev?: Resolver<Maybe<ResolversTypes['prompt_answers_stddev_fields']>, ParentType, ContextType>;
-  stddev_pop?: Resolver<
-    Maybe<ResolversTypes['prompt_answers_stddev_pop_fields']>,
-    ParentType,
-    ContextType
-  >;
-  stddev_samp?: Resolver<
-    Maybe<ResolversTypes['prompt_answers_stddev_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
+  stddev_pop?: Resolver<Maybe<ResolversTypes['prompt_answers_stddev_pop_fields']>, ParentType, ContextType>;
+  stddev_samp?: Resolver<Maybe<ResolversTypes['prompt_answers_stddev_samp_fields']>, ParentType, ContextType>;
   sum?: Resolver<Maybe<ResolversTypes['prompt_answers_sum_fields']>, ParentType, ContextType>;
-  var_pop?: Resolver<
-    Maybe<ResolversTypes['prompt_answers_var_pop_fields']>,
-    ParentType,
-    ContextType
-  >;
-  var_samp?: Resolver<
-    Maybe<ResolversTypes['prompt_answers_var_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
-  variance?: Resolver<
-    Maybe<ResolversTypes['prompt_answers_variance_fields']>,
-    ParentType,
-    ContextType
-  >;
+  var_pop?: Resolver<Maybe<ResolversTypes['prompt_answers_var_pop_fields']>, ParentType, ContextType>;
+  var_samp?: Resolver<Maybe<ResolversTypes['prompt_answers_var_samp_fields']>, ParentType, ContextType>;
+  variance?: Resolver<Maybe<ResolversTypes['prompt_answers_variance_fields']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Prompt_Answers_Avg_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['prompt_answers_avg_fields'] = ResolversParentTypes['prompt_answers_avg_fields'],
-> = {
+export type Prompt_Answers_Avg_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['prompt_answers_avg_fields'] = ResolversParentTypes['prompt_answers_avg_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -25750,11 +24659,7 @@ export type Prompt_Answers_Avg_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Prompt_Answers_Max_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['prompt_answers_max_fields'] = ResolversParentTypes['prompt_answers_max_fields'],
-> = {
+export type Prompt_Answers_Max_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['prompt_answers_max_fields'] = ResolversParentTypes['prompt_answers_max_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -25766,11 +24671,7 @@ export type Prompt_Answers_Max_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Prompt_Answers_Min_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['prompt_answers_min_fields'] = ResolversParentTypes['prompt_answers_min_fields'],
-> = {
+export type Prompt_Answers_Min_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['prompt_answers_min_fields'] = ResolversParentTypes['prompt_answers_min_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -25782,21 +24683,13 @@ export type Prompt_Answers_Min_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Prompt_Answers_Mutation_ResponseResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['prompt_answers_mutation_response'] = ResolversParentTypes['prompt_answers_mutation_response'],
-> = {
+export type Prompt_Answers_Mutation_ResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['prompt_answers_mutation_response'] = ResolversParentTypes['prompt_answers_mutation_response']> = {
   affected_rows?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   returning?: Resolver<Array<ResolversTypes['prompt_answers']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Prompt_Answers_Stddev_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['prompt_answers_stddev_fields'] = ResolversParentTypes['prompt_answers_stddev_fields'],
-> = {
+export type Prompt_Answers_Stddev_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['prompt_answers_stddev_fields'] = ResolversParentTypes['prompt_answers_stddev_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -25805,11 +24698,7 @@ export type Prompt_Answers_Stddev_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Prompt_Answers_Stddev_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['prompt_answers_stddev_pop_fields'] = ResolversParentTypes['prompt_answers_stddev_pop_fields'],
-> = {
+export type Prompt_Answers_Stddev_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['prompt_answers_stddev_pop_fields'] = ResolversParentTypes['prompt_answers_stddev_pop_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -25818,11 +24707,7 @@ export type Prompt_Answers_Stddev_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Prompt_Answers_Stddev_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['prompt_answers_stddev_samp_fields'] = ResolversParentTypes['prompt_answers_stddev_samp_fields'],
-> = {
+export type Prompt_Answers_Stddev_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['prompt_answers_stddev_samp_fields'] = ResolversParentTypes['prompt_answers_stddev_samp_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -25831,11 +24716,7 @@ export type Prompt_Answers_Stddev_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Prompt_Answers_Sum_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['prompt_answers_sum_fields'] = ResolversParentTypes['prompt_answers_sum_fields'],
-> = {
+export type Prompt_Answers_Sum_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['prompt_answers_sum_fields'] = ResolversParentTypes['prompt_answers_sum_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -25844,11 +24725,7 @@ export type Prompt_Answers_Sum_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Prompt_Answers_Var_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['prompt_answers_var_pop_fields'] = ResolversParentTypes['prompt_answers_var_pop_fields'],
-> = {
+export type Prompt_Answers_Var_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['prompt_answers_var_pop_fields'] = ResolversParentTypes['prompt_answers_var_pop_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -25857,11 +24734,7 @@ export type Prompt_Answers_Var_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Prompt_Answers_Var_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['prompt_answers_var_samp_fields'] = ResolversParentTypes['prompt_answers_var_samp_fields'],
-> = {
+export type Prompt_Answers_Var_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['prompt_answers_var_samp_fields'] = ResolversParentTypes['prompt_answers_var_samp_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -25870,11 +24743,7 @@ export type Prompt_Answers_Var_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Prompt_Answers_Variance_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['prompt_answers_variance_fields'] = ResolversParentTypes['prompt_answers_variance_fields'],
-> = {
+export type Prompt_Answers_Variance_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['prompt_answers_variance_fields'] = ResolversParentTypes['prompt_answers_variance_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -25883,11 +24752,7 @@ export type Prompt_Answers_Variance_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Prompt_Books_SummaryResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['prompt_books_summary'] = ResolversParentTypes['prompt_books_summary'],
-> = {
+export type Prompt_Books_SummaryResolvers<ContextType = any, ParentType extends ResolversParentTypes['prompt_books_summary'] = ResolversParentTypes['prompt_books_summary']> = {
   answers_count?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
   book?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType>;
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -25896,48 +24761,20 @@ export type Prompt_Books_SummaryResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type PromptsResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['prompts'] = ResolversParentTypes['prompts'],
-> = {
+export type PromptsResolvers<ContextType = any, ParentType extends ResolversParentTypes['prompts'] = ResolversParentTypes['prompts']> = {
   answers_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   books_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   featured?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  followed_prompts?: Resolver<
-    Array<ResolversTypes['followed_prompts']>,
-    ParentType,
-    ContextType,
-    Partial<PromptsFollowed_PromptsArgs>
-  >;
-  followers?: Resolver<
-    Array<ResolversTypes['followed_users']>,
-    ParentType,
-    ContextType,
-    Partial<PromptsFollowersArgs>
-  >;
+  followed_prompts?: Resolver<Array<ResolversTypes['followed_prompts']>, ParentType, ContextType, Partial<PromptsFollowed_PromptsArgs>>;
+  followers?: Resolver<Array<ResolversTypes['followed_users']>, ParentType, ContextType, Partial<PromptsFollowersArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   privacy_setting?: Resolver<ResolversTypes['privacy_settings'], ParentType, ContextType>;
   privacy_setting_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  prompt_answers?: Resolver<
-    Array<ResolversTypes['prompt_answers']>,
-    ParentType,
-    ContextType,
-    Partial<PromptsPrompt_AnswersArgs>
-  >;
-  prompt_answers_aggregate?: Resolver<
-    ResolversTypes['prompt_answers_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<PromptsPrompt_Answers_AggregateArgs>
-  >;
-  prompt_books?: Resolver<
-    Array<ResolversTypes['prompt_books_summary']>,
-    ParentType,
-    ContextType,
-    Partial<PromptsPrompt_BooksArgs>
-  >;
+  prompt_answers?: Resolver<Array<ResolversTypes['prompt_answers']>, ParentType, ContextType, Partial<PromptsPrompt_AnswersArgs>>;
+  prompt_answers_aggregate?: Resolver<ResolversTypes['prompt_answers_aggregate'], ParentType, ContextType, Partial<PromptsPrompt_Answers_AggregateArgs>>;
+  prompt_books?: Resolver<Array<ResolversTypes['prompt_books_summary']>, ParentType, ContextType, Partial<PromptsPrompt_BooksArgs>>;
   question?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['users'], ParentType, ContextType>;
@@ -25946,32 +24783,21 @@ export type PromptsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Prompts_Mutation_ResponseResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['prompts_mutation_response'] = ResolversParentTypes['prompts_mutation_response'],
-> = {
+export type Prompts_Mutation_ResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['prompts_mutation_response'] = ResolversParentTypes['prompts_mutation_response']> = {
   affected_rows?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   returning?: Resolver<Array<ResolversTypes['prompts']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type PublishersResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['publishers'] = ResolversParentTypes['publishers'],
-> = {
+export type PublishersResolvers<ContextType = any, ParentType extends ResolversParentTypes['publishers'] = ResolversParentTypes['publishers']> = {
   canonical_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   created_at?: Resolver<ResolversTypes['timestamp'], ParentType, ContextType>;
-  editions?: Resolver<
-    Array<ResolversTypes['editions']>,
-    ParentType,
-    ContextType,
-    Partial<PublishersEditionsArgs>
-  >;
+  editions?: Resolver<Array<ResolversTypes['editions']>, ParentType, ContextType, Partial<PublishersEditionsArgs>>;
   editions_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
   locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  object_type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   parent_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   parent_publisher?: Resolver<Maybe<ResolversTypes['publishers']>, ParentType, ContextType>;
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -25981,803 +24807,151 @@ export type PublishersResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Query_RootResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['query_root'] = ResolversParentTypes['query_root'],
-> = {
-  activities?: Resolver<
-    Array<ResolversTypes['activities']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootActivitiesArgs>
-  >;
-  activities_by_pk?: Resolver<
-    Maybe<ResolversTypes['activities']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootActivities_By_PkArgs, 'id'>
-  >;
-  activity_feed?: Resolver<
-    Array<ResolversTypes['activities']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootActivity_FeedArgs, 'args'>
-  >;
-  activity_foryou_feed?: Resolver<
-    Array<ResolversTypes['activities']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootActivity_Foryou_FeedArgs, 'args'>
-  >;
-  authors?: Resolver<
-    Array<ResolversTypes['authors']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootAuthorsArgs>
-  >;
-  authors_by_pk?: Resolver<
-    Maybe<ResolversTypes['authors']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootAuthors_By_PkArgs, 'id'>
-  >;
-  book_categories?: Resolver<
-    Array<ResolversTypes['book_categories']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootBook_CategoriesArgs>
-  >;
-  book_categories_by_pk?: Resolver<
-    Maybe<ResolversTypes['book_categories']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootBook_Categories_By_PkArgs, 'id'>
-  >;
-  book_characters?: Resolver<
-    Array<ResolversTypes['book_characters']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootBook_CharactersArgs>
-  >;
-  book_characters_by_pk?: Resolver<
-    Maybe<ResolversTypes['book_characters']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootBook_Characters_By_PkArgs, 'id'>
-  >;
-  book_collections?: Resolver<
-    Array<ResolversTypes['book_collections']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootBook_CollectionsArgs>
-  >;
-  book_collections_by_pk?: Resolver<
-    Maybe<ResolversTypes['book_collections']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootBook_Collections_By_PkArgs, 'id'>
-  >;
-  book_mappings?: Resolver<
-    Array<ResolversTypes['book_mappings']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootBook_MappingsArgs>
-  >;
-  book_mappings_by_pk?: Resolver<
-    Maybe<ResolversTypes['book_mappings']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootBook_Mappings_By_PkArgs, 'id'>
-  >;
-  book_series?: Resolver<
-    Array<ResolversTypes['book_series']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootBook_SeriesArgs>
-  >;
-  book_series_aggregate?: Resolver<
-    ResolversTypes['book_series_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<Query_RootBook_Series_AggregateArgs>
-  >;
-  book_series_by_pk?: Resolver<
-    Maybe<ResolversTypes['book_series']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootBook_Series_By_PkArgs, 'id'>
-  >;
-  book_statuses?: Resolver<
-    Array<ResolversTypes['book_statuses']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootBook_StatusesArgs>
-  >;
-  book_statuses_by_pk?: Resolver<
-    Maybe<ResolversTypes['book_statuses']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootBook_Statuses_By_PkArgs, 'id'>
-  >;
-  bookles?: Resolver<
-    Array<ResolversTypes['bookles']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootBooklesArgs>
-  >;
-  bookles_by_pk?: Resolver<
-    Maybe<ResolversTypes['bookles']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootBookles_By_PkArgs, 'id'>
-  >;
-  books?: Resolver<
-    Array<ResolversTypes['books']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootBooksArgs>
-  >;
-  books_aggregate?: Resolver<
-    ResolversTypes['books_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<Query_RootBooks_AggregateArgs>
-  >;
-  books_by_pk?: Resolver<
-    Maybe<ResolversTypes['books']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootBooks_By_PkArgs, 'id'>
-  >;
-  books_trending?: Resolver<
-    Maybe<ResolversTypes['TrendingBookType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootBooks_TrendingArgs, 'from' | 'limit' | 'offset' | 'to'>
-  >;
-  characters?: Resolver<
-    Array<ResolversTypes['characters']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootCharactersArgs>
-  >;
-  characters_by_pk?: Resolver<
-    Maybe<ResolversTypes['characters']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootCharacters_By_PkArgs, 'id'>
-  >;
-  collection_import_results?: Resolver<
-    Array<ResolversTypes['collection_import_results']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootCollection_Import_ResultsArgs>
-  >;
-  collection_import_results_by_pk?: Resolver<
-    Maybe<ResolversTypes['collection_import_results']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootCollection_Import_Results_By_PkArgs, 'id'>
-  >;
-  collection_imports?: Resolver<
-    Array<ResolversTypes['collection_imports']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootCollection_ImportsArgs>
-  >;
-  collection_imports_by_pk?: Resolver<
-    Maybe<ResolversTypes['collection_imports']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootCollection_Imports_By_PkArgs, 'id'>
-  >;
-  contributions?: Resolver<
-    Array<ResolversTypes['contributions']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootContributionsArgs>
-  >;
-  contributions_aggregate?: Resolver<
-    ResolversTypes['contributions_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<Query_RootContributions_AggregateArgs>
-  >;
-  contributions_by_pk?: Resolver<
-    Maybe<ResolversTypes['contributions']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootContributions_By_PkArgs, 'id'>
-  >;
-  countries?: Resolver<
-    Array<ResolversTypes['countries']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootCountriesArgs>
-  >;
-  countries_by_pk?: Resolver<
-    Maybe<ResolversTypes['countries']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootCountries_By_PkArgs, 'id'>
-  >;
-  editions?: Resolver<
-    Array<ResolversTypes['editions']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootEditionsArgs>
-  >;
-  editions_by_pk?: Resolver<
-    Maybe<ResolversTypes['editions']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootEditions_By_PkArgs, 'id'>
-  >;
-  flag_statuses?: Resolver<
-    Array<ResolversTypes['flag_statuses']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootFlag_StatusesArgs>
-  >;
-  flag_statuses_by_pk?: Resolver<
-    Maybe<ResolversTypes['flag_statuses']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootFlag_Statuses_By_PkArgs, 'id'>
-  >;
-  followed_lists?: Resolver<
-    Array<ResolversTypes['followed_lists']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootFollowed_ListsArgs>
-  >;
-  followed_lists_by_pk?: Resolver<
-    Maybe<ResolversTypes['followed_lists']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootFollowed_Lists_By_PkArgs, 'id'>
-  >;
-  followed_prompts?: Resolver<
-    Array<ResolversTypes['followed_prompts']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootFollowed_PromptsArgs>
-  >;
-  followed_prompts_by_pk?: Resolver<
-    Maybe<ResolversTypes['followed_prompts']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootFollowed_Prompts_By_PkArgs, 'id'>
-  >;
-  followed_user_books?: Resolver<
-    Array<ResolversTypes['followed_user_books']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootFollowed_User_BooksArgs>
-  >;
-  followed_user_books_aggregate?: Resolver<
-    ResolversTypes['followed_user_books_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<Query_RootFollowed_User_Books_AggregateArgs>
-  >;
-  followed_users?: Resolver<
-    Array<ResolversTypes['followed_users']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootFollowed_UsersArgs>
-  >;
-  followed_users_by_pk?: Resolver<
-    Maybe<ResolversTypes['followed_users']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootFollowed_Users_By_PkArgs, 'id'>
-  >;
-  following_user_books?: Resolver<
-    Array<ResolversTypes['following_user_books']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootFollowing_User_BooksArgs>
-  >;
-  following_user_books_aggregate?: Resolver<
-    ResolversTypes['following_user_books_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<Query_RootFollowing_User_Books_AggregateArgs>
-  >;
-  goals?: Resolver<
-    Array<ResolversTypes['goals']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootGoalsArgs>
-  >;
-  goals_by_pk?: Resolver<
-    Maybe<ResolversTypes['goals']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootGoals_By_PkArgs, 'id'>
-  >;
-  images?: Resolver<
-    Array<ResolversTypes['images']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootImagesArgs>
-  >;
-  images_by_pk?: Resolver<
-    Maybe<ResolversTypes['images']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootImages_By_PkArgs, 'id'>
-  >;
-  languages?: Resolver<
-    Array<ResolversTypes['languages']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootLanguagesArgs>
-  >;
-  languages_by_pk?: Resolver<
-    Maybe<ResolversTypes['languages']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootLanguages_By_PkArgs, 'id'>
-  >;
-  likes?: Resolver<
-    Array<ResolversTypes['likes']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootLikesArgs>
-  >;
-  likes_by_pk?: Resolver<
-    Maybe<ResolversTypes['likes']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootLikes_By_PkArgs, 'id'>
-  >;
-  list_books?: Resolver<
-    Array<ResolversTypes['list_books']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootList_BooksArgs>
-  >;
-  list_books_aggregate?: Resolver<
-    ResolversTypes['list_books_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<Query_RootList_Books_AggregateArgs>
-  >;
-  list_books_by_pk?: Resolver<
-    Maybe<ResolversTypes['list_books']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootList_Books_By_PkArgs, 'id'>
-  >;
-  lists?: Resolver<
-    Array<ResolversTypes['lists']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootListsArgs>
-  >;
-  lists_aggregate?: Resolver<
-    ResolversTypes['lists_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<Query_RootLists_AggregateArgs>
-  >;
-  lists_by_pk?: Resolver<
-    Maybe<ResolversTypes['lists']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootLists_By_PkArgs, 'id'>
-  >;
+export type Query_RootResolvers<ContextType = any, ParentType extends ResolversParentTypes['query_root'] = ResolversParentTypes['query_root']> = {
+  activities?: Resolver<Array<ResolversTypes['activities']>, ParentType, ContextType, Partial<Query_RootActivitiesArgs>>;
+  activities_by_pk?: Resolver<Maybe<ResolversTypes['activities']>, ParentType, ContextType, RequireFields<Query_RootActivities_By_PkArgs, 'id'>>;
+  activity_feed?: Resolver<Array<ResolversTypes['activities']>, ParentType, ContextType, RequireFields<Query_RootActivity_FeedArgs, 'args'>>;
+  activity_foryou_feed?: Resolver<Array<ResolversTypes['activities']>, ParentType, ContextType, RequireFields<Query_RootActivity_Foryou_FeedArgs, 'args'>>;
+  authors?: Resolver<Array<ResolversTypes['authors']>, ParentType, ContextType, Partial<Query_RootAuthorsArgs>>;
+  authors_by_pk?: Resolver<Maybe<ResolversTypes['authors']>, ParentType, ContextType, RequireFields<Query_RootAuthors_By_PkArgs, 'id'>>;
+  book_categories?: Resolver<Array<ResolversTypes['book_categories']>, ParentType, ContextType, Partial<Query_RootBook_CategoriesArgs>>;
+  book_categories_by_pk?: Resolver<Maybe<ResolversTypes['book_categories']>, ParentType, ContextType, RequireFields<Query_RootBook_Categories_By_PkArgs, 'id'>>;
+  book_characters?: Resolver<Array<ResolversTypes['book_characters']>, ParentType, ContextType, Partial<Query_RootBook_CharactersArgs>>;
+  book_characters_by_pk?: Resolver<Maybe<ResolversTypes['book_characters']>, ParentType, ContextType, RequireFields<Query_RootBook_Characters_By_PkArgs, 'id'>>;
+  book_collections?: Resolver<Array<ResolversTypes['book_collections']>, ParentType, ContextType, Partial<Query_RootBook_CollectionsArgs>>;
+  book_collections_by_pk?: Resolver<Maybe<ResolversTypes['book_collections']>, ParentType, ContextType, RequireFields<Query_RootBook_Collections_By_PkArgs, 'id'>>;
+  book_mappings?: Resolver<Array<ResolversTypes['book_mappings']>, ParentType, ContextType, Partial<Query_RootBook_MappingsArgs>>;
+  book_mappings_by_pk?: Resolver<Maybe<ResolversTypes['book_mappings']>, ParentType, ContextType, RequireFields<Query_RootBook_Mappings_By_PkArgs, 'id'>>;
+  book_series?: Resolver<Array<ResolversTypes['book_series']>, ParentType, ContextType, Partial<Query_RootBook_SeriesArgs>>;
+  book_series_aggregate?: Resolver<ResolversTypes['book_series_aggregate'], ParentType, ContextType, Partial<Query_RootBook_Series_AggregateArgs>>;
+  book_series_by_pk?: Resolver<Maybe<ResolversTypes['book_series']>, ParentType, ContextType, RequireFields<Query_RootBook_Series_By_PkArgs, 'id'>>;
+  book_statuses?: Resolver<Array<ResolversTypes['book_statuses']>, ParentType, ContextType, Partial<Query_RootBook_StatusesArgs>>;
+  book_statuses_by_pk?: Resolver<Maybe<ResolversTypes['book_statuses']>, ParentType, ContextType, RequireFields<Query_RootBook_Statuses_By_PkArgs, 'id'>>;
+  bookles?: Resolver<Array<ResolversTypes['bookles']>, ParentType, ContextType, Partial<Query_RootBooklesArgs>>;
+  bookles_by_pk?: Resolver<Maybe<ResolversTypes['bookles']>, ParentType, ContextType, RequireFields<Query_RootBookles_By_PkArgs, 'id'>>;
+  books?: Resolver<Array<ResolversTypes['books']>, ParentType, ContextType, Partial<Query_RootBooksArgs>>;
+  books_aggregate?: Resolver<ResolversTypes['books_aggregate'], ParentType, ContextType, Partial<Query_RootBooks_AggregateArgs>>;
+  books_by_pk?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType, RequireFields<Query_RootBooks_By_PkArgs, 'id'>>;
+  books_trending?: Resolver<Maybe<ResolversTypes['TrendingBookType']>, ParentType, ContextType, RequireFields<Query_RootBooks_TrendingArgs, 'from' | 'limit' | 'offset' | 'to'>>;
+  characters?: Resolver<Array<ResolversTypes['characters']>, ParentType, ContextType, Partial<Query_RootCharactersArgs>>;
+  characters_by_pk?: Resolver<Maybe<ResolversTypes['characters']>, ParentType, ContextType, RequireFields<Query_RootCharacters_By_PkArgs, 'id'>>;
+  collection_import_results?: Resolver<Array<ResolversTypes['collection_import_results']>, ParentType, ContextType, Partial<Query_RootCollection_Import_ResultsArgs>>;
+  collection_import_results_by_pk?: Resolver<Maybe<ResolversTypes['collection_import_results']>, ParentType, ContextType, RequireFields<Query_RootCollection_Import_Results_By_PkArgs, 'id'>>;
+  collection_imports?: Resolver<Array<ResolversTypes['collection_imports']>, ParentType, ContextType, Partial<Query_RootCollection_ImportsArgs>>;
+  collection_imports_by_pk?: Resolver<Maybe<ResolversTypes['collection_imports']>, ParentType, ContextType, RequireFields<Query_RootCollection_Imports_By_PkArgs, 'id'>>;
+  contributions?: Resolver<Array<ResolversTypes['contributions']>, ParentType, ContextType, Partial<Query_RootContributionsArgs>>;
+  contributions_aggregate?: Resolver<ResolversTypes['contributions_aggregate'], ParentType, ContextType, Partial<Query_RootContributions_AggregateArgs>>;
+  contributions_by_pk?: Resolver<Maybe<ResolversTypes['contributions']>, ParentType, ContextType, RequireFields<Query_RootContributions_By_PkArgs, 'id'>>;
+  countries?: Resolver<Array<ResolversTypes['countries']>, ParentType, ContextType, Partial<Query_RootCountriesArgs>>;
+  countries_by_pk?: Resolver<Maybe<ResolversTypes['countries']>, ParentType, ContextType, RequireFields<Query_RootCountries_By_PkArgs, 'id'>>;
+  editions?: Resolver<Array<ResolversTypes['editions']>, ParentType, ContextType, Partial<Query_RootEditionsArgs>>;
+  editions_by_pk?: Resolver<Maybe<ResolversTypes['editions']>, ParentType, ContextType, RequireFields<Query_RootEditions_By_PkArgs, 'id'>>;
+  flag_statuses?: Resolver<Array<ResolversTypes['flag_statuses']>, ParentType, ContextType, Partial<Query_RootFlag_StatusesArgs>>;
+  flag_statuses_by_pk?: Resolver<Maybe<ResolversTypes['flag_statuses']>, ParentType, ContextType, RequireFields<Query_RootFlag_Statuses_By_PkArgs, 'id'>>;
+  followed_lists?: Resolver<Array<ResolversTypes['followed_lists']>, ParentType, ContextType, Partial<Query_RootFollowed_ListsArgs>>;
+  followed_lists_by_pk?: Resolver<Maybe<ResolversTypes['followed_lists']>, ParentType, ContextType, RequireFields<Query_RootFollowed_Lists_By_PkArgs, 'id'>>;
+  followed_prompts?: Resolver<Array<ResolversTypes['followed_prompts']>, ParentType, ContextType, Partial<Query_RootFollowed_PromptsArgs>>;
+  followed_prompts_by_pk?: Resolver<Maybe<ResolversTypes['followed_prompts']>, ParentType, ContextType, RequireFields<Query_RootFollowed_Prompts_By_PkArgs, 'id'>>;
+  followed_user_books?: Resolver<Array<ResolversTypes['followed_user_books']>, ParentType, ContextType, Partial<Query_RootFollowed_User_BooksArgs>>;
+  followed_user_books_aggregate?: Resolver<ResolversTypes['followed_user_books_aggregate'], ParentType, ContextType, Partial<Query_RootFollowed_User_Books_AggregateArgs>>;
+  followed_users?: Resolver<Array<ResolversTypes['followed_users']>, ParentType, ContextType, Partial<Query_RootFollowed_UsersArgs>>;
+  followed_users_by_pk?: Resolver<Maybe<ResolversTypes['followed_users']>, ParentType, ContextType, RequireFields<Query_RootFollowed_Users_By_PkArgs, 'id'>>;
+  following_user_books?: Resolver<Array<ResolversTypes['following_user_books']>, ParentType, ContextType, Partial<Query_RootFollowing_User_BooksArgs>>;
+  following_user_books_aggregate?: Resolver<ResolversTypes['following_user_books_aggregate'], ParentType, ContextType, Partial<Query_RootFollowing_User_Books_AggregateArgs>>;
+  follows?: Resolver<Array<ResolversTypes['follows']>, ParentType, ContextType, Partial<Query_RootFollowsArgs>>;
+  follows_aggregate?: Resolver<ResolversTypes['follows_aggregate'], ParentType, ContextType, Partial<Query_RootFollows_AggregateArgs>>;
+  follows_by_pk?: Resolver<Maybe<ResolversTypes['follows']>, ParentType, ContextType, RequireFields<Query_RootFollows_By_PkArgs, 'id'>>;
+  goals?: Resolver<Array<ResolversTypes['goals']>, ParentType, ContextType, Partial<Query_RootGoalsArgs>>;
+  goals_by_pk?: Resolver<Maybe<ResolversTypes['goals']>, ParentType, ContextType, RequireFields<Query_RootGoals_By_PkArgs, 'id'>>;
+  images?: Resolver<Array<ResolversTypes['images']>, ParentType, ContextType, Partial<Query_RootImagesArgs>>;
+  images_by_pk?: Resolver<Maybe<ResolversTypes['images']>, ParentType, ContextType, RequireFields<Query_RootImages_By_PkArgs, 'id'>>;
+  languages?: Resolver<Array<ResolversTypes['languages']>, ParentType, ContextType, Partial<Query_RootLanguagesArgs>>;
+  languages_by_pk?: Resolver<Maybe<ResolversTypes['languages']>, ParentType, ContextType, RequireFields<Query_RootLanguages_By_PkArgs, 'id'>>;
+  likes?: Resolver<Array<ResolversTypes['likes']>, ParentType, ContextType, Partial<Query_RootLikesArgs>>;
+  likes_by_pk?: Resolver<Maybe<ResolversTypes['likes']>, ParentType, ContextType, RequireFields<Query_RootLikes_By_PkArgs, 'id'>>;
+  links?: Resolver<Array<ResolversTypes['links']>, ParentType, ContextType, Partial<Query_RootLinksArgs>>;
+  links_by_pk?: Resolver<Maybe<ResolversTypes['links']>, ParentType, ContextType, RequireFields<Query_RootLinks_By_PkArgs, 'id'>>;
+  list_books?: Resolver<Array<ResolversTypes['list_books']>, ParentType, ContextType, Partial<Query_RootList_BooksArgs>>;
+  list_books_aggregate?: Resolver<ResolversTypes['list_books_aggregate'], ParentType, ContextType, Partial<Query_RootList_Books_AggregateArgs>>;
+  list_books_by_pk?: Resolver<Maybe<ResolversTypes['list_books']>, ParentType, ContextType, RequireFields<Query_RootList_Books_By_PkArgs, 'id'>>;
+  lists?: Resolver<Array<ResolversTypes['lists']>, ParentType, ContextType, Partial<Query_RootListsArgs>>;
+  lists_aggregate?: Resolver<ResolversTypes['lists_aggregate'], ParentType, ContextType, Partial<Query_RootLists_AggregateArgs>>;
+  lists_by_pk?: Resolver<Maybe<ResolversTypes['lists']>, ParentType, ContextType, RequireFields<Query_RootLists_By_PkArgs, 'id'>>;
   me?: Resolver<Array<ResolversTypes['users']>, ParentType, ContextType, Partial<Query_RootMeArgs>>;
   newsletter?: Resolver<Maybe<ResolversTypes['NewsletterStatusType']>, ParentType, ContextType>;
-  notification_channels?: Resolver<
-    Array<ResolversTypes['notification_channels']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootNotification_ChannelsArgs>
-  >;
-  notification_channels_by_pk?: Resolver<
-    Maybe<ResolversTypes['notification_channels']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootNotification_Channels_By_PkArgs, 'id'>
-  >;
-  notification_deliveries?: Resolver<
-    Array<ResolversTypes['notification_deliveries']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootNotification_DeliveriesArgs>
-  >;
-  notification_deliveries_aggregate?: Resolver<
-    ResolversTypes['notification_deliveries_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<Query_RootNotification_Deliveries_AggregateArgs>
-  >;
-  notification_deliveries_by_pk?: Resolver<
-    Maybe<ResolversTypes['notification_deliveries']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootNotification_Deliveries_By_PkArgs, 'id'>
-  >;
-  notification_settings?: Resolver<
-    Array<ResolversTypes['notification_settings']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootNotification_SettingsArgs>
-  >;
-  notification_settings_by_pk?: Resolver<
-    Maybe<ResolversTypes['notification_settings']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootNotification_Settings_By_PkArgs, 'id'>
-  >;
-  notification_types?: Resolver<
-    Array<ResolversTypes['notification_types']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootNotification_TypesArgs>
-  >;
-  notification_types_by_pk?: Resolver<
-    Maybe<ResolversTypes['notification_types']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootNotification_Types_By_PkArgs, 'id'>
-  >;
-  notifications?: Resolver<
-    Array<ResolversTypes['notifications']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootNotificationsArgs>
-  >;
-  notifications_by_pk?: Resolver<
-    Maybe<ResolversTypes['notifications']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootNotifications_By_PkArgs, 'id'>
-  >;
-  platforms?: Resolver<
-    Array<ResolversTypes['platforms']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootPlatformsArgs>
-  >;
-  platforms_by_pk?: Resolver<
-    Maybe<ResolversTypes['platforms']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootPlatforms_By_PkArgs, 'id'>
-  >;
-  privacy_settings?: Resolver<
-    Array<ResolversTypes['privacy_settings']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootPrivacy_SettingsArgs>
-  >;
-  privacy_settings_by_pk?: Resolver<
-    Maybe<ResolversTypes['privacy_settings']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootPrivacy_Settings_By_PkArgs, 'id'>
-  >;
-  prompt_answers?: Resolver<
-    Array<ResolversTypes['prompt_answers']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootPrompt_AnswersArgs>
-  >;
-  prompt_answers_aggregate?: Resolver<
-    ResolversTypes['prompt_answers_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<Query_RootPrompt_Answers_AggregateArgs>
-  >;
-  prompt_answers_by_pk?: Resolver<
-    Maybe<ResolversTypes['prompt_answers']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootPrompt_Answers_By_PkArgs, 'id'>
-  >;
-  prompt_books_summary?: Resolver<
-    Array<ResolversTypes['prompt_books_summary']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootPrompt_Books_SummaryArgs>
-  >;
-  prompts?: Resolver<
-    Array<ResolversTypes['prompts']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootPromptsArgs>
-  >;
-  prompts_by_pk?: Resolver<
-    Maybe<ResolversTypes['prompts']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootPrompts_By_PkArgs, 'id'>
-  >;
-  publishers?: Resolver<
-    Array<ResolversTypes['publishers']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootPublishersArgs>
-  >;
-  publishers_by_pk?: Resolver<
-    Maybe<ResolversTypes['publishers']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootPublishers_By_PkArgs, 'id'>
-  >;
-  reading_formats?: Resolver<
-    Array<ResolversTypes['reading_formats']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootReading_FormatsArgs>
-  >;
-  reading_formats_by_pk?: Resolver<
-    Maybe<ResolversTypes['reading_formats']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootReading_Formats_By_PkArgs, 'id'>
-  >;
-  reading_journals?: Resolver<
-    Array<ResolversTypes['reading_journals']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootReading_JournalsArgs>
-  >;
-  reading_journals_by_pk?: Resolver<
-    Maybe<ResolversTypes['reading_journals']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootReading_Journals_By_PkArgs, 'id'>
-  >;
-  reading_journals_summary?: Resolver<
-    Array<ResolversTypes['reading_journals_summary']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootReading_Journals_SummaryArgs>
-  >;
-  recommendations?: Resolver<
-    Array<ResolversTypes['recommendations']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootRecommendationsArgs>
-  >;
-  recommendations_by_pk?: Resolver<
-    Maybe<ResolversTypes['recommendations']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootRecommendations_By_PkArgs, 'id'>
-  >;
-  referrals_for_user?: Resolver<
-    Maybe<Array<Maybe<ResolversTypes['ReferralType']>>>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootReferrals_For_UserArgs, 'limit' | 'user_id'>
-  >;
-  search?: Resolver<
-    Maybe<ResolversTypes['SearchOutput']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootSearchArgs, 'query'>
-  >;
-  series?: Resolver<
-    Array<ResolversTypes['series']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootSeriesArgs>
-  >;
-  series_by_pk?: Resolver<
-    Maybe<ResolversTypes['series']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootSeries_By_PkArgs, 'id'>
-  >;
-  subscriptions?: Resolver<
-    Maybe<ResolversTypes['SubscriptionsType']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootSubscriptionsArgs, 'default_payment_system_id'>
-  >;
-  tag_categories?: Resolver<
-    Array<ResolversTypes['tag_categories']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootTag_CategoriesArgs>
-  >;
-  tag_categories_by_pk?: Resolver<
-    Maybe<ResolversTypes['tag_categories']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootTag_Categories_By_PkArgs, 'id'>
-  >;
-  taggable_counts?: Resolver<
-    Array<ResolversTypes['taggable_counts']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootTaggable_CountsArgs>
-  >;
-  taggable_counts_by_pk?: Resolver<
-    Maybe<ResolversTypes['taggable_counts']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootTaggable_Counts_By_PkArgs, 'id'>
-  >;
-  taggings?: Resolver<
-    Array<ResolversTypes['taggings']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootTaggingsArgs>
-  >;
-  taggings_aggregate?: Resolver<
-    ResolversTypes['taggings_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<Query_RootTaggings_AggregateArgs>
-  >;
-  taggings_by_pk?: Resolver<
-    Maybe<ResolversTypes['taggings']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootTaggings_By_PkArgs, 'id'>
-  >;
-  tags?: Resolver<
-    Array<ResolversTypes['tags']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootTagsArgs>
-  >;
-  tags_aggregate?: Resolver<
-    ResolversTypes['tags_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<Query_RootTags_AggregateArgs>
-  >;
-  tags_by_pk?: Resolver<
-    Maybe<ResolversTypes['tags']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootTags_By_PkArgs, 'id'>
-  >;
-  user_blocks?: Resolver<
-    Array<ResolversTypes['user_blocks']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootUser_BlocksArgs>
-  >;
-  user_blocks_by_pk?: Resolver<
-    Maybe<ResolversTypes['user_blocks']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootUser_Blocks_By_PkArgs, 'id'>
-  >;
-  user_book_reads?: Resolver<
-    Array<ResolversTypes['user_book_reads']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootUser_Book_ReadsArgs>
-  >;
-  user_book_reads_aggregate?: Resolver<
-    ResolversTypes['user_book_reads_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<Query_RootUser_Book_Reads_AggregateArgs>
-  >;
-  user_book_reads_by_pk?: Resolver<
-    Maybe<ResolversTypes['user_book_reads']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootUser_Book_Reads_By_PkArgs, 'id'>
-  >;
-  user_book_statuses?: Resolver<
-    Array<ResolversTypes['user_book_statuses']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootUser_Book_StatusesArgs>
-  >;
-  user_book_statuses_aggregate?: Resolver<
-    ResolversTypes['user_book_statuses_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<Query_RootUser_Book_Statuses_AggregateArgs>
-  >;
-  user_book_statuses_by_pk?: Resolver<
-    Maybe<ResolversTypes['user_book_statuses']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootUser_Book_Statuses_By_PkArgs, 'id'>
-  >;
-  user_books?: Resolver<
-    Array<ResolversTypes['user_books']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootUser_BooksArgs>
-  >;
-  user_books_aggregate?: Resolver<
-    ResolversTypes['user_books_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<Query_RootUser_Books_AggregateArgs>
-  >;
-  user_books_by_pk?: Resolver<
-    Maybe<ResolversTypes['user_books']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootUser_Books_By_PkArgs, 'id'>
-  >;
-  user_flags?: Resolver<
-    Array<ResolversTypes['user_flags']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootUser_FlagsArgs>
-  >;
-  user_flags_by_pk?: Resolver<
-    Maybe<ResolversTypes['user_flags']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootUser_Flags_By_PkArgs, 'id'>
-  >;
-  user_referrals?: Resolver<
-    Array<ResolversTypes['user_referrals']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootUser_ReferralsArgs>
-  >;
-  user_referrals_by_pk?: Resolver<
-    Maybe<ResolversTypes['user_referrals']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootUser_Referrals_By_PkArgs, 'id'>
-  >;
-  user_statuses?: Resolver<
-    Array<ResolversTypes['user_statuses']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootUser_StatusesArgs>
-  >;
-  user_statuses_by_pk?: Resolver<
-    Maybe<ResolversTypes['user_statuses']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootUser_Statuses_By_PkArgs, 'id'>
-  >;
-  users?: Resolver<
-    Array<ResolversTypes['users']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootUsersArgs>
-  >;
-  users_aggregate_by_created_at_date?: Resolver<
-    Array<ResolversTypes['users_aggregate_by_created_at_date']>,
-    ParentType,
-    ContextType,
-    Partial<Query_RootUsers_Aggregate_By_Created_At_DateArgs>
-  >;
-  users_by_pk?: Resolver<
-    Maybe<ResolversTypes['users']>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_RootUsers_By_PkArgs, 'id'>
-  >;
+  notification_channels?: Resolver<Array<ResolversTypes['notification_channels']>, ParentType, ContextType, Partial<Query_RootNotification_ChannelsArgs>>;
+  notification_channels_by_pk?: Resolver<Maybe<ResolversTypes['notification_channels']>, ParentType, ContextType, RequireFields<Query_RootNotification_Channels_By_PkArgs, 'id'>>;
+  notification_deliveries?: Resolver<Array<ResolversTypes['notification_deliveries']>, ParentType, ContextType, Partial<Query_RootNotification_DeliveriesArgs>>;
+  notification_deliveries_aggregate?: Resolver<ResolversTypes['notification_deliveries_aggregate'], ParentType, ContextType, Partial<Query_RootNotification_Deliveries_AggregateArgs>>;
+  notification_deliveries_by_pk?: Resolver<Maybe<ResolversTypes['notification_deliveries']>, ParentType, ContextType, RequireFields<Query_RootNotification_Deliveries_By_PkArgs, 'id'>>;
+  notification_settings?: Resolver<Array<ResolversTypes['notification_settings']>, ParentType, ContextType, Partial<Query_RootNotification_SettingsArgs>>;
+  notification_settings_by_pk?: Resolver<Maybe<ResolversTypes['notification_settings']>, ParentType, ContextType, RequireFields<Query_RootNotification_Settings_By_PkArgs, 'id'>>;
+  notification_types?: Resolver<Array<ResolversTypes['notification_types']>, ParentType, ContextType, Partial<Query_RootNotification_TypesArgs>>;
+  notification_types_by_pk?: Resolver<Maybe<ResolversTypes['notification_types']>, ParentType, ContextType, RequireFields<Query_RootNotification_Types_By_PkArgs, 'id'>>;
+  notifications?: Resolver<Array<ResolversTypes['notifications']>, ParentType, ContextType, Partial<Query_RootNotificationsArgs>>;
+  notifications_by_pk?: Resolver<Maybe<ResolversTypes['notifications']>, ParentType, ContextType, RequireFields<Query_RootNotifications_By_PkArgs, 'id'>>;
+  platforms?: Resolver<Array<ResolversTypes['platforms']>, ParentType, ContextType, Partial<Query_RootPlatformsArgs>>;
+  platforms_by_pk?: Resolver<Maybe<ResolversTypes['platforms']>, ParentType, ContextType, RequireFields<Query_RootPlatforms_By_PkArgs, 'id'>>;
+  privacy_settings?: Resolver<Array<ResolversTypes['privacy_settings']>, ParentType, ContextType, Partial<Query_RootPrivacy_SettingsArgs>>;
+  privacy_settings_by_pk?: Resolver<Maybe<ResolversTypes['privacy_settings']>, ParentType, ContextType, RequireFields<Query_RootPrivacy_Settings_By_PkArgs, 'id'>>;
+  prompt_answers?: Resolver<Array<ResolversTypes['prompt_answers']>, ParentType, ContextType, Partial<Query_RootPrompt_AnswersArgs>>;
+  prompt_answers_aggregate?: Resolver<ResolversTypes['prompt_answers_aggregate'], ParentType, ContextType, Partial<Query_RootPrompt_Answers_AggregateArgs>>;
+  prompt_answers_by_pk?: Resolver<Maybe<ResolversTypes['prompt_answers']>, ParentType, ContextType, RequireFields<Query_RootPrompt_Answers_By_PkArgs, 'id'>>;
+  prompt_books_summary?: Resolver<Array<ResolversTypes['prompt_books_summary']>, ParentType, ContextType, Partial<Query_RootPrompt_Books_SummaryArgs>>;
+  prompts?: Resolver<Array<ResolversTypes['prompts']>, ParentType, ContextType, Partial<Query_RootPromptsArgs>>;
+  prompts_by_pk?: Resolver<Maybe<ResolversTypes['prompts']>, ParentType, ContextType, RequireFields<Query_RootPrompts_By_PkArgs, 'id'>>;
+  publishers?: Resolver<Array<ResolversTypes['publishers']>, ParentType, ContextType, Partial<Query_RootPublishersArgs>>;
+  publishers_by_pk?: Resolver<Maybe<ResolversTypes['publishers']>, ParentType, ContextType, RequireFields<Query_RootPublishers_By_PkArgs, 'id'>>;
+  reading_formats?: Resolver<Array<ResolversTypes['reading_formats']>, ParentType, ContextType, Partial<Query_RootReading_FormatsArgs>>;
+  reading_formats_by_pk?: Resolver<Maybe<ResolversTypes['reading_formats']>, ParentType, ContextType, RequireFields<Query_RootReading_Formats_By_PkArgs, 'id'>>;
+  reading_journals?: Resolver<Array<ResolversTypes['reading_journals']>, ParentType, ContextType, Partial<Query_RootReading_JournalsArgs>>;
+  reading_journals_by_pk?: Resolver<Maybe<ResolversTypes['reading_journals']>, ParentType, ContextType, RequireFields<Query_RootReading_Journals_By_PkArgs, 'id'>>;
+  reading_journals_summary?: Resolver<Array<ResolversTypes['reading_journals_summary']>, ParentType, ContextType, Partial<Query_RootReading_Journals_SummaryArgs>>;
+  referrals_for_user?: Resolver<Maybe<Array<Maybe<ResolversTypes['ReferralType']>>>, ParentType, ContextType, RequireFields<Query_RootReferrals_For_UserArgs, 'limit' | 'user_id'>>;
+  search?: Resolver<Maybe<ResolversTypes['SearchOutput']>, ParentType, ContextType, RequireFields<Query_RootSearchArgs, 'query'>>;
+  series?: Resolver<Array<ResolversTypes['series']>, ParentType, ContextType, Partial<Query_RootSeriesArgs>>;
+  series_by_pk?: Resolver<Maybe<ResolversTypes['series']>, ParentType, ContextType, RequireFields<Query_RootSeries_By_PkArgs, 'id'>>;
+  subscriptions?: Resolver<Maybe<ResolversTypes['SubscriptionsType']>, ParentType, ContextType, RequireFields<Query_RootSubscriptionsArgs, 'default_payment_system_id'>>;
+  tag_categories?: Resolver<Array<ResolversTypes['tag_categories']>, ParentType, ContextType, Partial<Query_RootTag_CategoriesArgs>>;
+  tag_categories_by_pk?: Resolver<Maybe<ResolversTypes['tag_categories']>, ParentType, ContextType, RequireFields<Query_RootTag_Categories_By_PkArgs, 'id'>>;
+  taggable_counts?: Resolver<Array<ResolversTypes['taggable_counts']>, ParentType, ContextType, Partial<Query_RootTaggable_CountsArgs>>;
+  taggable_counts_by_pk?: Resolver<Maybe<ResolversTypes['taggable_counts']>, ParentType, ContextType, RequireFields<Query_RootTaggable_Counts_By_PkArgs, 'id'>>;
+  taggings?: Resolver<Array<ResolversTypes['taggings']>, ParentType, ContextType, Partial<Query_RootTaggingsArgs>>;
+  taggings_aggregate?: Resolver<ResolversTypes['taggings_aggregate'], ParentType, ContextType, Partial<Query_RootTaggings_AggregateArgs>>;
+  taggings_by_pk?: Resolver<Maybe<ResolversTypes['taggings']>, ParentType, ContextType, RequireFields<Query_RootTaggings_By_PkArgs, 'id'>>;
+  tags?: Resolver<Array<ResolversTypes['tags']>, ParentType, ContextType, Partial<Query_RootTagsArgs>>;
+  tags_aggregate?: Resolver<ResolversTypes['tags_aggregate'], ParentType, ContextType, Partial<Query_RootTags_AggregateArgs>>;
+  tags_by_pk?: Resolver<Maybe<ResolversTypes['tags']>, ParentType, ContextType, RequireFields<Query_RootTags_By_PkArgs, 'id'>>;
+  user_blocks?: Resolver<Array<ResolversTypes['user_blocks']>, ParentType, ContextType, Partial<Query_RootUser_BlocksArgs>>;
+  user_blocks_by_pk?: Resolver<Maybe<ResolversTypes['user_blocks']>, ParentType, ContextType, RequireFields<Query_RootUser_Blocks_By_PkArgs, 'id'>>;
+  user_book_reads?: Resolver<Array<ResolversTypes['user_book_reads']>, ParentType, ContextType, Partial<Query_RootUser_Book_ReadsArgs>>;
+  user_book_reads_aggregate?: Resolver<ResolversTypes['user_book_reads_aggregate'], ParentType, ContextType, Partial<Query_RootUser_Book_Reads_AggregateArgs>>;
+  user_book_reads_by_pk?: Resolver<Maybe<ResolversTypes['user_book_reads']>, ParentType, ContextType, RequireFields<Query_RootUser_Book_Reads_By_PkArgs, 'id'>>;
+  user_book_statuses?: Resolver<Array<ResolversTypes['user_book_statuses']>, ParentType, ContextType, Partial<Query_RootUser_Book_StatusesArgs>>;
+  user_book_statuses_aggregate?: Resolver<ResolversTypes['user_book_statuses_aggregate'], ParentType, ContextType, Partial<Query_RootUser_Book_Statuses_AggregateArgs>>;
+  user_book_statuses_by_pk?: Resolver<Maybe<ResolversTypes['user_book_statuses']>, ParentType, ContextType, RequireFields<Query_RootUser_Book_Statuses_By_PkArgs, 'id'>>;
+  user_books?: Resolver<Array<ResolversTypes['user_books']>, ParentType, ContextType, Partial<Query_RootUser_BooksArgs>>;
+  user_books_aggregate?: Resolver<ResolversTypes['user_books_aggregate'], ParentType, ContextType, Partial<Query_RootUser_Books_AggregateArgs>>;
+  user_books_by_pk?: Resolver<Maybe<ResolversTypes['user_books']>, ParentType, ContextType, RequireFields<Query_RootUser_Books_By_PkArgs, 'id'>>;
+  user_flags?: Resolver<Array<ResolversTypes['user_flags']>, ParentType, ContextType, Partial<Query_RootUser_FlagsArgs>>;
+  user_flags_by_pk?: Resolver<Maybe<ResolversTypes['user_flags']>, ParentType, ContextType, RequireFields<Query_RootUser_Flags_By_PkArgs, 'id'>>;
+  user_referrals?: Resolver<Array<ResolversTypes['user_referrals']>, ParentType, ContextType, Partial<Query_RootUser_ReferralsArgs>>;
+  user_referrals_by_pk?: Resolver<Maybe<ResolversTypes['user_referrals']>, ParentType, ContextType, RequireFields<Query_RootUser_Referrals_By_PkArgs, 'id'>>;
+  user_statuses?: Resolver<Array<ResolversTypes['user_statuses']>, ParentType, ContextType, Partial<Query_RootUser_StatusesArgs>>;
+  user_statuses_by_pk?: Resolver<Maybe<ResolversTypes['user_statuses']>, ParentType, ContextType, RequireFields<Query_RootUser_Statuses_By_PkArgs, 'id'>>;
+  users?: Resolver<Array<ResolversTypes['users']>, ParentType, ContextType, Partial<Query_RootUsersArgs>>;
+  users_aggregate_by_created_at_date?: Resolver<Array<ResolversTypes['users_aggregate_by_created_at_date']>, ParentType, ContextType, Partial<Query_RootUsers_Aggregate_By_Created_At_DateArgs>>;
+  users_by_pk?: Resolver<Maybe<ResolversTypes['users']>, ParentType, ContextType, RequireFields<Query_RootUsers_By_PkArgs, 'id'>>;
 };
 
-export type Reading_FormatsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['reading_formats'] = ResolversParentTypes['reading_formats'],
-> = {
+export type Reading_FormatsResolvers<ContextType = any, ParentType extends ResolversParentTypes['reading_formats'] = ResolversParentTypes['reading_formats']> = {
   format?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Reading_JournalsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['reading_journals'] = ResolversParentTypes['reading_journals'],
-> = {
+export type Reading_JournalsResolvers<ContextType = any, ParentType extends ResolversParentTypes['reading_journals'] = ResolversParentTypes['reading_journals']> = {
+  action_at?: Resolver<ResolversTypes['timestamptz'], ParentType, ContextType>;
   book?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType>;
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   created_at?: Resolver<ResolversTypes['timestamp'], ParentType, ContextType>;
@@ -26785,125 +24959,49 @@ export type Reading_JournalsResolvers<
   edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   entry?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   event?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  followers?: Resolver<
-    Array<ResolversTypes['followed_users']>,
-    ParentType,
-    ContextType,
-    Partial<Reading_JournalsFollowersArgs>
-  >;
+  followers?: Resolver<Array<ResolversTypes['followed_users']>, ParentType, ContextType, Partial<Reading_JournalsFollowersArgs>>;
   id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
-  likes?: Resolver<
-    Array<ResolversTypes['likes']>,
-    ParentType,
-    ContextType,
-    Partial<Reading_JournalsLikesArgs>
-  >;
+  likes?: Resolver<Array<ResolversTypes['likes']>, ParentType, ContextType, Partial<Reading_JournalsLikesArgs>>;
   likes_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  metadata?: Resolver<
-    ResolversTypes['jsonb'],
-    ParentType,
-    ContextType,
-    Partial<Reading_JournalsMetadataArgs>
-  >;
+  metadata?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType, Partial<Reading_JournalsMetadataArgs>>;
   object_type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   privacy_setting_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  taggings?: Resolver<
-    Array<ResolversTypes['taggings']>,
-    ParentType,
-    ContextType,
-    Partial<Reading_JournalsTaggingsArgs>
-  >;
-  taggings_aggregate?: Resolver<
-    ResolversTypes['taggings_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<Reading_JournalsTaggings_AggregateArgs>
-  >;
+  taggings?: Resolver<Array<ResolversTypes['taggings']>, ParentType, ContextType, Partial<Reading_JournalsTaggingsArgs>>;
+  taggings_aggregate?: Resolver<ResolversTypes['taggings_aggregate'], ParentType, ContextType, Partial<Reading_JournalsTaggings_AggregateArgs>>;
   updated_at?: Resolver<ResolversTypes['timestamp'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['users']>, ParentType, ContextType>;
   user_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Reading_Journals_SummaryResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['reading_journals_summary'] = ResolversParentTypes['reading_journals_summary'],
-> = {
+export type Reading_Journals_SummaryResolvers<ContextType = any, ParentType extends ResolversParentTypes['reading_journals_summary'] = ResolversParentTypes['reading_journals_summary']> = {
   book?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType>;
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  followers?: Resolver<
-    Array<ResolversTypes['followed_users']>,
-    ParentType,
-    ContextType,
-    Partial<Reading_Journals_SummaryFollowersArgs>
-  >;
+  followers?: Resolver<Array<ResolversTypes['followed_users']>, ParentType, ContextType, Partial<Reading_Journals_SummaryFollowersArgs>>;
   journals_count?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
   last_updated_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
-  reading_journals?: Resolver<
-    Array<ResolversTypes['reading_journals']>,
-    ParentType,
-    ContextType,
-    Partial<Reading_Journals_SummaryReading_JournalsArgs>
-  >;
+  reading_journals?: Resolver<Array<ResolversTypes['reading_journals']>, ParentType, ContextType, Partial<Reading_Journals_SummaryReading_JournalsArgs>>;
   user?: Resolver<Maybe<ResolversTypes['users']>, ParentType, ContextType>;
   user_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type RecommendationsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['recommendations'] = ResolversParentTypes['recommendations'],
-> = {
-  context?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  created_at?: Resolver<ResolversTypes['timestamp'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
-  item_book?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType>;
-  item_id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
-  item_type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  item_user?: Resolver<Maybe<ResolversTypes['users']>, ParentType, ContextType>;
-  score?: Resolver<Maybe<ResolversTypes['float8']>, ParentType, ContextType>;
-  subject_id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
-  subject_type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  subject_user?: Resolver<Maybe<ResolversTypes['users']>, ParentType, ContextType>;
-  updated_at?: Resolver<ResolversTypes['timestamp'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type SeriesResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['series'] = ResolversParentTypes['series'],
-> = {
+export type SeriesResolvers<ContextType = any, ParentType extends ResolversParentTypes['series'] = ResolversParentTypes['series']> = {
   author?: Resolver<Maybe<ResolversTypes['authors']>, ParentType, ContextType>;
   author_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  book_series?: Resolver<
-    Array<ResolversTypes['book_series']>,
-    ParentType,
-    ContextType,
-    Partial<SeriesBook_SeriesArgs>
-  >;
-  book_series_aggregate?: Resolver<
-    ResolversTypes['book_series_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<SeriesBook_Series_AggregateArgs>
-  >;
+  book_series?: Resolver<Array<ResolversTypes['book_series']>, ParentType, ContextType, Partial<SeriesBook_SeriesArgs>>;
+  book_series_aggregate?: Resolver<ResolversTypes['book_series_aggregate'], ParentType, ContextType, Partial<SeriesBook_Series_AggregateArgs>>;
   books_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   canonical?: Resolver<Maybe<ResolversTypes['series']>, ParentType, ContextType>;
   canonical_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   creator?: Resolver<Maybe<ResolversTypes['users']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  identifiers?: Resolver<
-    ResolversTypes['jsonb'],
-    ParentType,
-    ContextType,
-    Partial<SeriesIdentifiersArgs>
-  >;
+  identifiers?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType, Partial<SeriesIdentifiersArgs>>;
   is_completed?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  object_type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   primary_books_count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   state?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -26911,1331 +25009,211 @@ export type SeriesResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export interface SmallintScalarConfig
-  extends GraphQLScalarTypeConfig<ResolversTypes['smallint'], any> {
+export interface SmallintScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['smallint'], any> {
   name: 'smallint';
 }
 
-export type Subscription_RootResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['subscription_root'] = ResolversParentTypes['subscription_root'],
-> = {
-  activities?: SubscriptionResolver<
-    Array<ResolversTypes['activities']>,
-    'activities',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootActivitiesArgs>
-  >;
-  activities_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['activities']>,
-    'activities_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootActivities_By_PkArgs, 'id'>
-  >;
-  activities_stream?: SubscriptionResolver<
-    Array<ResolversTypes['activities']>,
-    'activities_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootActivities_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  activity_feed?: SubscriptionResolver<
-    Array<ResolversTypes['activities']>,
-    'activity_feed',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootActivity_FeedArgs, 'args'>
-  >;
-  activity_foryou_feed?: SubscriptionResolver<
-    Array<ResolversTypes['activities']>,
-    'activity_foryou_feed',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootActivity_Foryou_FeedArgs, 'args'>
-  >;
-  authors?: SubscriptionResolver<
-    Array<ResolversTypes['authors']>,
-    'authors',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootAuthorsArgs>
-  >;
-  authors_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['authors']>,
-    'authors_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootAuthors_By_PkArgs, 'id'>
-  >;
-  authors_stream?: SubscriptionResolver<
-    Array<ResolversTypes['authors']>,
-    'authors_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootAuthors_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  book_categories?: SubscriptionResolver<
-    Array<ResolversTypes['book_categories']>,
-    'book_categories',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootBook_CategoriesArgs>
-  >;
-  book_categories_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['book_categories']>,
-    'book_categories_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootBook_Categories_By_PkArgs, 'id'>
-  >;
-  book_categories_stream?: SubscriptionResolver<
-    Array<ResolversTypes['book_categories']>,
-    'book_categories_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootBook_Categories_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  book_characters?: SubscriptionResolver<
-    Array<ResolversTypes['book_characters']>,
-    'book_characters',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootBook_CharactersArgs>
-  >;
-  book_characters_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['book_characters']>,
-    'book_characters_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootBook_Characters_By_PkArgs, 'id'>
-  >;
-  book_characters_stream?: SubscriptionResolver<
-    Array<ResolversTypes['book_characters']>,
-    'book_characters_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootBook_Characters_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  book_collections?: SubscriptionResolver<
-    Array<ResolversTypes['book_collections']>,
-    'book_collections',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootBook_CollectionsArgs>
-  >;
-  book_collections_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['book_collections']>,
-    'book_collections_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootBook_Collections_By_PkArgs, 'id'>
-  >;
-  book_collections_stream?: SubscriptionResolver<
-    Array<ResolversTypes['book_collections']>,
-    'book_collections_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootBook_Collections_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  book_mappings?: SubscriptionResolver<
-    Array<ResolversTypes['book_mappings']>,
-    'book_mappings',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootBook_MappingsArgs>
-  >;
-  book_mappings_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['book_mappings']>,
-    'book_mappings_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootBook_Mappings_By_PkArgs, 'id'>
-  >;
-  book_mappings_stream?: SubscriptionResolver<
-    Array<ResolversTypes['book_mappings']>,
-    'book_mappings_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootBook_Mappings_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  book_series?: SubscriptionResolver<
-    Array<ResolversTypes['book_series']>,
-    'book_series',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootBook_SeriesArgs>
-  >;
-  book_series_aggregate?: SubscriptionResolver<
-    ResolversTypes['book_series_aggregate'],
-    'book_series_aggregate',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootBook_Series_AggregateArgs>
-  >;
-  book_series_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['book_series']>,
-    'book_series_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootBook_Series_By_PkArgs, 'id'>
-  >;
-  book_series_stream?: SubscriptionResolver<
-    Array<ResolversTypes['book_series']>,
-    'book_series_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootBook_Series_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  book_statuses?: SubscriptionResolver<
-    Array<ResolversTypes['book_statuses']>,
-    'book_statuses',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootBook_StatusesArgs>
-  >;
-  book_statuses_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['book_statuses']>,
-    'book_statuses_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootBook_Statuses_By_PkArgs, 'id'>
-  >;
-  book_statuses_stream?: SubscriptionResolver<
-    Array<ResolversTypes['book_statuses']>,
-    'book_statuses_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootBook_Statuses_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  bookles?: SubscriptionResolver<
-    Array<ResolversTypes['bookles']>,
-    'bookles',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootBooklesArgs>
-  >;
-  bookles_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['bookles']>,
-    'bookles_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootBookles_By_PkArgs, 'id'>
-  >;
-  bookles_stream?: SubscriptionResolver<
-    Array<ResolversTypes['bookles']>,
-    'bookles_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootBookles_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  books?: SubscriptionResolver<
-    Array<ResolversTypes['books']>,
-    'books',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootBooksArgs>
-  >;
-  books_aggregate?: SubscriptionResolver<
-    ResolversTypes['books_aggregate'],
-    'books_aggregate',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootBooks_AggregateArgs>
-  >;
-  books_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['books']>,
-    'books_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootBooks_By_PkArgs, 'id'>
-  >;
-  books_stream?: SubscriptionResolver<
-    Array<ResolversTypes['books']>,
-    'books_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootBooks_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  characters?: SubscriptionResolver<
-    Array<ResolversTypes['characters']>,
-    'characters',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootCharactersArgs>
-  >;
-  characters_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['characters']>,
-    'characters_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootCharacters_By_PkArgs, 'id'>
-  >;
-  characters_stream?: SubscriptionResolver<
-    Array<ResolversTypes['characters']>,
-    'characters_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootCharacters_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  collection_import_results?: SubscriptionResolver<
-    Array<ResolversTypes['collection_import_results']>,
-    'collection_import_results',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootCollection_Import_ResultsArgs>
-  >;
-  collection_import_results_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['collection_import_results']>,
-    'collection_import_results_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootCollection_Import_Results_By_PkArgs, 'id'>
-  >;
-  collection_import_results_stream?: SubscriptionResolver<
-    Array<ResolversTypes['collection_import_results']>,
-    'collection_import_results_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootCollection_Import_Results_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  collection_imports?: SubscriptionResolver<
-    Array<ResolversTypes['collection_imports']>,
-    'collection_imports',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootCollection_ImportsArgs>
-  >;
-  collection_imports_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['collection_imports']>,
-    'collection_imports_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootCollection_Imports_By_PkArgs, 'id'>
-  >;
-  collection_imports_stream?: SubscriptionResolver<
-    Array<ResolversTypes['collection_imports']>,
-    'collection_imports_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootCollection_Imports_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  contributions?: SubscriptionResolver<
-    Array<ResolversTypes['contributions']>,
-    'contributions',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootContributionsArgs>
-  >;
-  contributions_aggregate?: SubscriptionResolver<
-    ResolversTypes['contributions_aggregate'],
-    'contributions_aggregate',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootContributions_AggregateArgs>
-  >;
-  contributions_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['contributions']>,
-    'contributions_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootContributions_By_PkArgs, 'id'>
-  >;
-  contributions_stream?: SubscriptionResolver<
-    Array<ResolversTypes['contributions']>,
-    'contributions_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootContributions_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  countries?: SubscriptionResolver<
-    Array<ResolversTypes['countries']>,
-    'countries',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootCountriesArgs>
-  >;
-  countries_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['countries']>,
-    'countries_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootCountries_By_PkArgs, 'id'>
-  >;
-  countries_stream?: SubscriptionResolver<
-    Array<ResolversTypes['countries']>,
-    'countries_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootCountries_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  editions?: SubscriptionResolver<
-    Array<ResolversTypes['editions']>,
-    'editions',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootEditionsArgs>
-  >;
-  editions_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['editions']>,
-    'editions_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootEditions_By_PkArgs, 'id'>
-  >;
-  editions_stream?: SubscriptionResolver<
-    Array<ResolversTypes['editions']>,
-    'editions_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootEditions_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  flag_statuses?: SubscriptionResolver<
-    Array<ResolversTypes['flag_statuses']>,
-    'flag_statuses',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootFlag_StatusesArgs>
-  >;
-  flag_statuses_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['flag_statuses']>,
-    'flag_statuses_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootFlag_Statuses_By_PkArgs, 'id'>
-  >;
-  flag_statuses_stream?: SubscriptionResolver<
-    Array<ResolversTypes['flag_statuses']>,
-    'flag_statuses_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootFlag_Statuses_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  followed_lists?: SubscriptionResolver<
-    Array<ResolversTypes['followed_lists']>,
-    'followed_lists',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootFollowed_ListsArgs>
-  >;
-  followed_lists_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['followed_lists']>,
-    'followed_lists_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootFollowed_Lists_By_PkArgs, 'id'>
-  >;
-  followed_lists_stream?: SubscriptionResolver<
-    Array<ResolversTypes['followed_lists']>,
-    'followed_lists_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootFollowed_Lists_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  followed_prompts?: SubscriptionResolver<
-    Array<ResolversTypes['followed_prompts']>,
-    'followed_prompts',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootFollowed_PromptsArgs>
-  >;
-  followed_prompts_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['followed_prompts']>,
-    'followed_prompts_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootFollowed_Prompts_By_PkArgs, 'id'>
-  >;
-  followed_prompts_stream?: SubscriptionResolver<
-    Array<ResolversTypes['followed_prompts']>,
-    'followed_prompts_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootFollowed_Prompts_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  followed_user_books?: SubscriptionResolver<
-    Array<ResolversTypes['followed_user_books']>,
-    'followed_user_books',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootFollowed_User_BooksArgs>
-  >;
-  followed_user_books_aggregate?: SubscriptionResolver<
-    ResolversTypes['followed_user_books_aggregate'],
-    'followed_user_books_aggregate',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootFollowed_User_Books_AggregateArgs>
-  >;
-  followed_user_books_stream?: SubscriptionResolver<
-    Array<ResolversTypes['followed_user_books']>,
-    'followed_user_books_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootFollowed_User_Books_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  followed_users?: SubscriptionResolver<
-    Array<ResolversTypes['followed_users']>,
-    'followed_users',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootFollowed_UsersArgs>
-  >;
-  followed_users_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['followed_users']>,
-    'followed_users_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootFollowed_Users_By_PkArgs, 'id'>
-  >;
-  followed_users_stream?: SubscriptionResolver<
-    Array<ResolversTypes['followed_users']>,
-    'followed_users_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootFollowed_Users_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  following_user_books?: SubscriptionResolver<
-    Array<ResolversTypes['following_user_books']>,
-    'following_user_books',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootFollowing_User_BooksArgs>
-  >;
-  following_user_books_aggregate?: SubscriptionResolver<
-    ResolversTypes['following_user_books_aggregate'],
-    'following_user_books_aggregate',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootFollowing_User_Books_AggregateArgs>
-  >;
-  following_user_books_stream?: SubscriptionResolver<
-    Array<ResolversTypes['following_user_books']>,
-    'following_user_books_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootFollowing_User_Books_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  goals?: SubscriptionResolver<
-    Array<ResolversTypes['goals']>,
-    'goals',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootGoalsArgs>
-  >;
-  goals_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['goals']>,
-    'goals_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootGoals_By_PkArgs, 'id'>
-  >;
-  goals_stream?: SubscriptionResolver<
-    Array<ResolversTypes['goals']>,
-    'goals_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootGoals_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  images?: SubscriptionResolver<
-    Array<ResolversTypes['images']>,
-    'images',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootImagesArgs>
-  >;
-  images_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['images']>,
-    'images_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootImages_By_PkArgs, 'id'>
-  >;
-  images_stream?: SubscriptionResolver<
-    Array<ResolversTypes['images']>,
-    'images_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootImages_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  languages?: SubscriptionResolver<
-    Array<ResolversTypes['languages']>,
-    'languages',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootLanguagesArgs>
-  >;
-  languages_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['languages']>,
-    'languages_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootLanguages_By_PkArgs, 'id'>
-  >;
-  languages_stream?: SubscriptionResolver<
-    Array<ResolversTypes['languages']>,
-    'languages_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootLanguages_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  likes?: SubscriptionResolver<
-    Array<ResolversTypes['likes']>,
-    'likes',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootLikesArgs>
-  >;
-  likes_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['likes']>,
-    'likes_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootLikes_By_PkArgs, 'id'>
-  >;
-  likes_stream?: SubscriptionResolver<
-    Array<ResolversTypes['likes']>,
-    'likes_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootLikes_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  list_books?: SubscriptionResolver<
-    Array<ResolversTypes['list_books']>,
-    'list_books',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootList_BooksArgs>
-  >;
-  list_books_aggregate?: SubscriptionResolver<
-    ResolversTypes['list_books_aggregate'],
-    'list_books_aggregate',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootList_Books_AggregateArgs>
-  >;
-  list_books_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['list_books']>,
-    'list_books_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootList_Books_By_PkArgs, 'id'>
-  >;
-  list_books_stream?: SubscriptionResolver<
-    Array<ResolversTypes['list_books']>,
-    'list_books_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootList_Books_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  lists?: SubscriptionResolver<
-    Array<ResolversTypes['lists']>,
-    'lists',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootListsArgs>
-  >;
-  lists_aggregate?: SubscriptionResolver<
-    ResolversTypes['lists_aggregate'],
-    'lists_aggregate',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootLists_AggregateArgs>
-  >;
-  lists_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['lists']>,
-    'lists_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootLists_By_PkArgs, 'id'>
-  >;
-  lists_stream?: SubscriptionResolver<
-    Array<ResolversTypes['lists']>,
-    'lists_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootLists_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  me?: SubscriptionResolver<
-    Array<ResolversTypes['users']>,
-    'me',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootMeArgs>
-  >;
-  notification_channels?: SubscriptionResolver<
-    Array<ResolversTypes['notification_channels']>,
-    'notification_channels',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootNotification_ChannelsArgs>
-  >;
-  notification_channels_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['notification_channels']>,
-    'notification_channels_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootNotification_Channels_By_PkArgs, 'id'>
-  >;
-  notification_channels_stream?: SubscriptionResolver<
-    Array<ResolversTypes['notification_channels']>,
-    'notification_channels_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootNotification_Channels_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  notification_deliveries?: SubscriptionResolver<
-    Array<ResolversTypes['notification_deliveries']>,
-    'notification_deliveries',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootNotification_DeliveriesArgs>
-  >;
-  notification_deliveries_aggregate?: SubscriptionResolver<
-    ResolversTypes['notification_deliveries_aggregate'],
-    'notification_deliveries_aggregate',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootNotification_Deliveries_AggregateArgs>
-  >;
-  notification_deliveries_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['notification_deliveries']>,
-    'notification_deliveries_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootNotification_Deliveries_By_PkArgs, 'id'>
-  >;
-  notification_deliveries_stream?: SubscriptionResolver<
-    Array<ResolversTypes['notification_deliveries']>,
-    'notification_deliveries_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootNotification_Deliveries_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  notification_settings?: SubscriptionResolver<
-    Array<ResolversTypes['notification_settings']>,
-    'notification_settings',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootNotification_SettingsArgs>
-  >;
-  notification_settings_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['notification_settings']>,
-    'notification_settings_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootNotification_Settings_By_PkArgs, 'id'>
-  >;
-  notification_settings_stream?: SubscriptionResolver<
-    Array<ResolversTypes['notification_settings']>,
-    'notification_settings_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootNotification_Settings_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  notification_types?: SubscriptionResolver<
-    Array<ResolversTypes['notification_types']>,
-    'notification_types',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootNotification_TypesArgs>
-  >;
-  notification_types_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['notification_types']>,
-    'notification_types_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootNotification_Types_By_PkArgs, 'id'>
-  >;
-  notification_types_stream?: SubscriptionResolver<
-    Array<ResolversTypes['notification_types']>,
-    'notification_types_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootNotification_Types_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  notifications?: SubscriptionResolver<
-    Array<ResolversTypes['notifications']>,
-    'notifications',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootNotificationsArgs>
-  >;
-  notifications_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['notifications']>,
-    'notifications_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootNotifications_By_PkArgs, 'id'>
-  >;
-  notifications_stream?: SubscriptionResolver<
-    Array<ResolversTypes['notifications']>,
-    'notifications_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootNotifications_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  platforms?: SubscriptionResolver<
-    Array<ResolversTypes['platforms']>,
-    'platforms',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootPlatformsArgs>
-  >;
-  platforms_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['platforms']>,
-    'platforms_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootPlatforms_By_PkArgs, 'id'>
-  >;
-  platforms_stream?: SubscriptionResolver<
-    Array<ResolversTypes['platforms']>,
-    'platforms_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootPlatforms_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  privacy_settings?: SubscriptionResolver<
-    Array<ResolversTypes['privacy_settings']>,
-    'privacy_settings',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootPrivacy_SettingsArgs>
-  >;
-  privacy_settings_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['privacy_settings']>,
-    'privacy_settings_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootPrivacy_Settings_By_PkArgs, 'id'>
-  >;
-  privacy_settings_stream?: SubscriptionResolver<
-    Array<ResolversTypes['privacy_settings']>,
-    'privacy_settings_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootPrivacy_Settings_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  prompt_answers?: SubscriptionResolver<
-    Array<ResolversTypes['prompt_answers']>,
-    'prompt_answers',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootPrompt_AnswersArgs>
-  >;
-  prompt_answers_aggregate?: SubscriptionResolver<
-    ResolversTypes['prompt_answers_aggregate'],
-    'prompt_answers_aggregate',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootPrompt_Answers_AggregateArgs>
-  >;
-  prompt_answers_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['prompt_answers']>,
-    'prompt_answers_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootPrompt_Answers_By_PkArgs, 'id'>
-  >;
-  prompt_answers_stream?: SubscriptionResolver<
-    Array<ResolversTypes['prompt_answers']>,
-    'prompt_answers_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootPrompt_Answers_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  prompt_books_summary?: SubscriptionResolver<
-    Array<ResolversTypes['prompt_books_summary']>,
-    'prompt_books_summary',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootPrompt_Books_SummaryArgs>
-  >;
-  prompt_books_summary_stream?: SubscriptionResolver<
-    Array<ResolversTypes['prompt_books_summary']>,
-    'prompt_books_summary_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootPrompt_Books_Summary_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  prompts?: SubscriptionResolver<
-    Array<ResolversTypes['prompts']>,
-    'prompts',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootPromptsArgs>
-  >;
-  prompts_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['prompts']>,
-    'prompts_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootPrompts_By_PkArgs, 'id'>
-  >;
-  prompts_stream?: SubscriptionResolver<
-    Array<ResolversTypes['prompts']>,
-    'prompts_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootPrompts_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  publishers?: SubscriptionResolver<
-    Array<ResolversTypes['publishers']>,
-    'publishers',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootPublishersArgs>
-  >;
-  publishers_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['publishers']>,
-    'publishers_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootPublishers_By_PkArgs, 'id'>
-  >;
-  publishers_stream?: SubscriptionResolver<
-    Array<ResolversTypes['publishers']>,
-    'publishers_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootPublishers_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  reading_formats?: SubscriptionResolver<
-    Array<ResolversTypes['reading_formats']>,
-    'reading_formats',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootReading_FormatsArgs>
-  >;
-  reading_formats_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['reading_formats']>,
-    'reading_formats_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootReading_Formats_By_PkArgs, 'id'>
-  >;
-  reading_formats_stream?: SubscriptionResolver<
-    Array<ResolversTypes['reading_formats']>,
-    'reading_formats_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootReading_Formats_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  reading_journals?: SubscriptionResolver<
-    Array<ResolversTypes['reading_journals']>,
-    'reading_journals',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootReading_JournalsArgs>
-  >;
-  reading_journals_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['reading_journals']>,
-    'reading_journals_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootReading_Journals_By_PkArgs, 'id'>
-  >;
-  reading_journals_stream?: SubscriptionResolver<
-    Array<ResolversTypes['reading_journals']>,
-    'reading_journals_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootReading_Journals_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  reading_journals_summary?: SubscriptionResolver<
-    Array<ResolversTypes['reading_journals_summary']>,
-    'reading_journals_summary',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootReading_Journals_SummaryArgs>
-  >;
-  reading_journals_summary_stream?: SubscriptionResolver<
-    Array<ResolversTypes['reading_journals_summary']>,
-    'reading_journals_summary_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootReading_Journals_Summary_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  recommendations?: SubscriptionResolver<
-    Array<ResolversTypes['recommendations']>,
-    'recommendations',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootRecommendationsArgs>
-  >;
-  recommendations_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['recommendations']>,
-    'recommendations_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootRecommendations_By_PkArgs, 'id'>
-  >;
-  recommendations_stream?: SubscriptionResolver<
-    Array<ResolversTypes['recommendations']>,
-    'recommendations_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootRecommendations_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  series?: SubscriptionResolver<
-    Array<ResolversTypes['series']>,
-    'series',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootSeriesArgs>
-  >;
-  series_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['series']>,
-    'series_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootSeries_By_PkArgs, 'id'>
-  >;
-  series_stream?: SubscriptionResolver<
-    Array<ResolversTypes['series']>,
-    'series_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootSeries_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  tag_categories?: SubscriptionResolver<
-    Array<ResolversTypes['tag_categories']>,
-    'tag_categories',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootTag_CategoriesArgs>
-  >;
-  tag_categories_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['tag_categories']>,
-    'tag_categories_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootTag_Categories_By_PkArgs, 'id'>
-  >;
-  tag_categories_stream?: SubscriptionResolver<
-    Array<ResolversTypes['tag_categories']>,
-    'tag_categories_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootTag_Categories_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  taggable_counts?: SubscriptionResolver<
-    Array<ResolversTypes['taggable_counts']>,
-    'taggable_counts',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootTaggable_CountsArgs>
-  >;
-  taggable_counts_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['taggable_counts']>,
-    'taggable_counts_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootTaggable_Counts_By_PkArgs, 'id'>
-  >;
-  taggable_counts_stream?: SubscriptionResolver<
-    Array<ResolversTypes['taggable_counts']>,
-    'taggable_counts_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootTaggable_Counts_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  taggings?: SubscriptionResolver<
-    Array<ResolversTypes['taggings']>,
-    'taggings',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootTaggingsArgs>
-  >;
-  taggings_aggregate?: SubscriptionResolver<
-    ResolversTypes['taggings_aggregate'],
-    'taggings_aggregate',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootTaggings_AggregateArgs>
-  >;
-  taggings_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['taggings']>,
-    'taggings_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootTaggings_By_PkArgs, 'id'>
-  >;
-  taggings_stream?: SubscriptionResolver<
-    Array<ResolversTypes['taggings']>,
-    'taggings_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootTaggings_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  tags?: SubscriptionResolver<
-    Array<ResolversTypes['tags']>,
-    'tags',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootTagsArgs>
-  >;
-  tags_aggregate?: SubscriptionResolver<
-    ResolversTypes['tags_aggregate'],
-    'tags_aggregate',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootTags_AggregateArgs>
-  >;
-  tags_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['tags']>,
-    'tags_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootTags_By_PkArgs, 'id'>
-  >;
-  tags_stream?: SubscriptionResolver<
-    Array<ResolversTypes['tags']>,
-    'tags_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootTags_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  user_blocks?: SubscriptionResolver<
-    Array<ResolversTypes['user_blocks']>,
-    'user_blocks',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootUser_BlocksArgs>
-  >;
-  user_blocks_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['user_blocks']>,
-    'user_blocks_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootUser_Blocks_By_PkArgs, 'id'>
-  >;
-  user_blocks_stream?: SubscriptionResolver<
-    Array<ResolversTypes['user_blocks']>,
-    'user_blocks_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootUser_Blocks_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  user_book_reads?: SubscriptionResolver<
-    Array<ResolversTypes['user_book_reads']>,
-    'user_book_reads',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootUser_Book_ReadsArgs>
-  >;
-  user_book_reads_aggregate?: SubscriptionResolver<
-    ResolversTypes['user_book_reads_aggregate'],
-    'user_book_reads_aggregate',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootUser_Book_Reads_AggregateArgs>
-  >;
-  user_book_reads_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['user_book_reads']>,
-    'user_book_reads_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootUser_Book_Reads_By_PkArgs, 'id'>
-  >;
-  user_book_reads_stream?: SubscriptionResolver<
-    Array<ResolversTypes['user_book_reads']>,
-    'user_book_reads_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootUser_Book_Reads_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  user_book_statuses?: SubscriptionResolver<
-    Array<ResolversTypes['user_book_statuses']>,
-    'user_book_statuses',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootUser_Book_StatusesArgs>
-  >;
-  user_book_statuses_aggregate?: SubscriptionResolver<
-    ResolversTypes['user_book_statuses_aggregate'],
-    'user_book_statuses_aggregate',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootUser_Book_Statuses_AggregateArgs>
-  >;
-  user_book_statuses_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['user_book_statuses']>,
-    'user_book_statuses_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootUser_Book_Statuses_By_PkArgs, 'id'>
-  >;
-  user_book_statuses_stream?: SubscriptionResolver<
-    Array<ResolversTypes['user_book_statuses']>,
-    'user_book_statuses_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootUser_Book_Statuses_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  user_books?: SubscriptionResolver<
-    Array<ResolversTypes['user_books']>,
-    'user_books',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootUser_BooksArgs>
-  >;
-  user_books_aggregate?: SubscriptionResolver<
-    ResolversTypes['user_books_aggregate'],
-    'user_books_aggregate',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootUser_Books_AggregateArgs>
-  >;
-  user_books_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['user_books']>,
-    'user_books_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootUser_Books_By_PkArgs, 'id'>
-  >;
-  user_books_stream?: SubscriptionResolver<
-    Array<ResolversTypes['user_books']>,
-    'user_books_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootUser_Books_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  user_flags?: SubscriptionResolver<
-    Array<ResolversTypes['user_flags']>,
-    'user_flags',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootUser_FlagsArgs>
-  >;
-  user_flags_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['user_flags']>,
-    'user_flags_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootUser_Flags_By_PkArgs, 'id'>
-  >;
-  user_flags_stream?: SubscriptionResolver<
-    Array<ResolversTypes['user_flags']>,
-    'user_flags_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootUser_Flags_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  user_referrals?: SubscriptionResolver<
-    Array<ResolversTypes['user_referrals']>,
-    'user_referrals',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootUser_ReferralsArgs>
-  >;
-  user_referrals_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['user_referrals']>,
-    'user_referrals_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootUser_Referrals_By_PkArgs, 'id'>
-  >;
-  user_referrals_stream?: SubscriptionResolver<
-    Array<ResolversTypes['user_referrals']>,
-    'user_referrals_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootUser_Referrals_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  user_statuses?: SubscriptionResolver<
-    Array<ResolversTypes['user_statuses']>,
-    'user_statuses',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootUser_StatusesArgs>
-  >;
-  user_statuses_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['user_statuses']>,
-    'user_statuses_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootUser_Statuses_By_PkArgs, 'id'>
-  >;
-  user_statuses_stream?: SubscriptionResolver<
-    Array<ResolversTypes['user_statuses']>,
-    'user_statuses_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootUser_Statuses_StreamArgs, 'batch_size' | 'cursor'>
-  >;
-  users?: SubscriptionResolver<
-    Array<ResolversTypes['users']>,
-    'users',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootUsersArgs>
-  >;
-  users_aggregate_by_created_at_date?: SubscriptionResolver<
-    Array<ResolversTypes['users_aggregate_by_created_at_date']>,
-    'users_aggregate_by_created_at_date',
-    ParentType,
-    ContextType,
-    Partial<Subscription_RootUsers_Aggregate_By_Created_At_DateArgs>
-  >;
-  users_aggregate_by_created_at_date_stream?: SubscriptionResolver<
-    Array<ResolversTypes['users_aggregate_by_created_at_date']>,
-    'users_aggregate_by_created_at_date_stream',
-    ParentType,
-    ContextType,
-    RequireFields<
-      Subscription_RootUsers_Aggregate_By_Created_At_Date_StreamArgs,
-      'batch_size' | 'cursor'
-    >
-  >;
-  users_by_pk?: SubscriptionResolver<
-    Maybe<ResolversTypes['users']>,
-    'users_by_pk',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootUsers_By_PkArgs, 'id'>
-  >;
-  users_stream?: SubscriptionResolver<
-    Array<ResolversTypes['users']>,
-    'users_stream',
-    ParentType,
-    ContextType,
-    RequireFields<Subscription_RootUsers_StreamArgs, 'batch_size' | 'cursor'>
-  >;
+export type Subscription_RootResolvers<ContextType = any, ParentType extends ResolversParentTypes['subscription_root'] = ResolversParentTypes['subscription_root']> = {
+  activities?: SubscriptionResolver<Array<ResolversTypes['activities']>, "activities", ParentType, ContextType, Partial<Subscription_RootActivitiesArgs>>;
+  activities_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['activities']>, "activities_by_pk", ParentType, ContextType, RequireFields<Subscription_RootActivities_By_PkArgs, 'id'>>;
+  activities_stream?: SubscriptionResolver<Array<ResolversTypes['activities']>, "activities_stream", ParentType, ContextType, RequireFields<Subscription_RootActivities_StreamArgs, 'batch_size' | 'cursor'>>;
+  activity_feed?: SubscriptionResolver<Array<ResolversTypes['activities']>, "activity_feed", ParentType, ContextType, RequireFields<Subscription_RootActivity_FeedArgs, 'args'>>;
+  activity_foryou_feed?: SubscriptionResolver<Array<ResolversTypes['activities']>, "activity_foryou_feed", ParentType, ContextType, RequireFields<Subscription_RootActivity_Foryou_FeedArgs, 'args'>>;
+  authors?: SubscriptionResolver<Array<ResolversTypes['authors']>, "authors", ParentType, ContextType, Partial<Subscription_RootAuthorsArgs>>;
+  authors_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['authors']>, "authors_by_pk", ParentType, ContextType, RequireFields<Subscription_RootAuthors_By_PkArgs, 'id'>>;
+  authors_stream?: SubscriptionResolver<Array<ResolversTypes['authors']>, "authors_stream", ParentType, ContextType, RequireFields<Subscription_RootAuthors_StreamArgs, 'batch_size' | 'cursor'>>;
+  book_categories?: SubscriptionResolver<Array<ResolversTypes['book_categories']>, "book_categories", ParentType, ContextType, Partial<Subscription_RootBook_CategoriesArgs>>;
+  book_categories_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['book_categories']>, "book_categories_by_pk", ParentType, ContextType, RequireFields<Subscription_RootBook_Categories_By_PkArgs, 'id'>>;
+  book_categories_stream?: SubscriptionResolver<Array<ResolversTypes['book_categories']>, "book_categories_stream", ParentType, ContextType, RequireFields<Subscription_RootBook_Categories_StreamArgs, 'batch_size' | 'cursor'>>;
+  book_characters?: SubscriptionResolver<Array<ResolversTypes['book_characters']>, "book_characters", ParentType, ContextType, Partial<Subscription_RootBook_CharactersArgs>>;
+  book_characters_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['book_characters']>, "book_characters_by_pk", ParentType, ContextType, RequireFields<Subscription_RootBook_Characters_By_PkArgs, 'id'>>;
+  book_characters_stream?: SubscriptionResolver<Array<ResolversTypes['book_characters']>, "book_characters_stream", ParentType, ContextType, RequireFields<Subscription_RootBook_Characters_StreamArgs, 'batch_size' | 'cursor'>>;
+  book_collections?: SubscriptionResolver<Array<ResolversTypes['book_collections']>, "book_collections", ParentType, ContextType, Partial<Subscription_RootBook_CollectionsArgs>>;
+  book_collections_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['book_collections']>, "book_collections_by_pk", ParentType, ContextType, RequireFields<Subscription_RootBook_Collections_By_PkArgs, 'id'>>;
+  book_collections_stream?: SubscriptionResolver<Array<ResolversTypes['book_collections']>, "book_collections_stream", ParentType, ContextType, RequireFields<Subscription_RootBook_Collections_StreamArgs, 'batch_size' | 'cursor'>>;
+  book_mappings?: SubscriptionResolver<Array<ResolversTypes['book_mappings']>, "book_mappings", ParentType, ContextType, Partial<Subscription_RootBook_MappingsArgs>>;
+  book_mappings_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['book_mappings']>, "book_mappings_by_pk", ParentType, ContextType, RequireFields<Subscription_RootBook_Mappings_By_PkArgs, 'id'>>;
+  book_mappings_stream?: SubscriptionResolver<Array<ResolversTypes['book_mappings']>, "book_mappings_stream", ParentType, ContextType, RequireFields<Subscription_RootBook_Mappings_StreamArgs, 'batch_size' | 'cursor'>>;
+  book_series?: SubscriptionResolver<Array<ResolversTypes['book_series']>, "book_series", ParentType, ContextType, Partial<Subscription_RootBook_SeriesArgs>>;
+  book_series_aggregate?: SubscriptionResolver<ResolversTypes['book_series_aggregate'], "book_series_aggregate", ParentType, ContextType, Partial<Subscription_RootBook_Series_AggregateArgs>>;
+  book_series_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['book_series']>, "book_series_by_pk", ParentType, ContextType, RequireFields<Subscription_RootBook_Series_By_PkArgs, 'id'>>;
+  book_series_stream?: SubscriptionResolver<Array<ResolversTypes['book_series']>, "book_series_stream", ParentType, ContextType, RequireFields<Subscription_RootBook_Series_StreamArgs, 'batch_size' | 'cursor'>>;
+  book_statuses?: SubscriptionResolver<Array<ResolversTypes['book_statuses']>, "book_statuses", ParentType, ContextType, Partial<Subscription_RootBook_StatusesArgs>>;
+  book_statuses_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['book_statuses']>, "book_statuses_by_pk", ParentType, ContextType, RequireFields<Subscription_RootBook_Statuses_By_PkArgs, 'id'>>;
+  book_statuses_stream?: SubscriptionResolver<Array<ResolversTypes['book_statuses']>, "book_statuses_stream", ParentType, ContextType, RequireFields<Subscription_RootBook_Statuses_StreamArgs, 'batch_size' | 'cursor'>>;
+  bookles?: SubscriptionResolver<Array<ResolversTypes['bookles']>, "bookles", ParentType, ContextType, Partial<Subscription_RootBooklesArgs>>;
+  bookles_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['bookles']>, "bookles_by_pk", ParentType, ContextType, RequireFields<Subscription_RootBookles_By_PkArgs, 'id'>>;
+  bookles_stream?: SubscriptionResolver<Array<ResolversTypes['bookles']>, "bookles_stream", ParentType, ContextType, RequireFields<Subscription_RootBookles_StreamArgs, 'batch_size' | 'cursor'>>;
+  books?: SubscriptionResolver<Array<ResolversTypes['books']>, "books", ParentType, ContextType, Partial<Subscription_RootBooksArgs>>;
+  books_aggregate?: SubscriptionResolver<ResolversTypes['books_aggregate'], "books_aggregate", ParentType, ContextType, Partial<Subscription_RootBooks_AggregateArgs>>;
+  books_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['books']>, "books_by_pk", ParentType, ContextType, RequireFields<Subscription_RootBooks_By_PkArgs, 'id'>>;
+  books_stream?: SubscriptionResolver<Array<ResolversTypes['books']>, "books_stream", ParentType, ContextType, RequireFields<Subscription_RootBooks_StreamArgs, 'batch_size' | 'cursor'>>;
+  characters?: SubscriptionResolver<Array<ResolversTypes['characters']>, "characters", ParentType, ContextType, Partial<Subscription_RootCharactersArgs>>;
+  characters_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['characters']>, "characters_by_pk", ParentType, ContextType, RequireFields<Subscription_RootCharacters_By_PkArgs, 'id'>>;
+  characters_stream?: SubscriptionResolver<Array<ResolversTypes['characters']>, "characters_stream", ParentType, ContextType, RequireFields<Subscription_RootCharacters_StreamArgs, 'batch_size' | 'cursor'>>;
+  collection_import_results?: SubscriptionResolver<Array<ResolversTypes['collection_import_results']>, "collection_import_results", ParentType, ContextType, Partial<Subscription_RootCollection_Import_ResultsArgs>>;
+  collection_import_results_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['collection_import_results']>, "collection_import_results_by_pk", ParentType, ContextType, RequireFields<Subscription_RootCollection_Import_Results_By_PkArgs, 'id'>>;
+  collection_import_results_stream?: SubscriptionResolver<Array<ResolversTypes['collection_import_results']>, "collection_import_results_stream", ParentType, ContextType, RequireFields<Subscription_RootCollection_Import_Results_StreamArgs, 'batch_size' | 'cursor'>>;
+  collection_imports?: SubscriptionResolver<Array<ResolversTypes['collection_imports']>, "collection_imports", ParentType, ContextType, Partial<Subscription_RootCollection_ImportsArgs>>;
+  collection_imports_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['collection_imports']>, "collection_imports_by_pk", ParentType, ContextType, RequireFields<Subscription_RootCollection_Imports_By_PkArgs, 'id'>>;
+  collection_imports_stream?: SubscriptionResolver<Array<ResolversTypes['collection_imports']>, "collection_imports_stream", ParentType, ContextType, RequireFields<Subscription_RootCollection_Imports_StreamArgs, 'batch_size' | 'cursor'>>;
+  contributions?: SubscriptionResolver<Array<ResolversTypes['contributions']>, "contributions", ParentType, ContextType, Partial<Subscription_RootContributionsArgs>>;
+  contributions_aggregate?: SubscriptionResolver<ResolversTypes['contributions_aggregate'], "contributions_aggregate", ParentType, ContextType, Partial<Subscription_RootContributions_AggregateArgs>>;
+  contributions_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['contributions']>, "contributions_by_pk", ParentType, ContextType, RequireFields<Subscription_RootContributions_By_PkArgs, 'id'>>;
+  contributions_stream?: SubscriptionResolver<Array<ResolversTypes['contributions']>, "contributions_stream", ParentType, ContextType, RequireFields<Subscription_RootContributions_StreamArgs, 'batch_size' | 'cursor'>>;
+  countries?: SubscriptionResolver<Array<ResolversTypes['countries']>, "countries", ParentType, ContextType, Partial<Subscription_RootCountriesArgs>>;
+  countries_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['countries']>, "countries_by_pk", ParentType, ContextType, RequireFields<Subscription_RootCountries_By_PkArgs, 'id'>>;
+  countries_stream?: SubscriptionResolver<Array<ResolversTypes['countries']>, "countries_stream", ParentType, ContextType, RequireFields<Subscription_RootCountries_StreamArgs, 'batch_size' | 'cursor'>>;
+  editions?: SubscriptionResolver<Array<ResolversTypes['editions']>, "editions", ParentType, ContextType, Partial<Subscription_RootEditionsArgs>>;
+  editions_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['editions']>, "editions_by_pk", ParentType, ContextType, RequireFields<Subscription_RootEditions_By_PkArgs, 'id'>>;
+  editions_stream?: SubscriptionResolver<Array<ResolversTypes['editions']>, "editions_stream", ParentType, ContextType, RequireFields<Subscription_RootEditions_StreamArgs, 'batch_size' | 'cursor'>>;
+  flag_statuses?: SubscriptionResolver<Array<ResolversTypes['flag_statuses']>, "flag_statuses", ParentType, ContextType, Partial<Subscription_RootFlag_StatusesArgs>>;
+  flag_statuses_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['flag_statuses']>, "flag_statuses_by_pk", ParentType, ContextType, RequireFields<Subscription_RootFlag_Statuses_By_PkArgs, 'id'>>;
+  flag_statuses_stream?: SubscriptionResolver<Array<ResolversTypes['flag_statuses']>, "flag_statuses_stream", ParentType, ContextType, RequireFields<Subscription_RootFlag_Statuses_StreamArgs, 'batch_size' | 'cursor'>>;
+  followed_lists?: SubscriptionResolver<Array<ResolversTypes['followed_lists']>, "followed_lists", ParentType, ContextType, Partial<Subscription_RootFollowed_ListsArgs>>;
+  followed_lists_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['followed_lists']>, "followed_lists_by_pk", ParentType, ContextType, RequireFields<Subscription_RootFollowed_Lists_By_PkArgs, 'id'>>;
+  followed_lists_stream?: SubscriptionResolver<Array<ResolversTypes['followed_lists']>, "followed_lists_stream", ParentType, ContextType, RequireFields<Subscription_RootFollowed_Lists_StreamArgs, 'batch_size' | 'cursor'>>;
+  followed_prompts?: SubscriptionResolver<Array<ResolversTypes['followed_prompts']>, "followed_prompts", ParentType, ContextType, Partial<Subscription_RootFollowed_PromptsArgs>>;
+  followed_prompts_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['followed_prompts']>, "followed_prompts_by_pk", ParentType, ContextType, RequireFields<Subscription_RootFollowed_Prompts_By_PkArgs, 'id'>>;
+  followed_prompts_stream?: SubscriptionResolver<Array<ResolversTypes['followed_prompts']>, "followed_prompts_stream", ParentType, ContextType, RequireFields<Subscription_RootFollowed_Prompts_StreamArgs, 'batch_size' | 'cursor'>>;
+  followed_user_books?: SubscriptionResolver<Array<ResolversTypes['followed_user_books']>, "followed_user_books", ParentType, ContextType, Partial<Subscription_RootFollowed_User_BooksArgs>>;
+  followed_user_books_aggregate?: SubscriptionResolver<ResolversTypes['followed_user_books_aggregate'], "followed_user_books_aggregate", ParentType, ContextType, Partial<Subscription_RootFollowed_User_Books_AggregateArgs>>;
+  followed_user_books_stream?: SubscriptionResolver<Array<ResolversTypes['followed_user_books']>, "followed_user_books_stream", ParentType, ContextType, RequireFields<Subscription_RootFollowed_User_Books_StreamArgs, 'batch_size' | 'cursor'>>;
+  followed_users?: SubscriptionResolver<Array<ResolversTypes['followed_users']>, "followed_users", ParentType, ContextType, Partial<Subscription_RootFollowed_UsersArgs>>;
+  followed_users_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['followed_users']>, "followed_users_by_pk", ParentType, ContextType, RequireFields<Subscription_RootFollowed_Users_By_PkArgs, 'id'>>;
+  followed_users_stream?: SubscriptionResolver<Array<ResolversTypes['followed_users']>, "followed_users_stream", ParentType, ContextType, RequireFields<Subscription_RootFollowed_Users_StreamArgs, 'batch_size' | 'cursor'>>;
+  following_user_books?: SubscriptionResolver<Array<ResolversTypes['following_user_books']>, "following_user_books", ParentType, ContextType, Partial<Subscription_RootFollowing_User_BooksArgs>>;
+  following_user_books_aggregate?: SubscriptionResolver<ResolversTypes['following_user_books_aggregate'], "following_user_books_aggregate", ParentType, ContextType, Partial<Subscription_RootFollowing_User_Books_AggregateArgs>>;
+  following_user_books_stream?: SubscriptionResolver<Array<ResolversTypes['following_user_books']>, "following_user_books_stream", ParentType, ContextType, RequireFields<Subscription_RootFollowing_User_Books_StreamArgs, 'batch_size' | 'cursor'>>;
+  follows?: SubscriptionResolver<Array<ResolversTypes['follows']>, "follows", ParentType, ContextType, Partial<Subscription_RootFollowsArgs>>;
+  follows_aggregate?: SubscriptionResolver<ResolversTypes['follows_aggregate'], "follows_aggregate", ParentType, ContextType, Partial<Subscription_RootFollows_AggregateArgs>>;
+  follows_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['follows']>, "follows_by_pk", ParentType, ContextType, RequireFields<Subscription_RootFollows_By_PkArgs, 'id'>>;
+  follows_stream?: SubscriptionResolver<Array<ResolversTypes['follows']>, "follows_stream", ParentType, ContextType, RequireFields<Subscription_RootFollows_StreamArgs, 'batch_size' | 'cursor'>>;
+  goals?: SubscriptionResolver<Array<ResolversTypes['goals']>, "goals", ParentType, ContextType, Partial<Subscription_RootGoalsArgs>>;
+  goals_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['goals']>, "goals_by_pk", ParentType, ContextType, RequireFields<Subscription_RootGoals_By_PkArgs, 'id'>>;
+  goals_stream?: SubscriptionResolver<Array<ResolversTypes['goals']>, "goals_stream", ParentType, ContextType, RequireFields<Subscription_RootGoals_StreamArgs, 'batch_size' | 'cursor'>>;
+  images?: SubscriptionResolver<Array<ResolversTypes['images']>, "images", ParentType, ContextType, Partial<Subscription_RootImagesArgs>>;
+  images_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['images']>, "images_by_pk", ParentType, ContextType, RequireFields<Subscription_RootImages_By_PkArgs, 'id'>>;
+  images_stream?: SubscriptionResolver<Array<ResolversTypes['images']>, "images_stream", ParentType, ContextType, RequireFields<Subscription_RootImages_StreamArgs, 'batch_size' | 'cursor'>>;
+  languages?: SubscriptionResolver<Array<ResolversTypes['languages']>, "languages", ParentType, ContextType, Partial<Subscription_RootLanguagesArgs>>;
+  languages_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['languages']>, "languages_by_pk", ParentType, ContextType, RequireFields<Subscription_RootLanguages_By_PkArgs, 'id'>>;
+  languages_stream?: SubscriptionResolver<Array<ResolversTypes['languages']>, "languages_stream", ParentType, ContextType, RequireFields<Subscription_RootLanguages_StreamArgs, 'batch_size' | 'cursor'>>;
+  likes?: SubscriptionResolver<Array<ResolversTypes['likes']>, "likes", ParentType, ContextType, Partial<Subscription_RootLikesArgs>>;
+  likes_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['likes']>, "likes_by_pk", ParentType, ContextType, RequireFields<Subscription_RootLikes_By_PkArgs, 'id'>>;
+  likes_stream?: SubscriptionResolver<Array<ResolversTypes['likes']>, "likes_stream", ParentType, ContextType, RequireFields<Subscription_RootLikes_StreamArgs, 'batch_size' | 'cursor'>>;
+  links?: SubscriptionResolver<Array<ResolversTypes['links']>, "links", ParentType, ContextType, Partial<Subscription_RootLinksArgs>>;
+  links_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['links']>, "links_by_pk", ParentType, ContextType, RequireFields<Subscription_RootLinks_By_PkArgs, 'id'>>;
+  links_stream?: SubscriptionResolver<Array<ResolversTypes['links']>, "links_stream", ParentType, ContextType, RequireFields<Subscription_RootLinks_StreamArgs, 'batch_size' | 'cursor'>>;
+  list_books?: SubscriptionResolver<Array<ResolversTypes['list_books']>, "list_books", ParentType, ContextType, Partial<Subscription_RootList_BooksArgs>>;
+  list_books_aggregate?: SubscriptionResolver<ResolversTypes['list_books_aggregate'], "list_books_aggregate", ParentType, ContextType, Partial<Subscription_RootList_Books_AggregateArgs>>;
+  list_books_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['list_books']>, "list_books_by_pk", ParentType, ContextType, RequireFields<Subscription_RootList_Books_By_PkArgs, 'id'>>;
+  list_books_stream?: SubscriptionResolver<Array<ResolversTypes['list_books']>, "list_books_stream", ParentType, ContextType, RequireFields<Subscription_RootList_Books_StreamArgs, 'batch_size' | 'cursor'>>;
+  lists?: SubscriptionResolver<Array<ResolversTypes['lists']>, "lists", ParentType, ContextType, Partial<Subscription_RootListsArgs>>;
+  lists_aggregate?: SubscriptionResolver<ResolversTypes['lists_aggregate'], "lists_aggregate", ParentType, ContextType, Partial<Subscription_RootLists_AggregateArgs>>;
+  lists_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['lists']>, "lists_by_pk", ParentType, ContextType, RequireFields<Subscription_RootLists_By_PkArgs, 'id'>>;
+  lists_stream?: SubscriptionResolver<Array<ResolversTypes['lists']>, "lists_stream", ParentType, ContextType, RequireFields<Subscription_RootLists_StreamArgs, 'batch_size' | 'cursor'>>;
+  me?: SubscriptionResolver<Array<ResolversTypes['users']>, "me", ParentType, ContextType, Partial<Subscription_RootMeArgs>>;
+  notification_channels?: SubscriptionResolver<Array<ResolversTypes['notification_channels']>, "notification_channels", ParentType, ContextType, Partial<Subscription_RootNotification_ChannelsArgs>>;
+  notification_channels_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['notification_channels']>, "notification_channels_by_pk", ParentType, ContextType, RequireFields<Subscription_RootNotification_Channels_By_PkArgs, 'id'>>;
+  notification_channels_stream?: SubscriptionResolver<Array<ResolversTypes['notification_channels']>, "notification_channels_stream", ParentType, ContextType, RequireFields<Subscription_RootNotification_Channels_StreamArgs, 'batch_size' | 'cursor'>>;
+  notification_deliveries?: SubscriptionResolver<Array<ResolversTypes['notification_deliveries']>, "notification_deliveries", ParentType, ContextType, Partial<Subscription_RootNotification_DeliveriesArgs>>;
+  notification_deliveries_aggregate?: SubscriptionResolver<ResolversTypes['notification_deliveries_aggregate'], "notification_deliveries_aggregate", ParentType, ContextType, Partial<Subscription_RootNotification_Deliveries_AggregateArgs>>;
+  notification_deliveries_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['notification_deliveries']>, "notification_deliveries_by_pk", ParentType, ContextType, RequireFields<Subscription_RootNotification_Deliveries_By_PkArgs, 'id'>>;
+  notification_deliveries_stream?: SubscriptionResolver<Array<ResolversTypes['notification_deliveries']>, "notification_deliveries_stream", ParentType, ContextType, RequireFields<Subscription_RootNotification_Deliveries_StreamArgs, 'batch_size' | 'cursor'>>;
+  notification_settings?: SubscriptionResolver<Array<ResolversTypes['notification_settings']>, "notification_settings", ParentType, ContextType, Partial<Subscription_RootNotification_SettingsArgs>>;
+  notification_settings_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['notification_settings']>, "notification_settings_by_pk", ParentType, ContextType, RequireFields<Subscription_RootNotification_Settings_By_PkArgs, 'id'>>;
+  notification_settings_stream?: SubscriptionResolver<Array<ResolversTypes['notification_settings']>, "notification_settings_stream", ParentType, ContextType, RequireFields<Subscription_RootNotification_Settings_StreamArgs, 'batch_size' | 'cursor'>>;
+  notification_types?: SubscriptionResolver<Array<ResolversTypes['notification_types']>, "notification_types", ParentType, ContextType, Partial<Subscription_RootNotification_TypesArgs>>;
+  notification_types_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['notification_types']>, "notification_types_by_pk", ParentType, ContextType, RequireFields<Subscription_RootNotification_Types_By_PkArgs, 'id'>>;
+  notification_types_stream?: SubscriptionResolver<Array<ResolversTypes['notification_types']>, "notification_types_stream", ParentType, ContextType, RequireFields<Subscription_RootNotification_Types_StreamArgs, 'batch_size' | 'cursor'>>;
+  notifications?: SubscriptionResolver<Array<ResolversTypes['notifications']>, "notifications", ParentType, ContextType, Partial<Subscription_RootNotificationsArgs>>;
+  notifications_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['notifications']>, "notifications_by_pk", ParentType, ContextType, RequireFields<Subscription_RootNotifications_By_PkArgs, 'id'>>;
+  notifications_stream?: SubscriptionResolver<Array<ResolversTypes['notifications']>, "notifications_stream", ParentType, ContextType, RequireFields<Subscription_RootNotifications_StreamArgs, 'batch_size' | 'cursor'>>;
+  platforms?: SubscriptionResolver<Array<ResolversTypes['platforms']>, "platforms", ParentType, ContextType, Partial<Subscription_RootPlatformsArgs>>;
+  platforms_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['platforms']>, "platforms_by_pk", ParentType, ContextType, RequireFields<Subscription_RootPlatforms_By_PkArgs, 'id'>>;
+  platforms_stream?: SubscriptionResolver<Array<ResolversTypes['platforms']>, "platforms_stream", ParentType, ContextType, RequireFields<Subscription_RootPlatforms_StreamArgs, 'batch_size' | 'cursor'>>;
+  privacy_settings?: SubscriptionResolver<Array<ResolversTypes['privacy_settings']>, "privacy_settings", ParentType, ContextType, Partial<Subscription_RootPrivacy_SettingsArgs>>;
+  privacy_settings_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['privacy_settings']>, "privacy_settings_by_pk", ParentType, ContextType, RequireFields<Subscription_RootPrivacy_Settings_By_PkArgs, 'id'>>;
+  privacy_settings_stream?: SubscriptionResolver<Array<ResolversTypes['privacy_settings']>, "privacy_settings_stream", ParentType, ContextType, RequireFields<Subscription_RootPrivacy_Settings_StreamArgs, 'batch_size' | 'cursor'>>;
+  prompt_answers?: SubscriptionResolver<Array<ResolversTypes['prompt_answers']>, "prompt_answers", ParentType, ContextType, Partial<Subscription_RootPrompt_AnswersArgs>>;
+  prompt_answers_aggregate?: SubscriptionResolver<ResolversTypes['prompt_answers_aggregate'], "prompt_answers_aggregate", ParentType, ContextType, Partial<Subscription_RootPrompt_Answers_AggregateArgs>>;
+  prompt_answers_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['prompt_answers']>, "prompt_answers_by_pk", ParentType, ContextType, RequireFields<Subscription_RootPrompt_Answers_By_PkArgs, 'id'>>;
+  prompt_answers_stream?: SubscriptionResolver<Array<ResolversTypes['prompt_answers']>, "prompt_answers_stream", ParentType, ContextType, RequireFields<Subscription_RootPrompt_Answers_StreamArgs, 'batch_size' | 'cursor'>>;
+  prompt_books_summary?: SubscriptionResolver<Array<ResolversTypes['prompt_books_summary']>, "prompt_books_summary", ParentType, ContextType, Partial<Subscription_RootPrompt_Books_SummaryArgs>>;
+  prompt_books_summary_stream?: SubscriptionResolver<Array<ResolversTypes['prompt_books_summary']>, "prompt_books_summary_stream", ParentType, ContextType, RequireFields<Subscription_RootPrompt_Books_Summary_StreamArgs, 'batch_size' | 'cursor'>>;
+  prompts?: SubscriptionResolver<Array<ResolversTypes['prompts']>, "prompts", ParentType, ContextType, Partial<Subscription_RootPromptsArgs>>;
+  prompts_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['prompts']>, "prompts_by_pk", ParentType, ContextType, RequireFields<Subscription_RootPrompts_By_PkArgs, 'id'>>;
+  prompts_stream?: SubscriptionResolver<Array<ResolversTypes['prompts']>, "prompts_stream", ParentType, ContextType, RequireFields<Subscription_RootPrompts_StreamArgs, 'batch_size' | 'cursor'>>;
+  publishers?: SubscriptionResolver<Array<ResolversTypes['publishers']>, "publishers", ParentType, ContextType, Partial<Subscription_RootPublishersArgs>>;
+  publishers_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['publishers']>, "publishers_by_pk", ParentType, ContextType, RequireFields<Subscription_RootPublishers_By_PkArgs, 'id'>>;
+  publishers_stream?: SubscriptionResolver<Array<ResolversTypes['publishers']>, "publishers_stream", ParentType, ContextType, RequireFields<Subscription_RootPublishers_StreamArgs, 'batch_size' | 'cursor'>>;
+  reading_formats?: SubscriptionResolver<Array<ResolversTypes['reading_formats']>, "reading_formats", ParentType, ContextType, Partial<Subscription_RootReading_FormatsArgs>>;
+  reading_formats_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['reading_formats']>, "reading_formats_by_pk", ParentType, ContextType, RequireFields<Subscription_RootReading_Formats_By_PkArgs, 'id'>>;
+  reading_formats_stream?: SubscriptionResolver<Array<ResolversTypes['reading_formats']>, "reading_formats_stream", ParentType, ContextType, RequireFields<Subscription_RootReading_Formats_StreamArgs, 'batch_size' | 'cursor'>>;
+  reading_journals?: SubscriptionResolver<Array<ResolversTypes['reading_journals']>, "reading_journals", ParentType, ContextType, Partial<Subscription_RootReading_JournalsArgs>>;
+  reading_journals_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['reading_journals']>, "reading_journals_by_pk", ParentType, ContextType, RequireFields<Subscription_RootReading_Journals_By_PkArgs, 'id'>>;
+  reading_journals_stream?: SubscriptionResolver<Array<ResolversTypes['reading_journals']>, "reading_journals_stream", ParentType, ContextType, RequireFields<Subscription_RootReading_Journals_StreamArgs, 'batch_size' | 'cursor'>>;
+  reading_journals_summary?: SubscriptionResolver<Array<ResolversTypes['reading_journals_summary']>, "reading_journals_summary", ParentType, ContextType, Partial<Subscription_RootReading_Journals_SummaryArgs>>;
+  reading_journals_summary_stream?: SubscriptionResolver<Array<ResolversTypes['reading_journals_summary']>, "reading_journals_summary_stream", ParentType, ContextType, RequireFields<Subscription_RootReading_Journals_Summary_StreamArgs, 'batch_size' | 'cursor'>>;
+  series?: SubscriptionResolver<Array<ResolversTypes['series']>, "series", ParentType, ContextType, Partial<Subscription_RootSeriesArgs>>;
+  series_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['series']>, "series_by_pk", ParentType, ContextType, RequireFields<Subscription_RootSeries_By_PkArgs, 'id'>>;
+  series_stream?: SubscriptionResolver<Array<ResolversTypes['series']>, "series_stream", ParentType, ContextType, RequireFields<Subscription_RootSeries_StreamArgs, 'batch_size' | 'cursor'>>;
+  tag_categories?: SubscriptionResolver<Array<ResolversTypes['tag_categories']>, "tag_categories", ParentType, ContextType, Partial<Subscription_RootTag_CategoriesArgs>>;
+  tag_categories_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['tag_categories']>, "tag_categories_by_pk", ParentType, ContextType, RequireFields<Subscription_RootTag_Categories_By_PkArgs, 'id'>>;
+  tag_categories_stream?: SubscriptionResolver<Array<ResolversTypes['tag_categories']>, "tag_categories_stream", ParentType, ContextType, RequireFields<Subscription_RootTag_Categories_StreamArgs, 'batch_size' | 'cursor'>>;
+  taggable_counts?: SubscriptionResolver<Array<ResolversTypes['taggable_counts']>, "taggable_counts", ParentType, ContextType, Partial<Subscription_RootTaggable_CountsArgs>>;
+  taggable_counts_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['taggable_counts']>, "taggable_counts_by_pk", ParentType, ContextType, RequireFields<Subscription_RootTaggable_Counts_By_PkArgs, 'id'>>;
+  taggable_counts_stream?: SubscriptionResolver<Array<ResolversTypes['taggable_counts']>, "taggable_counts_stream", ParentType, ContextType, RequireFields<Subscription_RootTaggable_Counts_StreamArgs, 'batch_size' | 'cursor'>>;
+  taggings?: SubscriptionResolver<Array<ResolversTypes['taggings']>, "taggings", ParentType, ContextType, Partial<Subscription_RootTaggingsArgs>>;
+  taggings_aggregate?: SubscriptionResolver<ResolversTypes['taggings_aggregate'], "taggings_aggregate", ParentType, ContextType, Partial<Subscription_RootTaggings_AggregateArgs>>;
+  taggings_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['taggings']>, "taggings_by_pk", ParentType, ContextType, RequireFields<Subscription_RootTaggings_By_PkArgs, 'id'>>;
+  taggings_stream?: SubscriptionResolver<Array<ResolversTypes['taggings']>, "taggings_stream", ParentType, ContextType, RequireFields<Subscription_RootTaggings_StreamArgs, 'batch_size' | 'cursor'>>;
+  tags?: SubscriptionResolver<Array<ResolversTypes['tags']>, "tags", ParentType, ContextType, Partial<Subscription_RootTagsArgs>>;
+  tags_aggregate?: SubscriptionResolver<ResolversTypes['tags_aggregate'], "tags_aggregate", ParentType, ContextType, Partial<Subscription_RootTags_AggregateArgs>>;
+  tags_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['tags']>, "tags_by_pk", ParentType, ContextType, RequireFields<Subscription_RootTags_By_PkArgs, 'id'>>;
+  tags_stream?: SubscriptionResolver<Array<ResolversTypes['tags']>, "tags_stream", ParentType, ContextType, RequireFields<Subscription_RootTags_StreamArgs, 'batch_size' | 'cursor'>>;
+  user_blocks?: SubscriptionResolver<Array<ResolversTypes['user_blocks']>, "user_blocks", ParentType, ContextType, Partial<Subscription_RootUser_BlocksArgs>>;
+  user_blocks_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['user_blocks']>, "user_blocks_by_pk", ParentType, ContextType, RequireFields<Subscription_RootUser_Blocks_By_PkArgs, 'id'>>;
+  user_blocks_stream?: SubscriptionResolver<Array<ResolversTypes['user_blocks']>, "user_blocks_stream", ParentType, ContextType, RequireFields<Subscription_RootUser_Blocks_StreamArgs, 'batch_size' | 'cursor'>>;
+  user_book_reads?: SubscriptionResolver<Array<ResolversTypes['user_book_reads']>, "user_book_reads", ParentType, ContextType, Partial<Subscription_RootUser_Book_ReadsArgs>>;
+  user_book_reads_aggregate?: SubscriptionResolver<ResolversTypes['user_book_reads_aggregate'], "user_book_reads_aggregate", ParentType, ContextType, Partial<Subscription_RootUser_Book_Reads_AggregateArgs>>;
+  user_book_reads_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['user_book_reads']>, "user_book_reads_by_pk", ParentType, ContextType, RequireFields<Subscription_RootUser_Book_Reads_By_PkArgs, 'id'>>;
+  user_book_reads_stream?: SubscriptionResolver<Array<ResolversTypes['user_book_reads']>, "user_book_reads_stream", ParentType, ContextType, RequireFields<Subscription_RootUser_Book_Reads_StreamArgs, 'batch_size' | 'cursor'>>;
+  user_book_statuses?: SubscriptionResolver<Array<ResolversTypes['user_book_statuses']>, "user_book_statuses", ParentType, ContextType, Partial<Subscription_RootUser_Book_StatusesArgs>>;
+  user_book_statuses_aggregate?: SubscriptionResolver<ResolversTypes['user_book_statuses_aggregate'], "user_book_statuses_aggregate", ParentType, ContextType, Partial<Subscription_RootUser_Book_Statuses_AggregateArgs>>;
+  user_book_statuses_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['user_book_statuses']>, "user_book_statuses_by_pk", ParentType, ContextType, RequireFields<Subscription_RootUser_Book_Statuses_By_PkArgs, 'id'>>;
+  user_book_statuses_stream?: SubscriptionResolver<Array<ResolversTypes['user_book_statuses']>, "user_book_statuses_stream", ParentType, ContextType, RequireFields<Subscription_RootUser_Book_Statuses_StreamArgs, 'batch_size' | 'cursor'>>;
+  user_books?: SubscriptionResolver<Array<ResolversTypes['user_books']>, "user_books", ParentType, ContextType, Partial<Subscription_RootUser_BooksArgs>>;
+  user_books_aggregate?: SubscriptionResolver<ResolversTypes['user_books_aggregate'], "user_books_aggregate", ParentType, ContextType, Partial<Subscription_RootUser_Books_AggregateArgs>>;
+  user_books_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['user_books']>, "user_books_by_pk", ParentType, ContextType, RequireFields<Subscription_RootUser_Books_By_PkArgs, 'id'>>;
+  user_books_stream?: SubscriptionResolver<Array<ResolversTypes['user_books']>, "user_books_stream", ParentType, ContextType, RequireFields<Subscription_RootUser_Books_StreamArgs, 'batch_size' | 'cursor'>>;
+  user_flags?: SubscriptionResolver<Array<ResolversTypes['user_flags']>, "user_flags", ParentType, ContextType, Partial<Subscription_RootUser_FlagsArgs>>;
+  user_flags_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['user_flags']>, "user_flags_by_pk", ParentType, ContextType, RequireFields<Subscription_RootUser_Flags_By_PkArgs, 'id'>>;
+  user_flags_stream?: SubscriptionResolver<Array<ResolversTypes['user_flags']>, "user_flags_stream", ParentType, ContextType, RequireFields<Subscription_RootUser_Flags_StreamArgs, 'batch_size' | 'cursor'>>;
+  user_referrals?: SubscriptionResolver<Array<ResolversTypes['user_referrals']>, "user_referrals", ParentType, ContextType, Partial<Subscription_RootUser_ReferralsArgs>>;
+  user_referrals_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['user_referrals']>, "user_referrals_by_pk", ParentType, ContextType, RequireFields<Subscription_RootUser_Referrals_By_PkArgs, 'id'>>;
+  user_referrals_stream?: SubscriptionResolver<Array<ResolversTypes['user_referrals']>, "user_referrals_stream", ParentType, ContextType, RequireFields<Subscription_RootUser_Referrals_StreamArgs, 'batch_size' | 'cursor'>>;
+  user_statuses?: SubscriptionResolver<Array<ResolversTypes['user_statuses']>, "user_statuses", ParentType, ContextType, Partial<Subscription_RootUser_StatusesArgs>>;
+  user_statuses_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['user_statuses']>, "user_statuses_by_pk", ParentType, ContextType, RequireFields<Subscription_RootUser_Statuses_By_PkArgs, 'id'>>;
+  user_statuses_stream?: SubscriptionResolver<Array<ResolversTypes['user_statuses']>, "user_statuses_stream", ParentType, ContextType, RequireFields<Subscription_RootUser_Statuses_StreamArgs, 'batch_size' | 'cursor'>>;
+  users?: SubscriptionResolver<Array<ResolversTypes['users']>, "users", ParentType, ContextType, Partial<Subscription_RootUsersArgs>>;
+  users_aggregate_by_created_at_date?: SubscriptionResolver<Array<ResolversTypes['users_aggregate_by_created_at_date']>, "users_aggregate_by_created_at_date", ParentType, ContextType, Partial<Subscription_RootUsers_Aggregate_By_Created_At_DateArgs>>;
+  users_aggregate_by_created_at_date_stream?: SubscriptionResolver<Array<ResolversTypes['users_aggregate_by_created_at_date']>, "users_aggregate_by_created_at_date_stream", ParentType, ContextType, RequireFields<Subscription_RootUsers_Aggregate_By_Created_At_Date_StreamArgs, 'batch_size' | 'cursor'>>;
+  users_by_pk?: SubscriptionResolver<Maybe<ResolversTypes['users']>, "users_by_pk", ParentType, ContextType, RequireFields<Subscription_RootUsers_By_PkArgs, 'id'>>;
+  users_stream?: SubscriptionResolver<Array<ResolversTypes['users']>, "users_stream", ParentType, ContextType, RequireFields<Subscription_RootUsers_StreamArgs, 'batch_size' | 'cursor'>>;
 };
 
-export type Tag_CategoriesResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['tag_categories'] = ResolversParentTypes['tag_categories'],
-> = {
+export type Tag_CategoriesResolvers<ContextType = any, ParentType extends ResolversParentTypes['tag_categories'] = ResolversParentTypes['tag_categories']> = {
   category?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  tags?: Resolver<
-    Array<ResolversTypes['tags']>,
-    ParentType,
-    ContextType,
-    Partial<Tag_CategoriesTagsArgs>
-  >;
-  tags_aggregate?: Resolver<
-    ResolversTypes['tags_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<Tag_CategoriesTags_AggregateArgs>
-  >;
+  tags?: Resolver<Array<ResolversTypes['tags']>, ParentType, ContextType, Partial<Tag_CategoriesTagsArgs>>;
+  tags_aggregate?: Resolver<ResolversTypes['tags_aggregate'], ParentType, ContextType, Partial<Tag_CategoriesTags_AggregateArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Taggable_CountsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['taggable_counts'] = ResolversParentTypes['taggable_counts'],
-> = {
+export type Taggable_CountsResolvers<ContextType = any, ParentType extends ResolversParentTypes['taggable_counts'] = ResolversParentTypes['taggable_counts']> = {
   book?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType>;
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   created_at?: Resolver<ResolversTypes['timestamp'], ParentType, ContextType>;
@@ -28250,10 +25228,7 @@ export type Taggable_CountsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type TaggingsResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['taggings'] = ResolversParentTypes['taggings'],
-> = {
+export type TaggingsResolvers<ContextType = any, ParentType extends ResolversParentTypes['taggings'] = ResolversParentTypes['taggings']> = {
   book?: Resolver<Maybe<ResolversTypes['books']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
@@ -28267,41 +25242,20 @@ export type TaggingsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Taggings_AggregateResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['taggings_aggregate'] = ResolversParentTypes['taggings_aggregate'],
-> = {
+export type Taggings_AggregateResolvers<ContextType = any, ParentType extends ResolversParentTypes['taggings_aggregate'] = ResolversParentTypes['taggings_aggregate']> = {
   aggregate?: Resolver<Maybe<ResolversTypes['taggings_aggregate_fields']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['taggings']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Taggings_Aggregate_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['taggings_aggregate_fields'] = ResolversParentTypes['taggings_aggregate_fields'],
-> = {
+export type Taggings_Aggregate_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['taggings_aggregate_fields'] = ResolversParentTypes['taggings_aggregate_fields']> = {
   avg?: Resolver<Maybe<ResolversTypes['taggings_avg_fields']>, ParentType, ContextType>;
-  count?: Resolver<
-    ResolversTypes['Int'],
-    ParentType,
-    ContextType,
-    Partial<Taggings_Aggregate_FieldsCountArgs>
-  >;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<Taggings_Aggregate_FieldsCountArgs>>;
   max?: Resolver<Maybe<ResolversTypes['taggings_max_fields']>, ParentType, ContextType>;
   min?: Resolver<Maybe<ResolversTypes['taggings_min_fields']>, ParentType, ContextType>;
   stddev?: Resolver<Maybe<ResolversTypes['taggings_stddev_fields']>, ParentType, ContextType>;
-  stddev_pop?: Resolver<
-    Maybe<ResolversTypes['taggings_stddev_pop_fields']>,
-    ParentType,
-    ContextType
-  >;
-  stddev_samp?: Resolver<
-    Maybe<ResolversTypes['taggings_stddev_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
+  stddev_pop?: Resolver<Maybe<ResolversTypes['taggings_stddev_pop_fields']>, ParentType, ContextType>;
+  stddev_samp?: Resolver<Maybe<ResolversTypes['taggings_stddev_samp_fields']>, ParentType, ContextType>;
   sum?: Resolver<Maybe<ResolversTypes['taggings_sum_fields']>, ParentType, ContextType>;
   var_pop?: Resolver<Maybe<ResolversTypes['taggings_var_pop_fields']>, ParentType, ContextType>;
   var_samp?: Resolver<Maybe<ResolversTypes['taggings_var_samp_fields']>, ParentType, ContextType>;
@@ -28309,11 +25263,7 @@ export type Taggings_Aggregate_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Taggings_Avg_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['taggings_avg_fields'] = ResolversParentTypes['taggings_avg_fields'],
-> = {
+export type Taggings_Avg_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['taggings_avg_fields'] = ResolversParentTypes['taggings_avg_fields']> = {
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   tag_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   taggable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -28321,11 +25271,7 @@ export type Taggings_Avg_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Taggings_Max_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['taggings_max_fields'] = ResolversParentTypes['taggings_max_fields'],
-> = {
+export type Taggings_Max_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['taggings_max_fields'] = ResolversParentTypes['taggings_max_fields']> = {
   created_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
   tag_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -28335,11 +25281,7 @@ export type Taggings_Max_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Taggings_Min_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['taggings_min_fields'] = ResolversParentTypes['taggings_min_fields'],
-> = {
+export type Taggings_Min_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['taggings_min_fields'] = ResolversParentTypes['taggings_min_fields']> = {
   created_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
   tag_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -28349,11 +25291,7 @@ export type Taggings_Min_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Taggings_Stddev_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['taggings_stddev_fields'] = ResolversParentTypes['taggings_stddev_fields'],
-> = {
+export type Taggings_Stddev_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['taggings_stddev_fields'] = ResolversParentTypes['taggings_stddev_fields']> = {
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   tag_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   taggable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -28361,11 +25299,7 @@ export type Taggings_Stddev_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Taggings_Stddev_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['taggings_stddev_pop_fields'] = ResolversParentTypes['taggings_stddev_pop_fields'],
-> = {
+export type Taggings_Stddev_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['taggings_stddev_pop_fields'] = ResolversParentTypes['taggings_stddev_pop_fields']> = {
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   tag_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   taggable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -28373,11 +25307,7 @@ export type Taggings_Stddev_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Taggings_Stddev_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['taggings_stddev_samp_fields'] = ResolversParentTypes['taggings_stddev_samp_fields'],
-> = {
+export type Taggings_Stddev_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['taggings_stddev_samp_fields'] = ResolversParentTypes['taggings_stddev_samp_fields']> = {
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   tag_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   taggable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -28385,11 +25315,7 @@ export type Taggings_Stddev_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Taggings_Sum_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['taggings_sum_fields'] = ResolversParentTypes['taggings_sum_fields'],
-> = {
+export type Taggings_Sum_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['taggings_sum_fields'] = ResolversParentTypes['taggings_sum_fields']> = {
   id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
   tag_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   taggable_id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
@@ -28397,11 +25323,7 @@ export type Taggings_Sum_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Taggings_Var_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['taggings_var_pop_fields'] = ResolversParentTypes['taggings_var_pop_fields'],
-> = {
+export type Taggings_Var_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['taggings_var_pop_fields'] = ResolversParentTypes['taggings_var_pop_fields']> = {
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   tag_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   taggable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -28409,11 +25331,7 @@ export type Taggings_Var_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Taggings_Var_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['taggings_var_samp_fields'] = ResolversParentTypes['taggings_var_samp_fields'],
-> = {
+export type Taggings_Var_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['taggings_var_samp_fields'] = ResolversParentTypes['taggings_var_samp_fields']> = {
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   tag_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   taggable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -28421,11 +25339,7 @@ export type Taggings_Var_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Taggings_Variance_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['taggings_variance_fields'] = ResolversParentTypes['taggings_variance_fields'],
-> = {
+export type Taggings_Variance_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['taggings_variance_fields'] = ResolversParentTypes['taggings_variance_fields']> = {
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   tag_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   taggable_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -28433,53 +25347,27 @@ export type Taggings_Variance_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type TagsResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['tags'] = ResolversParentTypes['tags'],
-> = {
+export type TagsResolvers<ContextType = any, ParentType extends ResolversParentTypes['tags'] = ResolversParentTypes['tags']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   tag?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   tag_category?: Resolver<ResolversTypes['tag_categories'], ParentType, ContextType>;
   tag_category_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  taggings?: Resolver<
-    Array<ResolversTypes['taggings']>,
-    ParentType,
-    ContextType,
-    Partial<TagsTaggingsArgs>
-  >;
-  taggings_aggregate?: Resolver<
-    ResolversTypes['taggings_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<TagsTaggings_AggregateArgs>
-  >;
+  taggings?: Resolver<Array<ResolversTypes['taggings']>, ParentType, ContextType, Partial<TagsTaggingsArgs>>;
+  taggings_aggregate?: Resolver<ResolversTypes['taggings_aggregate'], ParentType, ContextType, Partial<TagsTaggings_AggregateArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Tags_AggregateResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['tags_aggregate'] = ResolversParentTypes['tags_aggregate'],
-> = {
+export type Tags_AggregateResolvers<ContextType = any, ParentType extends ResolversParentTypes['tags_aggregate'] = ResolversParentTypes['tags_aggregate']> = {
   aggregate?: Resolver<Maybe<ResolversTypes['tags_aggregate_fields']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['tags']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Tags_Aggregate_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['tags_aggregate_fields'] = ResolversParentTypes['tags_aggregate_fields'],
-> = {
+export type Tags_Aggregate_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['tags_aggregate_fields'] = ResolversParentTypes['tags_aggregate_fields']> = {
   avg?: Resolver<Maybe<ResolversTypes['tags_avg_fields']>, ParentType, ContextType>;
-  count?: Resolver<
-    ResolversTypes['Int'],
-    ParentType,
-    ContextType,
-    Partial<Tags_Aggregate_FieldsCountArgs>
-  >;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<Tags_Aggregate_FieldsCountArgs>>;
   max?: Resolver<Maybe<ResolversTypes['tags_max_fields']>, ParentType, ContextType>;
   min?: Resolver<Maybe<ResolversTypes['tags_min_fields']>, ParentType, ContextType>;
   stddev?: Resolver<Maybe<ResolversTypes['tags_stddev_fields']>, ParentType, ContextType>;
@@ -28492,22 +25380,14 @@ export type Tags_Aggregate_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Tags_Avg_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['tags_avg_fields'] = ResolversParentTypes['tags_avg_fields'],
-> = {
+export type Tags_Avg_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['tags_avg_fields'] = ResolversParentTypes['tags_avg_fields']> = {
   count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   tag_category_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Tags_Max_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['tags_max_fields'] = ResolversParentTypes['tags_max_fields'],
-> = {
+export type Tags_Max_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['tags_max_fields'] = ResolversParentTypes['tags_max_fields']> = {
   count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -28516,11 +25396,7 @@ export type Tags_Max_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Tags_Min_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['tags_min_fields'] = ResolversParentTypes['tags_min_fields'],
-> = {
+export type Tags_Min_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['tags_min_fields'] = ResolversParentTypes['tags_min_fields']> = {
   count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -28529,97 +25405,64 @@ export type Tags_Min_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Tags_Stddev_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['tags_stddev_fields'] = ResolversParentTypes['tags_stddev_fields'],
-> = {
+export type Tags_Stddev_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['tags_stddev_fields'] = ResolversParentTypes['tags_stddev_fields']> = {
   count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   tag_category_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Tags_Stddev_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['tags_stddev_pop_fields'] = ResolversParentTypes['tags_stddev_pop_fields'],
-> = {
+export type Tags_Stddev_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['tags_stddev_pop_fields'] = ResolversParentTypes['tags_stddev_pop_fields']> = {
   count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   tag_category_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Tags_Stddev_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['tags_stddev_samp_fields'] = ResolversParentTypes['tags_stddev_samp_fields'],
-> = {
+export type Tags_Stddev_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['tags_stddev_samp_fields'] = ResolversParentTypes['tags_stddev_samp_fields']> = {
   count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   tag_category_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Tags_Sum_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['tags_sum_fields'] = ResolversParentTypes['tags_sum_fields'],
-> = {
+export type Tags_Sum_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['tags_sum_fields'] = ResolversParentTypes['tags_sum_fields']> = {
   count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
   tag_category_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Tags_Var_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['tags_var_pop_fields'] = ResolversParentTypes['tags_var_pop_fields'],
-> = {
+export type Tags_Var_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['tags_var_pop_fields'] = ResolversParentTypes['tags_var_pop_fields']> = {
   count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   tag_category_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Tags_Var_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['tags_var_samp_fields'] = ResolversParentTypes['tags_var_samp_fields'],
-> = {
+export type Tags_Var_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['tags_var_samp_fields'] = ResolversParentTypes['tags_var_samp_fields']> = {
   count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   tag_category_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Tags_Variance_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['tags_variance_fields'] = ResolversParentTypes['tags_variance_fields'],
-> = {
+export type Tags_Variance_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['tags_variance_fields'] = ResolversParentTypes['tags_variance_fields']> = {
   count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   tag_category_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export interface TimestampScalarConfig
-  extends GraphQLScalarTypeConfig<ResolversTypes['timestamp'], any> {
+export interface TimestampScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['timestamp'], any> {
   name: 'timestamp';
 }
 
-export interface TimestamptzScalarConfig
-  extends GraphQLScalarTypeConfig<ResolversTypes['timestamptz'], any> {
+export interface TimestamptzScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['timestamptz'], any> {
   name: 'timestamptz';
 }
 
-export type User_BlocksResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['user_blocks'] = ResolversParentTypes['user_blocks'],
-> = {
+export type User_BlocksResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_blocks'] = ResolversParentTypes['user_blocks']> = {
   blocked_user?: Resolver<Maybe<ResolversTypes['users']>, ParentType, ContextType>;
   blocked_user_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   created_at?: Resolver<ResolversTypes['timestamp'], ParentType, ContextType>;
@@ -28629,21 +25472,13 @@ export type User_BlocksResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Blocks_Mutation_ResponseResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_blocks_mutation_response'] = ResolversParentTypes['user_blocks_mutation_response'],
-> = {
+export type User_Blocks_Mutation_ResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_blocks_mutation_response'] = ResolversParentTypes['user_blocks_mutation_response']> = {
   affected_rows?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   returning?: Resolver<Array<ResolversTypes['user_blocks']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_ReadsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_reads'] = ResolversParentTypes['user_book_reads'],
-> = {
+export type User_Book_ReadsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_reads'] = ResolversParentTypes['user_book_reads']> = {
   edition?: Resolver<Maybe<ResolversTypes['editions']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   finished_at?: Resolver<Maybe<ResolversTypes['date']>, ParentType, ContextType>;
@@ -28658,73 +25493,28 @@ export type User_Book_ReadsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Reads_AggregateResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_reads_aggregate'] = ResolversParentTypes['user_book_reads_aggregate'],
-> = {
-  aggregate?: Resolver<
-    Maybe<ResolversTypes['user_book_reads_aggregate_fields']>,
-    ParentType,
-    ContextType
-  >;
+export type User_Book_Reads_AggregateResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_reads_aggregate'] = ResolversParentTypes['user_book_reads_aggregate']> = {
+  aggregate?: Resolver<Maybe<ResolversTypes['user_book_reads_aggregate_fields']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['user_book_reads']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Reads_Aggregate_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_reads_aggregate_fields'] = ResolversParentTypes['user_book_reads_aggregate_fields'],
-> = {
+export type User_Book_Reads_Aggregate_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_reads_aggregate_fields'] = ResolversParentTypes['user_book_reads_aggregate_fields']> = {
   avg?: Resolver<Maybe<ResolversTypes['user_book_reads_avg_fields']>, ParentType, ContextType>;
-  count?: Resolver<
-    ResolversTypes['Int'],
-    ParentType,
-    ContextType,
-    Partial<User_Book_Reads_Aggregate_FieldsCountArgs>
-  >;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<User_Book_Reads_Aggregate_FieldsCountArgs>>;
   max?: Resolver<Maybe<ResolversTypes['user_book_reads_max_fields']>, ParentType, ContextType>;
   min?: Resolver<Maybe<ResolversTypes['user_book_reads_min_fields']>, ParentType, ContextType>;
-  stddev?: Resolver<
-    Maybe<ResolversTypes['user_book_reads_stddev_fields']>,
-    ParentType,
-    ContextType
-  >;
-  stddev_pop?: Resolver<
-    Maybe<ResolversTypes['user_book_reads_stddev_pop_fields']>,
-    ParentType,
-    ContextType
-  >;
-  stddev_samp?: Resolver<
-    Maybe<ResolversTypes['user_book_reads_stddev_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
+  stddev?: Resolver<Maybe<ResolversTypes['user_book_reads_stddev_fields']>, ParentType, ContextType>;
+  stddev_pop?: Resolver<Maybe<ResolversTypes['user_book_reads_stddev_pop_fields']>, ParentType, ContextType>;
+  stddev_samp?: Resolver<Maybe<ResolversTypes['user_book_reads_stddev_samp_fields']>, ParentType, ContextType>;
   sum?: Resolver<Maybe<ResolversTypes['user_book_reads_sum_fields']>, ParentType, ContextType>;
-  var_pop?: Resolver<
-    Maybe<ResolversTypes['user_book_reads_var_pop_fields']>,
-    ParentType,
-    ContextType
-  >;
-  var_samp?: Resolver<
-    Maybe<ResolversTypes['user_book_reads_var_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
-  variance?: Resolver<
-    Maybe<ResolversTypes['user_book_reads_variance_fields']>,
-    ParentType,
-    ContextType
-  >;
+  var_pop?: Resolver<Maybe<ResolversTypes['user_book_reads_var_pop_fields']>, ParentType, ContextType>;
+  var_samp?: Resolver<Maybe<ResolversTypes['user_book_reads_var_samp_fields']>, ParentType, ContextType>;
+  variance?: Resolver<Maybe<ResolversTypes['user_book_reads_variance_fields']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Reads_Avg_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_reads_avg_fields'] = ResolversParentTypes['user_book_reads_avg_fields'],
-> = {
+export type User_Book_Reads_Avg_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_reads_avg_fields'] = ResolversParentTypes['user_book_reads_avg_fields']> = {
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   progress?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -28734,11 +25524,7 @@ export type User_Book_Reads_Avg_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Reads_Max_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_reads_max_fields'] = ResolversParentTypes['user_book_reads_max_fields'],
-> = {
+export type User_Book_Reads_Max_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_reads_max_fields'] = ResolversParentTypes['user_book_reads_max_fields']> = {
   edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   finished_at?: Resolver<Maybe<ResolversTypes['date']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -28751,11 +25537,7 @@ export type User_Book_Reads_Max_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Reads_Min_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_reads_min_fields'] = ResolversParentTypes['user_book_reads_min_fields'],
-> = {
+export type User_Book_Reads_Min_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_reads_min_fields'] = ResolversParentTypes['user_book_reads_min_fields']> = {
   edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   finished_at?: Resolver<Maybe<ResolversTypes['date']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -28768,11 +25550,7 @@ export type User_Book_Reads_Min_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Reads_Stddev_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_reads_stddev_fields'] = ResolversParentTypes['user_book_reads_stddev_fields'],
-> = {
+export type User_Book_Reads_Stddev_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_reads_stddev_fields'] = ResolversParentTypes['user_book_reads_stddev_fields']> = {
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   progress?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -28782,11 +25560,7 @@ export type User_Book_Reads_Stddev_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Reads_Stddev_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_reads_stddev_pop_fields'] = ResolversParentTypes['user_book_reads_stddev_pop_fields'],
-> = {
+export type User_Book_Reads_Stddev_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_reads_stddev_pop_fields'] = ResolversParentTypes['user_book_reads_stddev_pop_fields']> = {
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   progress?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -28796,11 +25570,7 @@ export type User_Book_Reads_Stddev_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Reads_Stddev_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_reads_stddev_samp_fields'] = ResolversParentTypes['user_book_reads_stddev_samp_fields'],
-> = {
+export type User_Book_Reads_Stddev_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_reads_stddev_samp_fields'] = ResolversParentTypes['user_book_reads_stddev_samp_fields']> = {
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   progress?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -28810,11 +25580,7 @@ export type User_Book_Reads_Stddev_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Reads_Sum_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_reads_sum_fields'] = ResolversParentTypes['user_book_reads_sum_fields'],
-> = {
+export type User_Book_Reads_Sum_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_reads_sum_fields'] = ResolversParentTypes['user_book_reads_sum_fields']> = {
   edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   progress?: Resolver<Maybe<ResolversTypes['float8']>, ParentType, ContextType>;
@@ -28824,11 +25590,7 @@ export type User_Book_Reads_Sum_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Reads_Var_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_reads_var_pop_fields'] = ResolversParentTypes['user_book_reads_var_pop_fields'],
-> = {
+export type User_Book_Reads_Var_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_reads_var_pop_fields'] = ResolversParentTypes['user_book_reads_var_pop_fields']> = {
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   progress?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -28838,11 +25600,7 @@ export type User_Book_Reads_Var_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Reads_Var_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_reads_var_samp_fields'] = ResolversParentTypes['user_book_reads_var_samp_fields'],
-> = {
+export type User_Book_Reads_Var_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_reads_var_samp_fields'] = ResolversParentTypes['user_book_reads_var_samp_fields']> = {
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   progress?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -28852,11 +25610,7 @@ export type User_Book_Reads_Var_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Reads_Variance_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_reads_variance_fields'] = ResolversParentTypes['user_book_reads_variance_fields'],
-> = {
+export type User_Book_Reads_Variance_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_reads_variance_fields'] = ResolversParentTypes['user_book_reads_variance_fields']> = {
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   progress?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -28866,106 +25620,43 @@ export type User_Book_Reads_Variance_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_StatusesResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_statuses'] = ResolversParentTypes['user_book_statuses'],
-> = {
+export type User_Book_StatusesResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_statuses'] = ResolversParentTypes['user_book_statuses']> = {
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user_books?: Resolver<
-    Array<ResolversTypes['user_books']>,
-    ParentType,
-    ContextType,
-    Partial<User_Book_StatusesUser_BooksArgs>
-  >;
-  user_books_aggregate?: Resolver<
-    ResolversTypes['user_books_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<User_Book_StatusesUser_Books_AggregateArgs>
-  >;
+  user_books?: Resolver<Array<ResolversTypes['user_books']>, ParentType, ContextType, Partial<User_Book_StatusesUser_BooksArgs>>;
+  user_books_aggregate?: Resolver<ResolversTypes['user_books_aggregate'], ParentType, ContextType, Partial<User_Book_StatusesUser_Books_AggregateArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Statuses_AggregateResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_statuses_aggregate'] = ResolversParentTypes['user_book_statuses_aggregate'],
-> = {
-  aggregate?: Resolver<
-    Maybe<ResolversTypes['user_book_statuses_aggregate_fields']>,
-    ParentType,
-    ContextType
-  >;
+export type User_Book_Statuses_AggregateResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_statuses_aggregate'] = ResolversParentTypes['user_book_statuses_aggregate']> = {
+  aggregate?: Resolver<Maybe<ResolversTypes['user_book_statuses_aggregate_fields']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['user_book_statuses']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Statuses_Aggregate_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_statuses_aggregate_fields'] = ResolversParentTypes['user_book_statuses_aggregate_fields'],
-> = {
+export type User_Book_Statuses_Aggregate_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_statuses_aggregate_fields'] = ResolversParentTypes['user_book_statuses_aggregate_fields']> = {
   avg?: Resolver<Maybe<ResolversTypes['user_book_statuses_avg_fields']>, ParentType, ContextType>;
-  count?: Resolver<
-    ResolversTypes['Int'],
-    ParentType,
-    ContextType,
-    Partial<User_Book_Statuses_Aggregate_FieldsCountArgs>
-  >;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<User_Book_Statuses_Aggregate_FieldsCountArgs>>;
   max?: Resolver<Maybe<ResolversTypes['user_book_statuses_max_fields']>, ParentType, ContextType>;
   min?: Resolver<Maybe<ResolversTypes['user_book_statuses_min_fields']>, ParentType, ContextType>;
-  stddev?: Resolver<
-    Maybe<ResolversTypes['user_book_statuses_stddev_fields']>,
-    ParentType,
-    ContextType
-  >;
-  stddev_pop?: Resolver<
-    Maybe<ResolversTypes['user_book_statuses_stddev_pop_fields']>,
-    ParentType,
-    ContextType
-  >;
-  stddev_samp?: Resolver<
-    Maybe<ResolversTypes['user_book_statuses_stddev_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
+  stddev?: Resolver<Maybe<ResolversTypes['user_book_statuses_stddev_fields']>, ParentType, ContextType>;
+  stddev_pop?: Resolver<Maybe<ResolversTypes['user_book_statuses_stddev_pop_fields']>, ParentType, ContextType>;
+  stddev_samp?: Resolver<Maybe<ResolversTypes['user_book_statuses_stddev_samp_fields']>, ParentType, ContextType>;
   sum?: Resolver<Maybe<ResolversTypes['user_book_statuses_sum_fields']>, ParentType, ContextType>;
-  var_pop?: Resolver<
-    Maybe<ResolversTypes['user_book_statuses_var_pop_fields']>,
-    ParentType,
-    ContextType
-  >;
-  var_samp?: Resolver<
-    Maybe<ResolversTypes['user_book_statuses_var_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
-  variance?: Resolver<
-    Maybe<ResolversTypes['user_book_statuses_variance_fields']>,
-    ParentType,
-    ContextType
-  >;
+  var_pop?: Resolver<Maybe<ResolversTypes['user_book_statuses_var_pop_fields']>, ParentType, ContextType>;
+  var_samp?: Resolver<Maybe<ResolversTypes['user_book_statuses_var_samp_fields']>, ParentType, ContextType>;
+  variance?: Resolver<Maybe<ResolversTypes['user_book_statuses_variance_fields']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Statuses_Avg_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_statuses_avg_fields'] = ResolversParentTypes['user_book_statuses_avg_fields'],
-> = {
+export type User_Book_Statuses_Avg_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_statuses_avg_fields'] = ResolversParentTypes['user_book_statuses_avg_fields']> = {
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Statuses_Max_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_statuses_max_fields'] = ResolversParentTypes['user_book_statuses_max_fields'],
-> = {
+export type User_Book_Statuses_Max_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_statuses_max_fields'] = ResolversParentTypes['user_book_statuses_max_fields']> = {
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -28973,11 +25664,7 @@ export type User_Book_Statuses_Max_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Statuses_Min_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_statuses_min_fields'] = ResolversParentTypes['user_book_statuses_min_fields'],
-> = {
+export type User_Book_Statuses_Min_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_statuses_min_fields'] = ResolversParentTypes['user_book_statuses_min_fields']> = {
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -28985,101 +25672,60 @@ export type User_Book_Statuses_Min_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Statuses_Stddev_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_statuses_stddev_fields'] = ResolversParentTypes['user_book_statuses_stddev_fields'],
-> = {
+export type User_Book_Statuses_Stddev_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_statuses_stddev_fields'] = ResolversParentTypes['user_book_statuses_stddev_fields']> = {
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Statuses_Stddev_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_statuses_stddev_pop_fields'] = ResolversParentTypes['user_book_statuses_stddev_pop_fields'],
-> = {
+export type User_Book_Statuses_Stddev_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_statuses_stddev_pop_fields'] = ResolversParentTypes['user_book_statuses_stddev_pop_fields']> = {
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Statuses_Stddev_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_statuses_stddev_samp_fields'] = ResolversParentTypes['user_book_statuses_stddev_samp_fields'],
-> = {
+export type User_Book_Statuses_Stddev_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_statuses_stddev_samp_fields'] = ResolversParentTypes['user_book_statuses_stddev_samp_fields']> = {
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Statuses_Sum_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_statuses_sum_fields'] = ResolversParentTypes['user_book_statuses_sum_fields'],
-> = {
+export type User_Book_Statuses_Sum_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_statuses_sum_fields'] = ResolversParentTypes['user_book_statuses_sum_fields']> = {
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Statuses_Var_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_statuses_var_pop_fields'] = ResolversParentTypes['user_book_statuses_var_pop_fields'],
-> = {
+export type User_Book_Statuses_Var_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_statuses_var_pop_fields'] = ResolversParentTypes['user_book_statuses_var_pop_fields']> = {
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Statuses_Var_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_statuses_var_samp_fields'] = ResolversParentTypes['user_book_statuses_var_samp_fields'],
-> = {
+export type User_Book_Statuses_Var_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_statuses_var_samp_fields'] = ResolversParentTypes['user_book_statuses_var_samp_fields']> = {
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Book_Statuses_Variance_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_book_statuses_variance_fields'] = ResolversParentTypes['user_book_statuses_variance_fields'],
-> = {
+export type User_Book_Statuses_Variance_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_book_statuses_variance_fields'] = ResolversParentTypes['user_book_statuses_variance_fields']> = {
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_BooksResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['user_books'] = ResolversParentTypes['user_books'],
-> = {
+export type User_BooksResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_books'] = ResolversParentTypes['user_books']> = {
   book?: Resolver<ResolversTypes['books'], ParentType, ContextType>;
   book_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  cached_match_score?: Resolver<Maybe<ResolversTypes['float8']>, ParentType, ContextType>;
   created_at?: Resolver<ResolversTypes['timestamptz'], ParentType, ContextType>;
   date_added?: Resolver<ResolversTypes['date'], ParentType, ContextType>;
   edition?: Resolver<Maybe<ResolversTypes['editions']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   first_read_date?: Resolver<Maybe<ResolversTypes['date']>, ParentType, ContextType>;
   first_started_reading_date?: Resolver<Maybe<ResolversTypes['date']>, ParentType, ContextType>;
-  followers?: Resolver<
-    Array<ResolversTypes['followed_users']>,
-    ParentType,
-    ContextType,
-    Partial<User_BooksFollowersArgs>
-  >;
+  followers?: Resolver<Array<ResolversTypes['followed_users']>, ParentType, ContextType, Partial<User_BooksFollowersArgs>>;
   has_review?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   imported?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   last_read_date?: Resolver<Maybe<ResolversTypes['date']>, ParentType, ContextType>;
-  likes?: Resolver<
-    Array<ResolversTypes['likes']>,
-    ParentType,
-    ContextType,
-    Partial<User_BooksLikesArgs>
-  >;
+  likes?: Resolver<Array<ResolversTypes['likes']>, ParentType, ContextType, Partial<User_BooksLikesArgs>>;
   likes_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   media_url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   merged_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
+  mod_status?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   object_type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   original_edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -29090,19 +25736,8 @@ export type User_BooksResolvers<
   private_notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   rating?: Resolver<Maybe<ResolversTypes['numeric']>, ParentType, ContextType>;
   read_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  reading_format?: Resolver<Maybe<ResolversTypes['reading_formats']>, ParentType, ContextType>;
-  reading_format_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  reading_journal_summary?: Resolver<
-    Maybe<ResolversTypes['reading_journals_summary']>,
-    ParentType,
-    ContextType
-  >;
-  reading_journals?: Resolver<
-    Array<ResolversTypes['reading_journals']>,
-    ParentType,
-    ContextType,
-    Partial<User_BooksReading_JournalsArgs>
-  >;
+  reading_journal_summary?: Resolver<Maybe<ResolversTypes['reading_journals_summary']>, ParentType, ContextType>;
+  reading_journals?: Resolver<Array<ResolversTypes['reading_journals']>, ParentType, ContextType, Partial<User_BooksReading_JournalsArgs>>;
   recommended_by?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   recommended_for?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   referrer?: Resolver<Maybe<ResolversTypes['users']>, ParentType, ContextType>;
@@ -29112,19 +25747,9 @@ export type User_BooksResolvers<
   review_html?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   review_length?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   review_migrated?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  review_object?: Resolver<
-    ResolversTypes['jsonb'],
-    ParentType,
-    ContextType,
-    Partial<User_BooksReview_ObjectArgs>
-  >;
+  review_object?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType, Partial<User_BooksReview_ObjectArgs>>;
   review_raw?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  review_slate?: Resolver<
-    ResolversTypes['jsonb'],
-    ParentType,
-    ContextType,
-    Partial<User_BooksReview_SlateArgs>
-  >;
+  review_slate?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType, Partial<User_BooksReview_SlateArgs>>;
   reviewed_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   sponsored_review?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   starred?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -29132,74 +25757,29 @@ export type User_BooksResolvers<
   updated_at?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
   url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   user?: Resolver<ResolversTypes['users'], ParentType, ContextType>;
-  user_book_reads?: Resolver<
-    Array<ResolversTypes['user_book_reads']>,
-    ParentType,
-    ContextType,
-    Partial<User_BooksUser_Book_ReadsArgs>
-  >;
-  user_book_reads_aggregate?: Resolver<
-    ResolversTypes['user_book_reads_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<User_BooksUser_Book_Reads_AggregateArgs>
-  >;
+  user_book_reads?: Resolver<Array<ResolversTypes['user_book_reads']>, ParentType, ContextType, Partial<User_BooksUser_Book_ReadsArgs>>;
+  user_book_reads_aggregate?: Resolver<ResolversTypes['user_book_reads_aggregate'], ParentType, ContextType, Partial<User_BooksUser_Book_Reads_AggregateArgs>>;
   user_book_status?: Resolver<ResolversTypes['user_book_statuses'], ParentType, ContextType>;
-  user_books?: Resolver<
-    Array<ResolversTypes['user_books']>,
-    ParentType,
-    ContextType,
-    Partial<User_BooksUser_BooksArgs>
-  >;
-  user_books_aggregate?: Resolver<
-    ResolversTypes['user_books_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<User_BooksUser_Books_AggregateArgs>
-  >;
+  user_books?: Resolver<Array<ResolversTypes['user_books']>, ParentType, ContextType, Partial<User_BooksUser_BooksArgs>>;
+  user_books_aggregate?: Resolver<ResolversTypes['user_books_aggregate'], ParentType, ContextType, Partial<User_BooksUser_Books_AggregateArgs>>;
   user_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Books_AggregateResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_books_aggregate'] = ResolversParentTypes['user_books_aggregate'],
-> = {
-  aggregate?: Resolver<
-    Maybe<ResolversTypes['user_books_aggregate_fields']>,
-    ParentType,
-    ContextType
-  >;
+export type User_Books_AggregateResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_books_aggregate'] = ResolversParentTypes['user_books_aggregate']> = {
+  aggregate?: Resolver<Maybe<ResolversTypes['user_books_aggregate_fields']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['user_books']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Books_Aggregate_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_books_aggregate_fields'] = ResolversParentTypes['user_books_aggregate_fields'],
-> = {
+export type User_Books_Aggregate_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_books_aggregate_fields'] = ResolversParentTypes['user_books_aggregate_fields']> = {
   avg?: Resolver<Maybe<ResolversTypes['user_books_avg_fields']>, ParentType, ContextType>;
-  count?: Resolver<
-    ResolversTypes['Int'],
-    ParentType,
-    ContextType,
-    Partial<User_Books_Aggregate_FieldsCountArgs>
-  >;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<User_Books_Aggregate_FieldsCountArgs>>;
   max?: Resolver<Maybe<ResolversTypes['user_books_max_fields']>, ParentType, ContextType>;
   min?: Resolver<Maybe<ResolversTypes['user_books_min_fields']>, ParentType, ContextType>;
   stddev?: Resolver<Maybe<ResolversTypes['user_books_stddev_fields']>, ParentType, ContextType>;
-  stddev_pop?: Resolver<
-    Maybe<ResolversTypes['user_books_stddev_pop_fields']>,
-    ParentType,
-    ContextType
-  >;
-  stddev_samp?: Resolver<
-    Maybe<ResolversTypes['user_books_stddev_samp_fields']>,
-    ParentType,
-    ContextType
-  >;
+  stddev_pop?: Resolver<Maybe<ResolversTypes['user_books_stddev_pop_fields']>, ParentType, ContextType>;
+  stddev_samp?: Resolver<Maybe<ResolversTypes['user_books_stddev_samp_fields']>, ParentType, ContextType>;
   sum?: Resolver<Maybe<ResolversTypes['user_books_sum_fields']>, ParentType, ContextType>;
   var_pop?: Resolver<Maybe<ResolversTypes['user_books_var_pop_fields']>, ParentType, ContextType>;
   var_samp?: Resolver<Maybe<ResolversTypes['user_books_var_samp_fields']>, ParentType, ContextType>;
@@ -29207,23 +25787,18 @@ export type User_Books_Aggregate_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Books_Avg_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_books_avg_fields'] = ResolversParentTypes['user_books_avg_fields'],
-> = {
+export type User_Books_Avg_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_books_avg_fields'] = ResolversParentTypes['user_books_avg_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  cached_match_score?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   likes_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  mod_status?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   owned_copies?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   privacy_setting_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   rating?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   read_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  reading_format_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   referrer_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   review_length?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   status_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -29231,13 +25806,8 @@ export type User_Books_Avg_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Books_Max_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_books_max_fields'] = ResolversParentTypes['user_books_max_fields'],
-> = {
+export type User_Books_Max_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_books_max_fields'] = ResolversParentTypes['user_books_max_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  cached_match_score?: Resolver<Maybe<ResolversTypes['float8']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
   date_added?: Resolver<Maybe<ResolversTypes['date']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -29248,6 +25818,7 @@ export type User_Books_Max_FieldsResolvers<
   likes_count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   media_url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   merged_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
+  mod_status?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   object_type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   original_edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -29256,7 +25827,6 @@ export type User_Books_Max_FieldsResolvers<
   private_notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   rating?: Resolver<Maybe<ResolversTypes['numeric']>, ParentType, ContextType>;
   read_count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  reading_format_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   recommended_by?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   recommended_for?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   referrer_user_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -29272,13 +25842,8 @@ export type User_Books_Max_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Books_Min_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_books_min_fields'] = ResolversParentTypes['user_books_min_fields'],
-> = {
+export type User_Books_Min_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_books_min_fields'] = ResolversParentTypes['user_books_min_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  cached_match_score?: Resolver<Maybe<ResolversTypes['float8']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
   date_added?: Resolver<Maybe<ResolversTypes['date']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -29289,6 +25854,7 @@ export type User_Books_Min_FieldsResolvers<
   likes_count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   media_url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   merged_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
+  mod_status?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   object_type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   original_edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -29297,7 +25863,6 @@ export type User_Books_Min_FieldsResolvers<
   private_notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   rating?: Resolver<Maybe<ResolversTypes['numeric']>, ParentType, ContextType>;
   read_count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  reading_format_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   recommended_by?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   recommended_for?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   referrer_user_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -29313,23 +25878,18 @@ export type User_Books_Min_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Books_Stddev_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_books_stddev_fields'] = ResolversParentTypes['user_books_stddev_fields'],
-> = {
+export type User_Books_Stddev_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_books_stddev_fields'] = ResolversParentTypes['user_books_stddev_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  cached_match_score?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   likes_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  mod_status?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   owned_copies?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   privacy_setting_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   rating?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   read_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  reading_format_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   referrer_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   review_length?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   status_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -29337,23 +25897,18 @@ export type User_Books_Stddev_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Books_Stddev_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_books_stddev_pop_fields'] = ResolversParentTypes['user_books_stddev_pop_fields'],
-> = {
+export type User_Books_Stddev_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_books_stddev_pop_fields'] = ResolversParentTypes['user_books_stddev_pop_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  cached_match_score?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   likes_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  mod_status?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   owned_copies?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   privacy_setting_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   rating?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   read_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  reading_format_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   referrer_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   review_length?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   status_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -29361,23 +25916,18 @@ export type User_Books_Stddev_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Books_Stddev_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_books_stddev_samp_fields'] = ResolversParentTypes['user_books_stddev_samp_fields'],
-> = {
+export type User_Books_Stddev_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_books_stddev_samp_fields'] = ResolversParentTypes['user_books_stddev_samp_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  cached_match_score?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   likes_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  mod_status?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   owned_copies?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   privacy_setting_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   rating?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   read_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  reading_format_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   referrer_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   review_length?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   status_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -29385,23 +25935,18 @@ export type User_Books_Stddev_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Books_Sum_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_books_sum_fields'] = ResolversParentTypes['user_books_sum_fields'],
-> = {
+export type User_Books_Sum_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_books_sum_fields'] = ResolversParentTypes['user_books_sum_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  cached_match_score?: Resolver<Maybe<ResolversTypes['float8']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   likes_count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  mod_status?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   original_edition_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   owned_copies?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   privacy_setting_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   rating?: Resolver<Maybe<ResolversTypes['numeric']>, ParentType, ContextType>;
   read_count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  reading_format_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   referrer_user_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   review_length?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   status_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -29409,23 +25954,18 @@ export type User_Books_Sum_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Books_Var_Pop_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_books_var_pop_fields'] = ResolversParentTypes['user_books_var_pop_fields'],
-> = {
+export type User_Books_Var_Pop_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_books_var_pop_fields'] = ResolversParentTypes['user_books_var_pop_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  cached_match_score?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   likes_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  mod_status?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   owned_copies?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   privacy_setting_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   rating?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   read_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  reading_format_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   referrer_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   review_length?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   status_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -29433,23 +25973,18 @@ export type User_Books_Var_Pop_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Books_Var_Samp_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_books_var_samp_fields'] = ResolversParentTypes['user_books_var_samp_fields'],
-> = {
+export type User_Books_Var_Samp_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_books_var_samp_fields'] = ResolversParentTypes['user_books_var_samp_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  cached_match_score?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   likes_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  mod_status?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   owned_copies?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   privacy_setting_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   rating?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   read_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  reading_format_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   referrer_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   review_length?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   status_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -29457,23 +25992,18 @@ export type User_Books_Var_Samp_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Books_Variance_FieldsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_books_variance_fields'] = ResolversParentTypes['user_books_variance_fields'],
-> = {
+export type User_Books_Variance_FieldsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_books_variance_fields'] = ResolversParentTypes['user_books_variance_fields']> = {
   book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  cached_match_score?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   likes_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  mod_status?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_book_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   original_edition_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   owned_copies?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   privacy_setting_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   rating?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   read_count?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  reading_format_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   referrer_user_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   review_length?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   status_id?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -29481,10 +26011,7 @@ export type User_Books_Variance_FieldsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_FlagsResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['user_flags'] = ResolversParentTypes['user_flags'],
-> = {
+export type User_FlagsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_flags'] = ResolversParentTypes['user_flags']> = {
   action_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   action_type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   category?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -29500,21 +26027,13 @@ export type User_FlagsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_Flags_Mutation_ResponseResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_flags_mutation_response'] = ResolversParentTypes['user_flags_mutation_response'],
-> = {
+export type User_Flags_Mutation_ResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_flags_mutation_response'] = ResolversParentTypes['user_flags_mutation_response']> = {
   affected_rows?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   returning?: Resolver<Array<ResolversTypes['user_flags']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_ReferralsResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['user_referrals'] = ResolversParentTypes['user_referrals'],
-> = {
+export type User_ReferralsResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_referrals'] = ResolversParentTypes['user_referrals']> = {
   created_at?: Resolver<ResolversTypes['timestamp'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['bigint'], ParentType, ContextType>;
   referrer?: Resolver<Maybe<ResolversTypes['users']>, ParentType, ContextType>;
@@ -29526,68 +26045,27 @@ export type User_ReferralsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type User_StatusesResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['user_statuses'] = ResolversParentTypes['user_statuses'],
-> = {
+export type User_StatusesResolvers<ContextType = any, ParentType extends ResolversParentTypes['user_statuses'] = ResolversParentTypes['user_statuses']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  users?: Resolver<
-    Array<ResolversTypes['users']>,
-    ParentType,
-    ContextType,
-    Partial<User_StatusesUsersArgs>
-  >;
+  users?: Resolver<Array<ResolversTypes['users']>, ParentType, ContextType, Partial<User_StatusesUsersArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UsersResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['users'] = ResolversParentTypes['users'],
-> = {
+export type UsersResolvers<ContextType = any, ParentType extends ResolversParentTypes['users'] = ResolversParentTypes['users']> = {
   access_level?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   account_privacy_setting_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  activities?: Resolver<
-    Array<ResolversTypes['activities']>,
-    ParentType,
-    ContextType,
-    Partial<UsersActivitiesArgs>
-  >;
+  activities?: Resolver<Array<ResolversTypes['activities']>, ParentType, ContextType, Partial<UsersActivitiesArgs>>;
   activity_privacy_settings_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   admin?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   birthdate?: Resolver<Maybe<ResolversTypes['date']>, ParentType, ContextType>;
-  blocked_users?: Resolver<
-    Array<ResolversTypes['user_blocks']>,
-    ParentType,
-    ContextType,
-    Partial<UsersBlocked_UsersArgs>
-  >;
+  blocked_users?: Resolver<Array<ResolversTypes['user_blocks']>, ParentType, ContextType, Partial<UsersBlocked_UsersArgs>>;
   books_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  cached_cover?: Resolver<
-    ResolversTypes['jsonb'],
-    ParentType,
-    ContextType,
-    Partial<UsersCached_CoverArgs>
-  >;
-  cached_genres?: Resolver<
-    ResolversTypes['jsonb'],
-    ParentType,
-    ContextType,
-    Partial<UsersCached_GenresArgs>
-  >;
-  cached_image?: Resolver<
-    ResolversTypes['jsonb'],
-    ParentType,
-    ContextType,
-    Partial<UsersCached_ImageArgs>
-  >;
-  collection_imports?: Resolver<
-    Array<ResolversTypes['collection_imports']>,
-    ParentType,
-    ContextType,
-    Partial<UsersCollection_ImportsArgs>
-  >;
+  cached_cover?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType, Partial<UsersCached_CoverArgs>>;
+  cached_genres?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType, Partial<UsersCached_GenresArgs>>;
+  cached_image?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType, Partial<UsersCached_ImageArgs>>;
+  collection_imports?: Resolver<Array<ResolversTypes['collection_imports']>, ParentType, ContextType, Partial<UsersCollection_ImportsArgs>>;
   confirmation_sent_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   confirmed_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   created_at?: Resolver<ResolversTypes['timestamptz'], ParentType, ContextType>;
@@ -29595,181 +26073,62 @@ export type UsersResolvers<
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   email_verified?: Resolver<Maybe<ResolversTypes['timestamptz']>, ParentType, ContextType>;
   flair?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  followed_by_users?: Resolver<
-    Array<ResolversTypes['followed_users']>,
-    ParentType,
-    ContextType,
-    Partial<UsersFollowed_By_UsersArgs>
-  >;
-  followed_lists?: Resolver<
-    Array<ResolversTypes['followed_lists']>,
-    ParentType,
-    ContextType,
-    Partial<UsersFollowed_ListsArgs>
-  >;
-  followed_prompts?: Resolver<
-    Array<ResolversTypes['followed_prompts']>,
-    ParentType,
-    ContextType,
-    Partial<UsersFollowed_PromptsArgs>
-  >;
-  followed_users?: Resolver<
-    Array<ResolversTypes['followed_users']>,
-    ParentType,
-    ContextType,
-    Partial<UsersFollowed_UsersArgs>
-  >;
+  followed_by_users?: Resolver<Array<ResolversTypes['followed_users']>, ParentType, ContextType, Partial<UsersFollowed_By_UsersArgs>>;
+  followed_lists?: Resolver<Array<ResolversTypes['followed_lists']>, ParentType, ContextType, Partial<UsersFollowed_ListsArgs>>;
+  followed_prompts?: Resolver<Array<ResolversTypes['followed_prompts']>, ParentType, ContextType, Partial<UsersFollowed_PromptsArgs>>;
+  followed_users?: Resolver<Array<ResolversTypes['followed_users']>, ParentType, ContextType, Partial<UsersFollowed_UsersArgs>>;
   followed_users_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   followers_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  goals?: Resolver<
-    Array<ResolversTypes['goals']>,
-    ParentType,
-    ContextType,
-    Partial<UsersGoalsArgs>
-  >;
+  follows?: Resolver<Array<ResolversTypes['follows']>, ParentType, ContextType, Partial<UsersFollowsArgs>>;
+  follows_aggregate?: Resolver<ResolversTypes['follows_aggregate'], ParentType, ContextType, Partial<UsersFollows_AggregateArgs>>;
+  goals?: Resolver<Array<ResolversTypes['goals']>, ParentType, ContextType, Partial<UsersGoalsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   image?: Resolver<Maybe<ResolversTypes['images']>, ParentType, ContextType>;
   image_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   last_activity_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   last_sign_in_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
-  librarian_roles?: Resolver<
-    ResolversTypes['jsonb'],
-    ParentType,
-    ContextType,
-    Partial<UsersLibrarian_RolesArgs>
-  >;
+  librarian_roles?: Resolver<ResolversTypes['jsonb'], ParentType, ContextType, Partial<UsersLibrarian_RolesArgs>>;
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  lists?: Resolver<
-    Array<ResolversTypes['lists']>,
-    ParentType,
-    ContextType,
-    Partial<UsersListsArgs>
-  >;
-  lists_aggregate?: Resolver<
-    ResolversTypes['lists_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<UsersLists_AggregateArgs>
-  >;
+  links?: Resolver<Maybe<ResolversTypes['links']>, ParentType, ContextType>;
+  lists?: Resolver<Array<ResolversTypes['lists']>, ParentType, ContextType, Partial<UsersListsArgs>>;
+  lists_aggregate?: Resolver<ResolversTypes['lists_aggregate'], ParentType, ContextType, Partial<UsersLists_AggregateArgs>>;
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   locked_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
-  match_updated_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   membership?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   membership_ends_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  notification_deliveries?: Resolver<
-    Array<ResolversTypes['notification_deliveries']>,
-    ParentType,
-    ContextType,
-    Partial<UsersNotification_DeliveriesArgs>
-  >;
-  notification_deliveries_aggregate?: Resolver<
-    ResolversTypes['notification_deliveries_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<UsersNotification_Deliveries_AggregateArgs>
-  >;
+  notification_deliveries?: Resolver<Array<ResolversTypes['notification_deliveries']>, ParentType, ContextType, Partial<UsersNotification_DeliveriesArgs>>;
+  notification_deliveries_aggregate?: Resolver<ResolversTypes['notification_deliveries_aggregate'], ParentType, ContextType, Partial<UsersNotification_Deliveries_AggregateArgs>>;
   object_type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   onboarded?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   payment_system_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   pro?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  prompt_answers?: Resolver<
-    Array<ResolversTypes['prompt_answers']>,
-    ParentType,
-    ContextType,
-    Partial<UsersPrompt_AnswersArgs>
-  >;
-  prompt_answers_aggregate?: Resolver<
-    ResolversTypes['prompt_answers_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<UsersPrompt_Answers_AggregateArgs>
-  >;
-  prompts?: Resolver<
-    Array<ResolversTypes['prompts']>,
-    ParentType,
-    ContextType,
-    Partial<UsersPromptsArgs>
-  >;
+  prompt_answers?: Resolver<Array<ResolversTypes['prompt_answers']>, ParentType, ContextType, Partial<UsersPrompt_AnswersArgs>>;
+  prompt_answers_aggregate?: Resolver<ResolversTypes['prompt_answers_aggregate'], ParentType, ContextType, Partial<UsersPrompt_Answers_AggregateArgs>>;
+  prompts?: Resolver<Array<ResolversTypes['prompts']>, ParentType, ContextType, Partial<UsersPromptsArgs>>;
   pronoun_personal?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   pronoun_possessive?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  recommendations?: Resolver<
-    Array<ResolversTypes['recommendations']>,
-    ParentType,
-    ContextType,
-    Partial<UsersRecommendationsArgs>
-  >;
-  recommended?: Resolver<
-    Array<ResolversTypes['recommendations']>,
-    ParentType,
-    ContextType,
-    Partial<UsersRecommendedArgs>
-  >;
   referrer_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   referrer_url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  referrered_users?: Resolver<
-    Array<ResolversTypes['user_books']>,
-    ParentType,
-    ContextType,
-    Partial<UsersReferrered_UsersArgs>
-  >;
-  referrered_users_aggregate?: Resolver<
-    ResolversTypes['user_books_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<UsersReferrered_Users_AggregateArgs>
-  >;
+  referrered_users?: Resolver<Array<ResolversTypes['user_books']>, ParentType, ContextType, Partial<UsersReferrered_UsersArgs>>;
+  referrered_users_aggregate?: Resolver<ResolversTypes['user_books_aggregate'], ParentType, ContextType, Partial<UsersReferrered_Users_AggregateArgs>>;
   remember_created_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
-  reported_user_flags?: Resolver<
-    Array<ResolversTypes['user_flags']>,
-    ParentType,
-    ContextType,
-    Partial<UsersReported_User_FlagsArgs>
-  >;
+  reported_user_flags?: Resolver<Array<ResolversTypes['user_flags']>, ParentType, ContextType, Partial<UsersReported_User_FlagsArgs>>;
   reset_password_sent_at?: Resolver<Maybe<ResolversTypes['timestamp']>, ParentType, ContextType>;
   sign_in_count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   status_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  taggings?: Resolver<
-    Array<ResolversTypes['taggings']>,
-    ParentType,
-    ContextType,
-    Partial<UsersTaggingsArgs>
-  >;
-  taggings_aggregate?: Resolver<
-    ResolversTypes['taggings_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<UsersTaggings_AggregateArgs>
-  >;
+  taggings?: Resolver<Array<ResolversTypes['taggings']>, ParentType, ContextType, Partial<UsersTaggingsArgs>>;
+  taggings_aggregate?: Resolver<ResolversTypes['taggings_aggregate'], ParentType, ContextType, Partial<UsersTaggings_AggregateArgs>>;
   unconfirmed_email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updated_at?: Resolver<ResolversTypes['timestamptz'], ParentType, ContextType>;
-  user_books?: Resolver<
-    Array<ResolversTypes['user_books']>,
-    ParentType,
-    ContextType,
-    Partial<UsersUser_BooksArgs>
-  >;
-  user_books_aggregate?: Resolver<
-    ResolversTypes['user_books_aggregate'],
-    ParentType,
-    ContextType,
-    Partial<UsersUser_Books_AggregateArgs>
-  >;
-  user_flags?: Resolver<
-    Array<ResolversTypes['user_flags']>,
-    ParentType,
-    ContextType,
-    Partial<UsersUser_FlagsArgs>
-  >;
+  user_books?: Resolver<Array<ResolversTypes['user_books']>, ParentType, ContextType, Partial<UsersUser_BooksArgs>>;
+  user_books_aggregate?: Resolver<ResolversTypes['user_books_aggregate'], ParentType, ContextType, Partial<UsersUser_Books_AggregateArgs>>;
+  user_flags?: Resolver<Array<ResolversTypes['user_flags']>, ParentType, ContextType, Partial<UsersUser_FlagsArgs>>;
   username?: Resolver<Maybe<ResolversTypes['citext']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Users_Aggregate_By_Created_At_DateResolvers<
-  ContextType = any,
-  ParentType extends
-    ResolversParentTypes['users_aggregate_by_created_at_date'] = ResolversParentTypes['users_aggregate_by_created_at_date'],
-> = {
+export type Users_Aggregate_By_Created_At_DateResolvers<ContextType = any, ParentType extends ResolversParentTypes['users_aggregate_by_created_at_date'] = ResolversParentTypes['users_aggregate_by_created_at_date']> = {
   count?: Resolver<Maybe<ResolversTypes['bigint']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['date']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -29788,6 +26147,8 @@ export type Resolvers<ContextType = any> = {
   DeleteReadingJournalOutput?: DeleteReadingJournalOutputResolvers<ContextType>;
   DeleteReadingJournalsOutput?: DeleteReadingJournalsOutputResolvers<ContextType>;
   EditionIdType?: EditionIdTypeResolvers<ContextType>;
+  FollowDeleteType?: FollowDeleteTypeResolvers<ContextType>;
+  FollowType?: FollowTypeResolvers<ContextType>;
   FollowedListType?: FollowedListTypeResolvers<ContextType>;
   FollowedPromptType?: FollowedPromptTypeResolvers<ContextType>;
   FollowedUserType?: FollowedUserTypeResolvers<ContextType>;
@@ -29911,13 +26272,26 @@ export type Resolvers<ContextType = any> = {
   following_user_books_var_pop_fields?: Following_User_Books_Var_Pop_FieldsResolvers<ContextType>;
   following_user_books_var_samp_fields?: Following_User_Books_Var_Samp_FieldsResolvers<ContextType>;
   following_user_books_variance_fields?: Following_User_Books_Variance_FieldsResolvers<ContextType>;
+  follows?: FollowsResolvers<ContextType>;
+  follows_aggregate?: Follows_AggregateResolvers<ContextType>;
+  follows_aggregate_fields?: Follows_Aggregate_FieldsResolvers<ContextType>;
+  follows_avg_fields?: Follows_Avg_FieldsResolvers<ContextType>;
+  follows_max_fields?: Follows_Max_FieldsResolvers<ContextType>;
+  follows_min_fields?: Follows_Min_FieldsResolvers<ContextType>;
+  follows_stddev_fields?: Follows_Stddev_FieldsResolvers<ContextType>;
+  follows_stddev_pop_fields?: Follows_Stddev_Pop_FieldsResolvers<ContextType>;
+  follows_stddev_samp_fields?: Follows_Stddev_Samp_FieldsResolvers<ContextType>;
+  follows_sum_fields?: Follows_Sum_FieldsResolvers<ContextType>;
+  follows_var_pop_fields?: Follows_Var_Pop_FieldsResolvers<ContextType>;
+  follows_var_samp_fields?: Follows_Var_Samp_FieldsResolvers<ContextType>;
+  follows_variance_fields?: Follows_Variance_FieldsResolvers<ContextType>;
   goals?: GoalsResolvers<ContextType>;
-  goals_mutation_response?: Goals_Mutation_ResponseResolvers<ContextType>;
   images?: ImagesResolvers<ContextType>;
   json?: GraphQLScalarType;
   jsonb?: GraphQLScalarType;
   languages?: LanguagesResolvers<ContextType>;
   likes?: LikesResolvers<ContextType>;
+  links?: LinksResolvers<ContextType>;
   list_books?: List_BooksResolvers<ContextType>;
   list_books_aggregate?: List_Books_AggregateResolvers<ContextType>;
   list_books_aggregate_fields?: List_Books_Aggregate_FieldsResolvers<ContextType>;
@@ -29990,7 +26364,6 @@ export type Resolvers<ContextType = any> = {
   reading_formats?: Reading_FormatsResolvers<ContextType>;
   reading_journals?: Reading_JournalsResolvers<ContextType>;
   reading_journals_summary?: Reading_Journals_SummaryResolvers<ContextType>;
-  recommendations?: RecommendationsResolvers<ContextType>;
   series?: SeriesResolvers<ContextType>;
   smallint?: GraphQLScalarType;
   subscription_root?: Subscription_RootResolvers<ContextType>;

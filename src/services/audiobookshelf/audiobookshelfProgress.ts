@@ -2,11 +2,7 @@ import axios from 'axios';
 import logger from '../logger';
 import { logError } from '../../utils/errors';
 import { validateAudiobookshelfConnection } from './audiobookshelfConnection';
-import {
-  InProgressLibraryItem,
-  ItemsInProgressResponse,
-  MediaProgress,
-} from '../../audiobookshelfTypes';
+import { MediaProgress } from '../../audiobookshelfTypes';
 import { AudiobookshelfClient } from '../../types';
 
 export async function getCurrentlyListeningBooks(
@@ -22,35 +18,36 @@ export async function getCurrentlyListeningBooks(
 
     logger.info('Fetching currently listening books from Audiobookshelf');
 
-    const response = await apiClient.get<ItemsInProgressResponse>('/api/me/items-in-progress');
+    // Fetch user data which includes all media progress
+    const response = await apiClient.get<{ mediaProgress: MediaProgress[] }>('/api/me');
 
-    if (
-      !response.data ||
-      !response.data.libraryItems ||
-      !Array.isArray(response.data.libraryItems)
-    ) {
-      logger.warn('Unexpected response format from items-in-progress endpoint');
+    if (!response.data || !response.data.mediaProgress || !Array.isArray(response.data.mediaProgress)) {
+      logger.warn('Unexpected response format from /api/me endpoint');
       return [];
     }
 
-    const booksInProgress = response.data.libraryItems.filter(
-      item => item && item.mediaType === 'book'
+    // Filter for books only (exclude podcasts) and in-progress items
+    const booksInProgress = response.data.mediaProgress.filter(
+      progress =>
+        progress &&
+        progress.mediaItemType === 'book' &&
+        !progress.isFinished &&
+        !progress.hideFromContinueListening
     );
 
-    logger.info(
-      `Found ${response.data.libraryItems.length} items in progress, ${booksInProgress.length} of those are audiobooks`
-    );
+    logger.info(`Found ${booksInProgress.length} audiobooks in progress`);
 
+    // Deduplicate by libraryItemId (shouldn't be needed but keeping for safety)
     const uniqueBookIds = new Set<string>();
-    const uniqueBooksInProgress = booksInProgress.filter(item => {
-      if (!item || !item.id) return false;
+    const uniqueBooksInProgress = booksInProgress.filter(progress => {
+      if (!progress || !progress.libraryItemId) return false;
 
-      if (uniqueBookIds.has(item.id)) {
-        logger.debug(`Skipping duplicate book from Audiobookshelf API response: ${item.id}`);
+      if (uniqueBookIds.has(progress.libraryItemId)) {
+        logger.debug(`Skipping duplicate book from Audiobookshelf API response: ${progress.libraryItemId}`);
         return false;
       }
 
-      uniqueBookIds.add(item.id);
+      uniqueBookIds.add(progress.libraryItemId);
       return true;
     });
 
@@ -62,34 +59,7 @@ export async function getCurrentlyListeningBooks(
       );
     }
 
-    const progressPromises = uniqueBooksInProgress.map(async item => {
-      if (!item || !item.id) {
-        logger.warn('Found invalid item in progress (missing ID), skipping');
-        return null;
-      }
-
-      try {
-        const { data: progressData } = await apiClient.get<MediaProgress>(
-          `/api/me/progress/${item.id}`
-        );
-
-        if (!progressData) {
-          logger.warn(`No progress data found for item ${item.id}`);
-          return createAudiobookFallbackProgressData(item);
-        }
-
-        return progressData;
-      } catch (error) {
-        logger.warn(`Error fetching progress for item ${item.id}, using fallback data`, {
-          error: error instanceof Error ? error.message : 'Unknown error',
-        });
-        return createAudiobookFallbackProgressData(item);
-      }
-    });
-
-    const progressResults = await Promise.all(progressPromises);
-
-    return progressResults.filter(Boolean) as MediaProgress[];
+    return uniqueBooksInProgress;
   } catch (error) {
     const statusCode =
       axios.isAxiosError(error) && error.response ? error.response.status : 'unknown';
@@ -98,28 +68,9 @@ export async function getCurrentlyListeningBooks(
     logError('Error fetching currently listening books', error, {
       statusCode,
       details: JSON.stringify(errorDetails),
-      endpoint: '/api/me/items-in-progress',
+      endpoint: '/api/me',
     });
 
     return [];
   }
-}
-
-function createAudiobookFallbackProgressData(item: InProgressLibraryItem) {
-  const mediaMetadata = item.media?.metadata || {};
-  const duration =
-    ('duration' in mediaMetadata ? mediaMetadata.duration : 0) ||
-    (item.media && 'duration' in item.media ? item.media.duration : 0) ||
-    0;
-
-  return {
-    libraryItemId: item.id,
-    currentTime: 0,
-    progress: 0,
-    isFinished: false,
-    lastUpdate: item.progressLastUpdate
-      ? new Date(item.progressLastUpdate).toISOString()
-      : new Date().toISOString(),
-    duration: duration,
-  };
 }

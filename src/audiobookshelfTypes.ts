@@ -612,13 +612,18 @@ export interface PlaylistItemExpanded extends PlaylistItem {
 /** Track consumption progress of media */
 export interface MediaProgress {
   id: string;
+  userId: string;
   libraryItemId: string;
   episodeId: string | null;
+  mediaItemId: string;
+  mediaItemType: 'book' | 'podcast';
   duration: number;
   progress: number;
   currentTime: number;
   isFinished: boolean;
   hideFromContinueListening: boolean;
+  ebookLocation: string | null;
+  ebookProgress: number;
   lastUpdate: number;
   startedAt: number;
   finishedAt: number | null;
@@ -914,6 +919,19 @@ export interface StreamProgress {
   percent: string;
   chunks: string[];
   numSegments: number;
+}
+
+/** Response from /api/libraries endpoint */
+export interface LibrariesResponse {
+  libraries: Library[];
+}
+
+/** Response from /api/libraries/{id}/items with pagination */
+export interface LibraryItemsResponse {
+  results: LibraryItemMinified[];
+  total: number;
+  limit: number;
+  page: number;
 }
 
 export interface ItemsInProgressResponse {
