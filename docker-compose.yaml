@@ -1,0 +1,14 @@
+services:
+  audiohardshelf:
+    image: ghcr.io/fhavrlent/audiohardshelf:latest
+    container_name: audiohardshelf
+    restart: unless-stopped
+
+    environment:
+      - ABS_URL=${ABS_URL}
+      - SYNC_INTERVAL=${SYNC_INTERVAL:-1h}
+      - ABS_API_KEY=${ABS_API_KEY}
+      - HARDCOVER_API_KEY=${HARDCOVER_API_KEY}
+      # Optional:
+      # - LOG_LEVEL=${LOG_LEVEL:-debug}
+      # - API_TIMEOUT_MS=${API_TIMEOUT_MS:-10000}
