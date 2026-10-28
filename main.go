@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strings"
 	"syscall"
 
@@ -14,6 +15,7 @@ import (
 	"github.com/fhavrlent/audiohardshelf/internal/config"
 	"github.com/fhavrlent/audiohardshelf/internal/hardcover"
 	"github.com/fhavrlent/audiohardshelf/internal/scheduler"
+	"github.com/fhavrlent/audiohardshelf/internal/state"
 	"github.com/fhavrlent/audiohardshelf/internal/syncer"
 )
 
@@ -70,13 +72,13 @@ func start(ctx context.Context, command string) error {
 
 	abs := audiobookshelf.New(cfg.ABSURL, cfg.ABSAPIKey, cfg.APITimeout)
 	hc := hardcover.New(cfg.HardcoverAPIURL, cfg.HardcoverAPIKey, cfg.APITimeout)
-	sync := syncer.New(abs, hc, slog.Default())
+	sync := syncer.New(abs, hc, slog.Default(), syncer.Options{AutoStart: cfg.AutoStart, State: loadState(cfg.StateFile)})
 
 	if command == "sync" {
 		return sync.Run(ctx)
 	}
 
-	slog.Info("AudioHardShelf starting", "version", version, "syncInterval", cfg.SyncInterval)
+	slog.Info("AudioHardShelf starting", "version", version, "syncInterval", cfg.SyncInterval, "autoStart", cfg.AutoStart)
 
 	sched := scheduler.New(sync.Run, slog.Default(), cfg.SyncInterval)
 	go abs.WatchProgress(ctx, slog.Default(), sched.ProgressChanged)
@@ -84,4 +86,18 @@ func start(ctx context.Context, command string) error {
 
 	slog.Info("shutting down")
 	return nil
+}
+
+// loadState opens the state file, keeping state in memory only when its
+// directory doesn't exist, such as when no volume is mounted.
+func loadState(path string) *state.Store {
+	if _, err := os.Stat(filepath.Dir(path)); err != nil {
+		slog.Info("state directory not found, keeping sync state in memory only", "stateFile", path)
+		return state.Memory()
+	}
+	store, err := state.Load(path)
+	if err != nil {
+		slog.Warn("starting with empty sync state", "error", err)
+	}
+	return store
 }

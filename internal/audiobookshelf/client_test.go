@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"slices"
 	"strconv"
 	"testing"
@@ -81,6 +82,7 @@ func TestBook(t *testing.T) {
 		}
 		writeJSON(w, map[string]any{"media": map[string]any{"metadata": map[string]any{
 			"title": "Dune", "isbn": "9780441013593", "asin": nil,
+			"authors": []map[string]string{{"id": "au_1", "name": "Frank Herbert"}},
 		}}})
 	}))
 	defer server.Close()
@@ -89,7 +91,7 @@ func TestBook(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if want := (Book{Title: "Dune", ISBN: "9780441013593"}); book != want {
+	if want := (Book{Title: "Dune", ISBN: "9780441013593", Authors: []string{"Frank Herbert"}}); !reflect.DeepEqual(book, want) {
 		t.Errorf("got %+v, want %+v", book, want)
 	}
 }

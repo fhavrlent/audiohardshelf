@@ -33,17 +33,21 @@ type MediaProgress struct {
 	LibraryItemID string  `json:"libraryItemId"`
 	MediaItemType string  `json:"mediaItemType"`
 	CurrentTime   float64 `json:"currentTime"`
-	IsFinished    bool    `json:"isFinished"`
+	// Duration of the audio in seconds; zero when unknown.
+	Duration   float64 `json:"duration"`
+	IsFinished bool    `json:"isFinished"`
 	// Epoch milliseconds; zero when unset.
 	StartedAt  int64 `json:"startedAt"`
 	FinishedAt int64 `json:"finishedAt"`
+	LastUpdate int64 `json:"lastUpdate"`
 }
 
 // Book is the metadata needed to match a library item on Hardcover.
 type Book struct {
-	Title string
-	ISBN  string
-	ASIN  string
+	Title   string
+	ISBN    string
+	ASIN    string
+	Authors []string
 }
 
 func (c *Client) get(ctx context.Context, path string, query url.Values, out any) error {
@@ -152,9 +156,12 @@ func (c *Client) Book(ctx context.Context, libraryItemID string) (Book, error) {
 	var item struct {
 		Media struct {
 			Metadata struct {
-				Title string `json:"title"`
-				ISBN  string `json:"isbn"`
-				ASIN  string `json:"asin"`
+				Title   string `json:"title"`
+				ISBN    string `json:"isbn"`
+				ASIN    string `json:"asin"`
+				Authors []struct {
+					Name string `json:"name"`
+				} `json:"authors"`
 			} `json:"metadata"`
 		} `json:"media"`
 	}
@@ -162,5 +169,11 @@ func (c *Client) Book(ctx context.Context, libraryItemID string) (Book, error) {
 		return Book{}, fmt.Errorf("fetching book %s: %w", libraryItemID, err)
 	}
 	metadata := item.Media.Metadata
-	return Book{Title: metadata.Title, ISBN: metadata.ISBN, ASIN: metadata.ASIN}, nil
+	book := Book{Title: metadata.Title, ISBN: metadata.ISBN, ASIN: metadata.ASIN}
+	for _, author := range metadata.Authors {
+		if author.Name != "" {
+			book.Authors = append(book.Authors, author.Name)
+		}
+	}
+	return book, nil
 }

@@ -10,5 +10,12 @@ services:
       - ABS_API_KEY=${ABS_API_KEY}
       - HARDCOVER_API_KEY=${HARDCOVER_API_KEY}
       # Optional:
+      # - AUTO_START=${AUTO_START:-false}
       # - LOG_LEVEL=${LOG_LEVEL:-debug}
       # - API_TIMEOUT_MS=${API_TIMEOUT_MS:-10000}
+
+    volumes:
+      - audiohardshelf-data:/data
+
+volumes:
+  audiohardshelf-data:

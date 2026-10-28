@@ -7,23 +7,39 @@ Listen in any Audiobookshelf app, and a minute after you pause, your progress on
 ## Features
 
 - **Near real-time:** listens to Audiobookshelf's live updates, so Hardcover is updated within minutes, not hours
-- **Automatic matching** of your Audiobookshelf books to Hardcover by ISBN, ASIN or title
+- **Automatic matching** of your Audiobookshelf books to Hardcover by ISBN, ASIN, or title and author
+- **Optional auto-start:** books you start listening to are added to Hardcover as Currently Reading, in their audiobook edition
 - **Finished books** are marked as Read on Hardcover, with start and finish dates
+- **Correct percentages** even when your file is longer or shorter than the Hardcover edition
 - **Re-read aware:** won't mark a book Read again if you've started re-reading it on Hardcover
 - **Lightweight:** a single ~9 MB container image for amd64 and arm64
 
 ## Before You Start: How Books Are Matched
 
-AudioHardShelf **updates** books on Hardcover. It doesn't add them. For a book to sync, all of the following must be true on Hardcover:
+By default AudioHardShelf **updates** books on Hardcover. It doesn't add them. For a book to sync, all of the following must be true on Hardcover:
 
 1. The book is on your shelf with the status **Currently Reading**.
 2. You picked the **audiobook edition** you're listening to. Hardcover tracks audiobook progress in time, so print and ebook editions are skipped. You can change the edition from the book's page on Hardcover.
 3. That edition can be matched to your Audiobookshelf book by one of the following, tried in this order:
    - **ISBN**: the ISBN in Audiobookshelf equals the edition's ISBN-10 or ISBN-13
    - **ASIN**: the ASIN in Audiobookshelf equals the edition's ASIN (Audible editions usually have one)
-   - **Title**: the titles are exactly the same, ignoring capitalization
+   - **Title**: the titles are the same, ignoring capitalization, and the books don't list different authors
+   - **Title and author**: the titles are the same once punctuation, a leading "The", "A" or "An", and bracketed parts like "(Book 1)" are ignored, or one is the other without its subtitle ("Dune" and "Dune: Book One"). At least one author must be the same in both.
 
 Tip: matching your books in Audiobookshelf against Audible (*Match* on a book, provider *Audible*) fills in the ASIN, which is the most reliable way to match audiobooks.
+
+### Auto-start
+
+Set `AUTO_START=true` to skip steps 1 and 2. When you listen to a book that isn't Currently Reading on Hardcover, AudioHardShelf looks up the audiobook edition with the book's ISBN or ASIN, then:
+
+- **Not on your shelf:** adds it as Currently Reading in that edition.
+- **Want to Read:** changes it to Currently Reading in that edition.
+- **Currently Reading in another edition** (print or ebook): switches it to the audiobook edition.
+- **Read, Paused, Did Not Finish or Ignored:** leaves it alone. Change the status on Hardcover if you want it to sync.
+
+Only books you've listened to in the last 14 days are started, so books you abandoned in Audiobookshelf don't show up on Hardcover. Books without an ISBN or ASIN, or whose edition isn't on Hardcover, can't be started; add those on Hardcover yourself.
+
+With auto-start on, a Currently Reading book that has no reading record on Hardcover gets one.
 
 ## Getting Started
 
@@ -47,8 +63,15 @@ services:
       - ABS_API_KEY=${ABS_API_KEY}
       - HARDCOVER_API_KEY=${HARDCOVER_API_KEY}
       # Optional:
+      # - AUTO_START=${AUTO_START:-false}
       # - LOG_LEVEL=${LOG_LEVEL:-debug}
       # - API_TIMEOUT_MS=${API_TIMEOUT_MS:-10000}
+
+    volumes:
+      - audiohardshelf-data:/data
+
+volumes:
+  audiohardshelf-data:
 ```
 
 ### 3. Create `.env` next to it
@@ -89,10 +112,12 @@ docker compose run --rm audiohardshelf sync
 | `ABS_URL` | yes | | Your Audiobookshelf server URL |
 | `ABS_API_KEY` | yes | | Audiobookshelf API key |
 | `HARDCOVER_API_KEY` | yes | | Hardcover API key; the `Bearer ` prefix is optional |
+| `AUTO_START` | | `false` | `true` to put books you listen to on Hardcover as Currently Reading. See [Auto-start](#auto-start). |
 | `SYNC_INTERVAL` | | `1h` | How often to run a full sync regardless of activity, as a duration such as `30m` or `2h` (minimum `1m`). This is a fallback; see [When syncs run](#when-syncs-run). |
 | `LOG_LEVEL` | | `debug` | `error`, `warn`, `info` or `debug` |
 | `API_TIMEOUT_MS` | | `10000` | Timeout for each API request, in milliseconds |
 | `HARDCOVER_API_URL` | | `https://api.hardcover.app/v1/graphql` | Hardcover GraphQL endpoint |
+| `STATE_FILE` | | `/data/state.json` | Where sync state is kept between restarts. See [Sync state](#sync-state). |
 
 The API keys can also be provided as Docker secrets named `abs_api_key` and `hardcover_api_key`.
 
@@ -100,12 +125,22 @@ The API keys can also be provided as Docker secrets named `abs_api_key` and `har
 
 Each sync:
 
-1. Fetches the books you're listening to in Audiobookshelf, plus books you finished in the last 30 days.
+1. Fetches the books you're listening to in Audiobookshelf, plus books you finished in the last 30 days (or since the last sync, if that was longer ago).
 2. Fetches the audiobooks you're currently reading on Hardcover.
-3. Matches them up (see [How books are matched](#before-you-start-how-books-are-matched)).
-4. For each match, writes your listening position and start date to Hardcover. For finished books, it also sets the finish date and changes the status to **Read**.
+3. Matches them up (see [How books are matched](#before-you-start-how-books-are-matched)), starting unmatched books on Hardcover if [auto-start](#auto-start) is on.
+4. For each match whose position changed since the last sync, writes your listening position and start date to Hardcover. For finished books, it also sets the finish date and changes the status to **Read**.
 
 Once a book is marked Read, it's no longer "Currently Reading" on Hardcover, so later syncs leave it alone.
+
+### Progress and edition length
+
+Hardcover shows progress as a percentage of its edition's length. When your Audiobookshelf file is more than 5% longer or shorter than that (another narrator, abridged, extra material), your position is scaled to the edition's length so the percentage matches. Finished books are set to the edition's full length.
+
+### Sync state
+
+AudioHardShelf remembers what it last synced for each book in `STATE_FILE`, so it only contacts Hardcover when your progress actually changed, marks each finished listen as Read only once, and catches up on books finished while it wasn't running.
+
+The compose file above keeps it in a named volume. If `/data` isn't mounted, the image's anonymous volume is used, which is lost when the container is recreated. If the directory doesn't exist at all (for example when running the binary outside Docker), state is kept in memory only. Deleting the file is safe; the next sync rebuilds it.
 
 ### When syncs run
 
@@ -119,13 +154,12 @@ If the live connection fails, the app keeps retrying in the background and still
 
 ## Limitations
 
-- **It never adds books or starts them on Hardcover.** You need to mark a book as Currently Reading, in its audiobook edition, before it syncs.
 - **Audiobook editions only.** Progress isn't synced to print or ebook editions on Hardcover, and Audiobookshelf ebook reading progress isn't synced at all.
-- **Sync is one-way, Audiobookshelf → Hardcover.** Changes made on Hardcover never reach Audiobookshelf. Audiobookshelf always wins: if Hardcover shows further progress than Audiobookshelf, it's overwritten.
-- **Progress is synced as a listening position in seconds.** Hardcover calculates the percentage from its edition's length, so if your file is a different length (another narrator, abridged, extra material), the percentage on Hardcover will be off.
-- **Title matching is exact.** "Dune" won't match "Dune: Book One". Use ISBN or ASIN for anything with a subtitle or series in the title.
-- **Finished books are picked up for 30 days.** If the app isn't running for longer than that, books finished in the meantime aren't marked Read; mark them on Hardcover yourself.
-- **Re-reads:** if you finish a book and start the same day on a re-read in Hardcover, the new read may be marked Read again.
+- **Without auto-start, it never adds books or starts them on Hardcover.** With it, only books with an ISBN or ASIN of an audiobook edition on Hardcover can be started.
+- **Sync is one-way, Audiobookshelf → Hardcover.** Changes made on Hardcover never reach Audiobookshelf. When your Audiobookshelf position changes, it overwrites the one on Hardcover, even if Hardcover's was further along. Progress you change on Hardcover alone is kept until you listen again.
+- **Scaled progress is approximate.** When the lengths differ, the position on Hardcover is right as a percentage, not as a timestamp.
+- **Loose title matching needs authors.** Titles that differ by more than punctuation, articles, a series marker or a subtitle won't match. Use ISBN or ASIN for those.
+- **Finished books are picked up for 30 days without a state file.** With [sync state](#sync-state) kept, books finished while the app wasn't running are caught up on however long it was.
 - **One user per container.** It syncs the Audiobookshelf user that owns the API key to one Hardcover account. For more people, run one container each.
 - **Podcasts are ignored.**
 
@@ -136,7 +170,10 @@ Set `LOG_LEVEL=debug` and check `docker logs audiohardshelf`; every book is logg
 | Log message | What to check |
 |---|---|
 | `no matching audiobook currently reading on Hardcover` | The book isn't Currently Reading on Hardcover, isn't using an audiobook edition, or no ISBN/ASIN/title matches. See [How books are matched](#before-you-start-how-books-are-matched). |
-| `book has no read on Hardcover` | The book has no reading record on Hardcover to update. Give it a start date on Hardcover, or remove it and mark it Currently Reading again. |
+| `book has no read on Hardcover` | The book has no reading record on Hardcover to update. Give it a start date on Hardcover, remove it and mark it Currently Reading again, or turn on `AUTO_START`. |
+| `no audiobook edition on Hardcover with this ISBN or ASIN` | Auto-start couldn't find the edition. Check the ISBN/ASIN in Audiobookshelf, or add the book on Hardcover yourself. |
+| `book has another status on Hardcover, leaving it unchanged` | Auto-start doesn't touch books that are Read, Paused, Did Not Finish or Ignored. Set it to Currently Reading or Want to Read on Hardcover. |
+| `saving state failed` | `STATE_FILE`'s directory isn't writable. Use a named volume as in the compose file above, not a bind mount owned by root. |
 | `check that ABS_API_KEY is valid` / `authentication failed, check ABS_API_KEY` | `ABS_API_KEY` is wrong, expired or disabled. |
 | `check ABS_URL` / `connection refused` | `ABS_URL` is wrong, the server is down, or the URL is missing a sub-path. |
 | `check that HARDCOVER_API_KEY is valid` / `connecting to Hardcover` | `HARDCOVER_API_KEY` is wrong or has expired; get a new one from your Hardcover account. |

@@ -16,6 +16,7 @@ import (
 
 // Hardcover `user_books.status_id` values.
 const (
+	StatusWantToRead       = 1
 	StatusCurrentlyReading = 2
 	StatusRead             = 3
 )
@@ -44,10 +45,30 @@ type User struct {
 type Audiobook struct {
 	UserBookID int
 	EditionID  int
-	Title      string
-	ISBN10     string
-	ISBN13     string
-	ASIN       string
+	// Title is the edition's title, or the book's when the edition has none.
+	Title     string
+	BookTitle string
+	ISBN10    string
+	ISBN13    string
+	ASIN      string
+	// AudioSeconds is the edition's length; zero when unknown.
+	AudioSeconds int
+	Authors      []string
+}
+
+// Edition is an audio edition in the Hardcover catalog.
+type Edition struct {
+	ID           int    `json:"id"`
+	BookID       int    `json:"book_id"`
+	Title        string `json:"title"`
+	AudioSeconds int    `json:"audio_seconds"`
+}
+
+// UserBook is a book on the user's shelf.
+type UserBook struct {
+	ID        int  `json:"id"`
+	StatusID  int  `json:"status_id"`
+	EditionID *int `json:"edition_id"`
 }
 
 // Read is one read-through of a user book.
@@ -140,12 +161,18 @@ const currentlyReadingQuery = `
       edition_id
       book {
         title
+        contributions {
+          author {
+            name
+          }
+        }
         editions(where: {audio_seconds: {_gte: 0}}) {
           id
           isbn_10
           isbn_13
           asin
           title
+          audio_seconds
         }
       }
     }
@@ -159,13 +186,19 @@ func (c *Client) CurrentlyReadingAudiobooks(ctx context.Context, userID int) ([]
 			ID        int  `json:"id"`
 			EditionID *int `json:"edition_id"`
 			Book      struct {
-				Title    string `json:"title"`
+				Title         string `json:"title"`
+				Contributions []struct {
+					Author *struct {
+						Name string `json:"name"`
+					} `json:"author"`
+				} `json:"contributions"`
 				Editions []struct {
-					ID     int    `json:"id"`
-					ISBN10 string `json:"isbn_10"`
-					ISBN13 string `json:"isbn_13"`
-					ASIN   string `json:"asin"`
-					Title  string `json:"title"`
+					ID           int    `json:"id"`
+					ISBN10       string `json:"isbn_10"`
+					ISBN13       string `json:"isbn_13"`
+					ASIN         string `json:"asin"`
+					Title        string `json:"title"`
+					AudioSeconds *int   `json:"audio_seconds"`
 				} `json:"editions"`
 			} `json:"book"`
 		} `json:"user_books"`
@@ -180,6 +213,12 @@ func (c *Client) CurrentlyReadingAudiobooks(ctx context.Context, userID int) ([]
 		if userBook.EditionID == nil {
 			continue
 		}
+		var authors []string
+		for _, contribution := range userBook.Book.Contributions {
+			if contribution.Author != nil && contribution.Author.Name != "" {
+				authors = append(authors, contribution.Author.Name)
+			}
+		}
 		for _, edition := range userBook.Book.Editions {
 			if edition.ID != *userBook.EditionID {
 				continue
@@ -188,14 +227,20 @@ func (c *Client) CurrentlyReadingAudiobooks(ctx context.Context, userID int) ([]
 			if title == "" {
 				title = userBook.Book.Title
 			}
-			audiobooks = append(audiobooks, Audiobook{
+			audiobook := Audiobook{
 				UserBookID: userBook.ID,
 				EditionID:  edition.ID,
 				Title:      title,
+				BookTitle:  userBook.Book.Title,
 				ISBN10:     edition.ISBN10,
 				ISBN13:     edition.ISBN13,
 				ASIN:       edition.ASIN,
-			})
+				Authors:    authors,
+			}
+			if edition.AudioSeconds != nil {
+				audiobook.AudioSeconds = *edition.AudioSeconds
+			}
+			audiobooks = append(audiobooks, audiobook)
 		}
 	}
 	return audiobooks, nil
@@ -239,7 +284,21 @@ const updateReadMutation = `
 
 // UpdateRead writes progress and dates to a read.
 func (c *Client) UpdateRead(ctx context.Context, readID int, update ReadUpdate) error {
-	return c.mutate(ctx, updateReadMutation, map[string]any{"id": readID, "object": update})
+	_, err := c.mutate(ctx, updateReadMutation, map[string]any{"id": readID, "object": update})
+	return err
+}
+
+const insertReadMutation = `
+  mutation InsertRead($userBookId: Int!, $read: DatesReadInput!) {
+    result: insert_user_book_read(user_book_id: $userBookId, user_book_read: $read) {
+      id
+      error
+    }
+  }`
+
+// InsertRead adds a read to a user book and returns its ID.
+func (c *Client) InsertRead(ctx context.Context, userBookID int, read ReadUpdate) (int, error) {
+	return c.mutate(ctx, insertReadMutation, map[string]any{"userBookId": userBookID, "read": read})
 }
 
 const updateUserBookMutation = `
@@ -251,21 +310,114 @@ const updateUserBookMutation = `
 
 // MarkAsRead sets a user book's status to Read.
 func (c *Client) MarkAsRead(ctx context.Context, userBookID, editionID int) error {
-	object := map[string]any{"edition_id": editionID, "status_id": StatusRead}
-	return c.mutate(ctx, updateUserBookMutation, map[string]any{"id": userBookID, "object": object})
+	return c.setStatus(ctx, userBookID, editionID, StatusRead)
 }
 
-func (c *Client) mutate(ctx context.Context, mutation string, variables map[string]any) error {
+// StartReading sets a user book's status to Currently Reading in the given edition.
+func (c *Client) StartReading(ctx context.Context, userBookID, editionID int) error {
+	return c.setStatus(ctx, userBookID, editionID, StatusCurrentlyReading)
+}
+
+func (c *Client) setStatus(ctx context.Context, userBookID, editionID, statusID int) error {
+	object := map[string]any{"edition_id": editionID, "status_id": statusID}
+	_, err := c.mutate(ctx, updateUserBookMutation, map[string]any{"id": userBookID, "object": object})
+	return err
+}
+
+const insertUserBookMutation = `
+  mutation InsertUserBook($object: UserBookCreateInput!) {
+    result: insert_user_book(object: $object) {
+      id
+      error
+    }
+  }`
+
+// AddCurrentlyReading puts a book on the user's shelf as Currently Reading in
+// the given edition and returns the new user book's ID.
+func (c *Client) AddCurrentlyReading(ctx context.Context, bookID, editionID int) (int, error) {
+	object := map[string]any{"book_id": bookID, "edition_id": editionID, "status_id": StatusCurrentlyReading}
+	return c.mutate(ctx, insertUserBookMutation, map[string]any{"object": object})
+}
+
+const audioEditionQuery = `
+  query AudioEdition($where: editions_bool_exp!) {
+    editions(where: $where, order_by: {users_count: desc}, limit: 1) {
+      id
+      book_id
+      title
+      audio_seconds
+    }
+  }`
+
+// FindAudioEdition returns the audio edition with the given ISBN (10 or 13
+// digits, without hyphens) or ASIN, trying ISBN first, or nil if there is none.
+// Empty identifiers are skipped.
+func (c *Client) FindAudioEdition(ctx context.Context, isbn, asin string) (*Edition, error) {
+	var conditions []map[string]any
+	switch len(isbn) {
+	case 10:
+		conditions = append(conditions, map[string]any{"isbn_10": map[string]any{"_eq": isbn}})
+	case 13:
+		conditions = append(conditions, map[string]any{"isbn_13": map[string]any{"_eq": isbn}})
+	}
+	if asin != "" {
+		conditions = append(conditions, map[string]any{"asin": map[string]any{"_eq": asin}})
+	}
+
+	for _, condition := range conditions {
+		condition["audio_seconds"] = map[string]any{"_gte": 0}
+		var data struct {
+			Editions []Edition `json:"editions"`
+		}
+		if err := c.query(ctx, audioEditionQuery, map[string]any{"where": condition}, &data); err != nil {
+			return nil, err
+		}
+		if len(data.Editions) > 0 {
+			return &data.Editions[0], nil
+		}
+	}
+	return nil, nil
+}
+
+const userBookQuery = `
+  query UserBook($userId: Int!, $bookId: Int!) {
+    user_books(where: {user_id: {_eq: $userId}, book_id: {_eq: $bookId}}, limit: 1) {
+      id
+      status_id
+      edition_id
+    }
+  }`
+
+// UserBook returns the user's shelf entry for a book, or nil if it isn't on their shelf.
+func (c *Client) UserBook(ctx context.Context, userID, bookID int) (*UserBook, error) {
+	var data struct {
+		UserBooks []UserBook `json:"user_books"`
+	}
+	if err := c.query(ctx, userBookQuery, map[string]any{"userId": userID, "bookId": bookID}, &data); err != nil {
+		return nil, err
+	}
+	if len(data.UserBooks) == 0 {
+		return nil, nil
+	}
+	return &data.UserBooks[0], nil
+}
+
+// mutate runs a mutation aliased as `result` and returns the ID it reports, if any.
+func (c *Client) mutate(ctx context.Context, mutation string, variables map[string]any) (int, error) {
 	var data struct {
 		Result struct {
+			ID    *int    `json:"id"`
 			Error *string `json:"error"`
 		} `json:"result"`
 	}
 	if err := c.query(ctx, mutation, variables, &data); err != nil {
-		return err
+		return 0, err
 	}
 	if data.Result.Error != nil && *data.Result.Error != "" {
-		return errors.New(*data.Result.Error)
+		return 0, errors.New(*data.Result.Error)
 	}
-	return nil
+	if data.Result.ID == nil {
+		return 0, nil
+	}
+	return *data.Result.ID, nil
 }

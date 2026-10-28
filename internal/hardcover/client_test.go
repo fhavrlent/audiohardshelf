@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -52,7 +53,8 @@ func TestGraphQLErrors(t *testing.T) {
 
 func TestCurrentlyReadingAudiobooks(t *testing.T) {
 	client, _ := serve(t, `{"data":{"user_books":[
-		{"id":1,"edition_id":10,"book":{"title":"Book","editions":[{"id":10,"isbn_13":"978","asin":"B01","title":null}]}},
+		{"id":1,"edition_id":10,"book":{"title":"Book","contributions":[{"author":{"name":"Author"}},{"author":null}],
+			"editions":[{"id":10,"isbn_13":"978","asin":"B01","title":null,"audio_seconds":3600}]}},
 		{"id":2,"edition_id":20,"book":{"title":"Print edition","editions":[{"id":21}]}},
 		{"id":3,"edition_id":null,"book":{"title":"No edition","editions":[{"id":30}]}}
 	]}}`)
@@ -61,8 +63,11 @@ func TestCurrentlyReadingAudiobooks(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	want := Audiobook{UserBookID: 1, EditionID: 10, Title: "Book", ISBN13: "978", ASIN: "B01"}
-	if len(audiobooks) != 1 || audiobooks[0] != want {
+	want := Audiobook{
+		UserBookID: 1, EditionID: 10, Title: "Book", BookTitle: "Book", ISBN13: "978", ASIN: "B01",
+		AudioSeconds: 3600, Authors: []string{"Author"},
+	}
+	if len(audiobooks) != 1 || !reflect.DeepEqual(audiobooks[0], want) {
 		t.Errorf("got %+v, want [%+v]", audiobooks, want)
 	}
 }
@@ -80,5 +85,57 @@ func TestMutationError(t *testing.T) {
 	}
 	if object["progress_seconds"] != float64(60) {
 		t.Errorf("progress_seconds = %v", object["progress_seconds"])
+	}
+}
+
+func TestFindAudioEdition(t *testing.T) {
+	client, last := serve(t, `{"data":{"editions":[{"id":10,"book_id":1,"title":"Dune","audio_seconds":75600}]}}`)
+	edition, err := client.FindAudioEdition(t.Context(), "9780441013593", "B002V0QK4C")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if want := (Edition{ID: 10, BookID: 1, Title: "Dune", AudioSeconds: 75600}); edition == nil || *edition != want {
+		t.Errorf("got %+v, want %+v", edition, want)
+	}
+	where := (*last)["variables"].(map[string]any)["where"].(map[string]any)
+	if _, ok := where["isbn_13"]; !ok || where["asin"] != nil || where["audio_seconds"] == nil {
+		t.Errorf("searched with %v, want ISBN-13 and audio editions only", where)
+	}
+}
+
+func TestFindAudioEditionNone(t *testing.T) {
+	client, last := serve(t, `{"data":{"editions":[]}}`)
+	edition, err := client.FindAudioEdition(t.Context(), "", "B002V0QK4C")
+	if err != nil || edition != nil {
+		t.Fatalf("got %+v, %v; want nil", edition, err)
+	}
+	where := (*last)["variables"].(map[string]any)["where"].(map[string]any)
+	if _, ok := where["asin"]; !ok {
+		t.Errorf("searched with %v, want ASIN", where)
+	}
+
+	edition, err = client.FindAudioEdition(t.Context(), "", "")
+	if err != nil || edition != nil {
+		t.Errorf("got %+v, %v without identifiers; want nil", edition, err)
+	}
+}
+
+func TestAddCurrentlyReading(t *testing.T) {
+	client, last := serve(t, `{"data":{"result":{"id":42,"error":null}}}`)
+	id, err := client.AddCurrentlyReading(t.Context(), 1, 10)
+	if err != nil || id != 42 {
+		t.Fatalf("got %d, %v; want 42", id, err)
+	}
+	object := (*last)["variables"].(map[string]any)["object"].(map[string]any)
+	if object["book_id"] != float64(1) || object["edition_id"] != float64(10) || object["status_id"] != float64(StatusCurrentlyReading) {
+		t.Errorf("sent %v", object)
+	}
+}
+
+func TestUserBookNotOnShelf(t *testing.T) {
+	client, _ := serve(t, `{"data":{"user_books":[]}}`)
+	userBook, err := client.UserBook(t.Context(), 7, 1)
+	if err != nil || userBook != nil {
+		t.Errorf("got %+v, %v; want nil", userBook, err)
 	}
 }

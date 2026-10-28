@@ -14,6 +14,7 @@ const (
 	defaultHardcoverAPIURL = "https://api.hardcover.app/v1/graphql"
 	defaultSyncInterval    = time.Hour
 	defaultAPITimeout      = 10 * time.Second
+	defaultStateFile       = "/data/state.json"
 )
 
 type Config struct {
@@ -25,12 +26,20 @@ type Config struct {
 	SyncInterval time.Duration
 	APITimeout   time.Duration
 	LogLevel     slog.Level
+	// AutoStart puts books being listened to on Hardcover as Currently Reading.
+	AutoStart bool
+	// StateFile is where sync state is kept between restarts.
+	StateFile string
 }
 
 // Load reads the configuration from environment variables, preferring
 // Docker secrets for API keys when they are mounted.
 func Load() (Config, error) {
 	syncInterval, err := parseSyncInterval(os.Getenv("SYNC_INTERVAL"))
+	if err != nil {
+		return Config{}, err
+	}
+	autoStart, err := parseBool("AUTO_START", os.Getenv("AUTO_START"))
 	if err != nil {
 		return Config{}, err
 	}
@@ -43,6 +52,8 @@ func Load() (Config, error) {
 		SyncInterval:    syncInterval,
 		APITimeout:      parseTimeout(os.Getenv("API_TIMEOUT_MS")),
 		LogLevel:        parseLogLevel(os.Getenv("LOG_LEVEL")),
+		AutoStart:       autoStart,
+		StateFile:       envOr("STATE_FILE", defaultStateFile),
 	}, nil
 }
 
@@ -86,6 +97,16 @@ func parseSyncInterval(value string) (time.Duration, error) {
 		return 0, fmt.Errorf("invalid SYNC_INTERVAL %q: use a duration of at least 1m, such as 30m or 1h", value)
 	}
 	return interval, nil
+}
+
+func parseBool(name, value string) (bool, error) {
+	switch strings.ToLower(strings.TrimSpace(value)) {
+	case "", "false", "0", "no", "off":
+		return false, nil
+	case "true", "1", "yes", "on":
+		return true, nil
+	}
+	return false, fmt.Errorf("invalid %s %q: use true or false", name, value)
 }
 
 func parseTimeout(value string) time.Duration {
