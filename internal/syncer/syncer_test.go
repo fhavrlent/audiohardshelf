@@ -444,3 +444,32 @@ func TestHardcoverSeconds(t *testing.T) {
 		}
 	}
 }
+
+func TestPickAudioEdition(t *testing.T) {
+	styles := hardcover.CatalogBook{ID: 1, Title: "The Mysterious Affair at Styles", AudioEditions: []hardcover.Edition{
+		{ID: 10, Title: "The Mysterious Affair at Styles: An Audible Original Full Cast Audio Drama", AudioSeconds: 13980},
+		{ID: 11, Title: "The Mysterious Affair at Styles: A Hercule Poirot Mystery", AudioSeconds: 21420},
+		{ID: 12, Title: "Záhada na zámku Styles", AudioSeconds: 21600},
+		{ID: 13, Title: "The Mysterious Affair at Styles"},
+	}}
+	tests := []struct {
+		name     string
+		title    string
+		duration float64
+		want     int
+	}{
+		{"closest length", "The Mysterious Affair at Styles", 21500, 11},
+		{"shorter file", "The Mysterious Affair at Styles", 14000, 10},
+		{"unknown length", "The Mysterious Affair at Styles", 0, 10},
+		{"translation", "Záhada na zámku Styles", 14000, 12},
+		{"no title match", "Something Else", 21700, 12},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := pickAudioEdition(tt.title, tt.duration, styles)
+			if got.ID != tt.want || got.BookID != 1 {
+				t.Errorf("picked edition %d of book %d, want %d of book 1", got.ID, got.BookID, tt.want)
+			}
+		})
+	}
+}

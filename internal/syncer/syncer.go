@@ -206,7 +206,7 @@ func (s *Syncer) syncBook(ctx context.Context, progress audiobookshelf.MediaProg
 		case last.AutoStartSkippedAt > s.now().Add(-autoStartRetry).UnixMilli():
 			log.Debug("not starting book on Hardcover: it couldn't be started within the last day")
 		default:
-			audiobook, err = s.startReading(ctx, log, book, r.userID)
+			audiobook, err = s.startReading(ctx, log, book, progress.Duration, r.userID)
 			if err != nil {
 				log.Error("starting book on Hardcover failed", "error", err)
 				return failed
@@ -304,8 +304,8 @@ func (s *Syncer) remember(libraryItemID string, userBookID, seconds int) {
 // startReading puts a book on Hardcover as Currently Reading in its audiobook
 // edition. It returns nil, with the reason logged, when there is no such
 // edition or the book has a status that shouldn't change.
-func (s *Syncer) startReading(ctx context.Context, log *slog.Logger, book audiobookshelf.Book, userID int) (*hardcover.Audiobook, error) {
-	edition, err := s.findAudioEdition(ctx, log, book)
+func (s *Syncer) startReading(ctx context.Context, log *slog.Logger, book audiobookshelf.Book, duration float64, userID int) (*hardcover.Audiobook, error) {
+	edition, err := s.findAudioEdition(ctx, log, book, duration)
 	if err != nil || edition == nil {
 		return nil, err
 	}
@@ -351,9 +351,10 @@ func (s *Syncer) startReading(ctx context.Context, log *slog.Logger, book audiob
 }
 
 // findAudioEdition looks up a book's audiobook edition on Hardcover by ISBN or
-// ASIN, then by searching for its title and author. It returns nil, with the
-// reason logged, when there is none.
-func (s *Syncer) findAudioEdition(ctx context.Context, log *slog.Logger, book audiobookshelf.Book) (*hardcover.Edition, error) {
+// ASIN, then by searching for its title and author. duration is the length of
+// the Audiobookshelf file, used to pick between editions. It returns nil, with
+// the reason logged, when there is none.
+func (s *Syncer) findAudioEdition(ctx context.Context, log *slog.Logger, book audiobookshelf.Book, duration float64) (*hardcover.Edition, error) {
 	isbn := normalizeISBN(book.ISBN)
 	asin := strings.ToUpper(strings.TrimSpace(book.ASIN))
 	if isbn != "" || asin != "" {
@@ -394,9 +395,9 @@ func (s *Syncer) findAudioEdition(ctx context.Context, log *slog.Logger, book au
 			}
 			continue
 		}
-		edition := pickAudioEdition(book.Title, candidate)
+		edition := pickAudioEdition(book.Title, duration, candidate)
 		log.Debug("found audiobook edition on Hardcover", "by", "title and author",
-			"hardcoverBookId", candidate.ID, "editionTitle", edition.Title)
+			"hardcoverBookId", candidate.ID, "editionTitle", edition.Title, "editionSeconds", edition.AudioSeconds)
 		return &edition, nil
 	}
 
@@ -426,14 +427,31 @@ func catalogTitleMatches(title string, book hardcover.CatalogBook) bool {
 	return false
 }
 
-// pickAudioEdition returns the audio edition whose title matches, so a
-// translation gets its own edition, or else the most popular one.
-func pickAudioEdition(title string, book hardcover.CatalogBook) hardcover.Edition {
-	edition := book.AudioEditions[0]
+// pickAudioEdition returns the audio edition whose length is closest to
+// duration, among those whose title matches, so a translation gets its own
+// edition and an abridged or dramatised one isn't mistaken for the full
+// reading. Without a known length it returns the most popular one.
+func pickAudioEdition(title string, duration float64, book hardcover.CatalogBook) hardcover.Edition {
+	var matching []hardcover.Edition
 	for _, candidate := range book.AudioEditions {
 		if looseTitlesMatch(title, candidate.Title) {
-			edition = candidate
-			break
+			matching = append(matching, candidate)
+		}
+	}
+	if len(matching) == 0 {
+		matching = book.AudioEditions
+	}
+
+	edition := matching[0]
+	if duration > 0 {
+		best := math.Inf(1)
+		for _, candidate := range matching {
+			if candidate.AudioSeconds <= 0 {
+				continue
+			}
+			if diff := math.Abs(float64(candidate.AudioSeconds) - duration); diff < best {
+				best, edition = diff, candidate
+			}
 		}
 	}
 	if edition.BookID == 0 {

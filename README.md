@@ -33,7 +33,7 @@ Tip: matching your books in Audiobookshelf against Audible (*Match* on a book, p
 Set `AUTO_START=true` to skip steps 1 and 2. When you listen to a book that isn't Currently Reading on Hardcover, AudioHardShelf looks for its audiobook edition on Hardcover:
 
 1. by the book's **ISBN or ASIN**, if it has one;
-2. otherwise by searching Hardcover for its **title and first author**. A result counts only if it shares an author and its title, an alternative title or one of its audiobook editions' titles matches (see *Title and author* above), so books without ISBN or ASIN, such as most Czech audiobooks, and translations whose Hardcover entry uses the original title still work. When the book has several audiobook editions, the one whose title matches is preferred.
+2. otherwise by searching Hardcover for its **title and first author**. A result counts only if it shares an author and its title, an alternative title or one of its audiobook editions' titles matches (see *Title and author* above), so books without ISBN or ASIN, such as most Czech audiobooks, and translations whose Hardcover entry uses the original title still work. When the book has several audiobook editions, those whose title matches are preferred, and among them the one closest in length to your file, so a full-cast dramatisation or abridged version isn't picked over the unabridged reading.
 
 Then:
 
