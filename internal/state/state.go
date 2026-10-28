@@ -21,6 +21,9 @@ type Book struct {
 	// MarkedReadAt is the Audiobookshelf finish time, in epoch milliseconds,
 	// of the listen that was marked as read on Hardcover.
 	MarkedReadAt int64 `json:"markedReadAt,omitempty"`
+	// AutoStartSkippedAt is when, in epoch milliseconds, the item last couldn't
+	// be started on Hardcover.
+	AutoStartSkippedAt int64 `json:"autoStartSkippedAt,omitempty"`
 }
 
 // Store holds the state in memory and, when it has a path, in a JSON file.

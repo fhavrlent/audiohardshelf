@@ -14,6 +14,13 @@ import (
 	"github.com/fhavrlent/audiohardshelf/internal/httpjson"
 )
 
+// readingFormatAudiobook is the `editions.reading_format_id` of audiobooks ("Listened").
+const readingFormatAudiobook = 2
+
+// audioEditions filters editions to audiobooks: those with a length or the
+// audiobook reading format, since not every audiobook edition has its length set.
+const audioEditions = `{_or: [{audio_seconds: {_gte: 0}}, {reading_format_id: {_eq: 2}}]}`
+
 // Hardcover `user_books.status_id` values.
 const (
 	StatusWantToRead       = 1
@@ -62,6 +69,33 @@ type Edition struct {
 	BookID       int    `json:"book_id"`
 	Title        string `json:"title"`
 	AudioSeconds int    `json:"audio_seconds"`
+}
+
+// CatalogBook is a book in the Hardcover catalog with its audio editions,
+// most popular first.
+type CatalogBook struct {
+	ID                int
+	Title             string
+	AlternativeTitles []string
+	Authors           []string
+	AudioEditions     []Edition
+}
+
+// contributions decodes a book's `contributions { author { name } }`.
+type contributions []struct {
+	Author *struct {
+		Name string `json:"name"`
+	} `json:"author"`
+}
+
+func (c contributions) authors() []string {
+	var names []string
+	for _, contribution := range c {
+		if contribution.Author != nil && contribution.Author.Name != "" {
+			names = append(names, contribution.Author.Name)
+		}
+	}
+	return names
 }
 
 // UserBook is a book on the user's shelf.
@@ -166,7 +200,7 @@ const currentlyReadingQuery = `
             name
           }
         }
-        editions(where: {audio_seconds: {_gte: 0}}) {
+        editions(where: ` + audioEditions + `) {
           id
           isbn_10
           isbn_13
@@ -179,20 +213,16 @@ const currentlyReadingQuery = `
   }`
 
 // CurrentlyReadingAudiobooks returns the books the user is currently reading
-// in an audio edition. Books read in another edition are left out.
+// in an audiobook edition. Books read in another edition are left out.
 func (c *Client) CurrentlyReadingAudiobooks(ctx context.Context, userID int) ([]Audiobook, error) {
 	var data struct {
 		UserBooks []struct {
 			ID        int  `json:"id"`
 			EditionID *int `json:"edition_id"`
 			Book      struct {
-				Title         string `json:"title"`
-				Contributions []struct {
-					Author *struct {
-						Name string `json:"name"`
-					} `json:"author"`
-				} `json:"contributions"`
-				Editions []struct {
+				Title         string        `json:"title"`
+				Contributions contributions `json:"contributions"`
+				Editions      []struct {
 					ID           int    `json:"id"`
 					ISBN10       string `json:"isbn_10"`
 					ISBN13       string `json:"isbn_13"`
@@ -213,12 +243,7 @@ func (c *Client) CurrentlyReadingAudiobooks(ctx context.Context, userID int) ([]
 		if userBook.EditionID == nil {
 			continue
 		}
-		var authors []string
-		for _, contribution := range userBook.Book.Contributions {
-			if contribution.Author != nil && contribution.Author.Name != "" {
-				authors = append(authors, contribution.Author.Name)
-			}
-		}
+		authors := userBook.Book.Contributions.authors()
 		for _, edition := range userBook.Book.Editions {
 			if edition.ID != *userBook.EditionID {
 				continue
@@ -365,7 +390,10 @@ func (c *Client) FindAudioEdition(ctx context.Context, isbn, asin string) (*Edit
 	}
 
 	for _, condition := range conditions {
-		condition["audio_seconds"] = map[string]any{"_gte": 0}
+		condition["_or"] = []map[string]any{
+			{"audio_seconds": map[string]any{"_gte": 0}},
+			{"reading_format_id": map[string]any{"_eq": readingFormatAudiobook}},
+		}
 		var data struct {
 			Editions []Edition `json:"editions"`
 		}
@@ -377,6 +405,104 @@ func (c *Client) FindAudioEdition(ctx context.Context, isbn, asin string) (*Edit
 		}
 	}
 	return nil, nil
+}
+
+const searchBooksQuery = `
+  query SearchBooks($query: String!, $perPage: Int!) {
+    search(query: $query, query_type: "Book", per_page: $perPage, page: 1) {
+      ids
+      results
+    }
+  }`
+
+// SearchBooks returns the IDs of up to limit catalog books matching query, best match first.
+func (c *Client) SearchBooks(ctx context.Context, query string, limit int) ([]int, error) {
+	var data struct {
+		Search struct {
+			IDs     []int `json:"ids"`
+			Results struct {
+				Hits []struct {
+					Document struct {
+						ID json.Number `json:"id"`
+					} `json:"document"`
+				} `json:"hits"`
+			} `json:"results"`
+		} `json:"search"`
+	}
+	if err := c.query(ctx, searchBooksQuery, map[string]any{"query": query, "perPage": limit}, &data); err != nil {
+		return nil, err
+	}
+	if len(data.Search.IDs) > 0 {
+		return data.Search.IDs, nil
+	}
+	// Fall back to the IDs in the raw search hits.
+	var ids []int
+	for _, hit := range data.Search.Results.Hits {
+		if id, err := hit.Document.ID.Int64(); err == nil {
+			ids = append(ids, int(id))
+		}
+	}
+	return ids, nil
+}
+
+const catalogBooksQuery = `
+  query CatalogBooks($ids: [Int!]!) {
+    books(where: {id: {_in: $ids}}) {
+      id
+      title
+      alternative_titles
+      contributions {
+        author {
+          name
+        }
+      }
+      editions(where: ` + audioEditions + `, order_by: {users_count: desc}) {
+        id
+        book_id
+        title
+        audio_seconds
+      }
+    }
+  }`
+
+// CatalogBooks returns the catalog books with the given IDs, in the same order.
+func (c *Client) CatalogBooks(ctx context.Context, ids []int) ([]CatalogBook, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+	var data struct {
+		Books []struct {
+			ID                int             `json:"id"`
+			Title             string          `json:"title"`
+			AlternativeTitles json.RawMessage `json:"alternative_titles"`
+			Contributions     contributions   `json:"contributions"`
+			Editions          []Edition       `json:"editions"`
+		} `json:"books"`
+	}
+	if err := c.query(ctx, catalogBooksQuery, map[string]any{"ids": ids}, &data); err != nil {
+		return nil, err
+	}
+
+	byID := map[int]CatalogBook{}
+	for _, book := range data.Books {
+		// Alternative titles are a JSON list of strings; anything else is ignored.
+		var alternatives []string
+		_ = json.Unmarshal(book.AlternativeTitles, &alternatives)
+		byID[book.ID] = CatalogBook{
+			ID:                book.ID,
+			Title:             book.Title,
+			AlternativeTitles: alternatives,
+			Authors:           book.Contributions.authors(),
+			AudioEditions:     book.Editions,
+		}
+	}
+	var books []CatalogBook
+	for _, id := range ids {
+		if book, ok := byID[id]; ok {
+			books = append(books, book)
+		}
+	}
+	return books, nil
 }
 
 const userBookQuery = `

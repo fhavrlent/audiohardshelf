@@ -19,7 +19,7 @@ Listen in any Audiobookshelf app, and a minute after you pause, your progress on
 By default AudioHardShelf **updates** books on Hardcover. It doesn't add them. For a book to sync, all of the following must be true on Hardcover:
 
 1. The book is on your shelf with the status **Currently Reading**.
-2. You picked the **audiobook edition** you're listening to. Hardcover tracks audiobook progress in time, so print and ebook editions are skipped. You can change the edition from the book's page on Hardcover.
+2. You picked the **audiobook edition** you're listening to (reading format *Listened*). Hardcover tracks audiobook progress in time, so print and ebook editions are skipped. You can change the edition from the book's page on Hardcover.
 3. That edition can be matched to your Audiobookshelf book by one of the following, tried in this order:
    - **ISBN**: the ISBN in Audiobookshelf equals the edition's ISBN-10 or ISBN-13
    - **ASIN**: the ASIN in Audiobookshelf equals the edition's ASIN (Audible editions usually have one)
@@ -30,14 +30,19 @@ Tip: matching your books in Audiobookshelf against Audible (*Match* on a book, p
 
 ### Auto-start
 
-Set `AUTO_START=true` to skip steps 1 and 2. When you listen to a book that isn't Currently Reading on Hardcover, AudioHardShelf looks up the audiobook edition with the book's ISBN or ASIN, then:
+Set `AUTO_START=true` to skip steps 1 and 2. When you listen to a book that isn't Currently Reading on Hardcover, AudioHardShelf looks for its audiobook edition on Hardcover:
+
+1. by the book's **ISBN or ASIN**, if it has one;
+2. otherwise by searching Hardcover for its **title and first author**. A result counts only if it shares an author and its title, an alternative title or one of its audiobook editions' titles matches (see *Title and author* above), so books without ISBN or ASIN, such as most Czech audiobooks, and translations whose Hardcover entry uses the original title still work. When the book has several audiobook editions, the one whose title matches is preferred.
+
+Then:
 
 - **Not on your shelf:** adds it as Currently Reading in that edition.
 - **Want to Read:** changes it to Currently Reading in that edition.
 - **Currently Reading in another edition** (print or ebook): switches it to the audiobook edition.
 - **Read, Paused, Did Not Finish or Ignored:** leaves it alone. Change the status on Hardcover if you want it to sync.
 
-Only books you've listened to in the last 14 days are started, so books you abandoned in Audiobookshelf don't show up on Hardcover. Books without an ISBN or ASIN, or whose edition isn't on Hardcover, can't be started; add those on Hardcover yourself.
+Only books you've listened to in the last 14 days are started, so books you abandoned in Audiobookshelf don't show up on Hardcover. A book that can't be started is tried again after a day. Books that Hardcover has no audiobook edition for can't be started: add the edition on Hardcover (reading format *Listened*), and the book is picked up on the next try.
 
 With auto-start on, a Currently Reading book that has no reading record on Hardcover gets one.
 
@@ -155,7 +160,8 @@ If the live connection fails, the app keeps retrying in the background and still
 ## Limitations
 
 - **Audiobook editions only.** Progress isn't synced to print or ebook editions on Hardcover, and Audiobookshelf ebook reading progress isn't synced at all.
-- **Without auto-start, it never adds books or starts them on Hardcover.** With it, only books with an ISBN or ASIN of an audiobook edition on Hardcover can be started.
+- **Without auto-start, it never adds books or starts them on Hardcover.** With it, only books that have an audiobook edition on Hardcover can be started, and a book without ISBN or ASIN needs at least one author in Audiobookshelf.
+- **Audiobook editions without a length** on Hardcover still sync, but Hardcover can't show a percentage for them, and progress isn't scaled.
 - **Sync is one-way, Audiobookshelf → Hardcover.** Changes made on Hardcover never reach Audiobookshelf. When your Audiobookshelf position changes, it overwrites the one on Hardcover, even if Hardcover's was further along. Progress you change on Hardcover alone is kept until you listen again.
 - **Scaled progress is approximate.** When the lengths differ, the position on Hardcover is right as a percentage, not as a timestamp.
 - **Loose title matching needs authors.** Titles that differ by more than punctuation, articles, a series marker or a subtitle won't match. Use ISBN or ASIN for those.
@@ -171,8 +177,10 @@ Set `LOG_LEVEL=debug` and check `docker logs audiohardshelf`; every book is logg
 |---|---|
 | `no matching audiobook currently reading on Hardcover` | The book isn't Currently Reading on Hardcover, isn't using an audiobook edition, or no ISBN/ASIN/title matches. See [How books are matched](#before-you-start-how-books-are-matched). |
 | `book has no read on Hardcover` | The book has no reading record on Hardcover to update. Give it a start date on Hardcover, remove it and mark it Currently Reading again, or turn on `AUTO_START`. |
-| `no audiobook edition on Hardcover with this ISBN or ASIN` | Auto-start couldn't find the edition. Check the ISBN/ASIN in Audiobookshelf, or add the book on Hardcover yourself. |
-| `book has another status on Hardcover, leaving it unchanged` | Auto-start doesn't touch books that are Read, Paused, Did Not Finish or Ignored. Set it to Currently Reading or Want to Read on Hardcover. |
+| `not starting book on Hardcover: the book is there but has no audiobook edition` | Hardcover only has print or ebook editions. Add an audiobook edition (reading format *Listened*) on Hardcover. |
+| `not starting book on Hardcover: not found by ISBN, ASIN, or title and author` | Check the title and author in Audiobookshelf against Hardcover, or add the book on Hardcover yourself. |
+| `not starting book on Hardcover: no audiobook edition with its ISBN or ASIN, and no author to search by` | Add the author in Audiobookshelf. |
+| `not starting book on Hardcover: it has another status there` | Auto-start doesn't touch books that are Read, Paused, Did Not Finish or Ignored. Set it to Currently Reading or Want to Read on Hardcover. |
 | `saving state failed` | `STATE_FILE`'s directory isn't writable. Use a named volume as in the compose file above, not a bind mount owned by root. |
 | `check that ABS_API_KEY is valid` / `authentication failed, check ABS_API_KEY` | `ABS_API_KEY` is wrong, expired or disabled. |
 | `check ABS_URL` / `connection refused` | `ABS_URL` is wrong, the server is down, or the URL is missing a sub-path. |

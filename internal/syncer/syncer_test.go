@@ -43,6 +43,10 @@ type fakeHardcover struct {
 	added       []int // book IDs
 	started     []int // user book IDs
 	insertedFor map[int]hardcover.ReadUpdate
+	// Search results by query, and catalog books by ID.
+	search   map[string][]int
+	catalog  map[int]hardcover.CatalogBook
+	searches []string
 }
 
 func (f *fakeHardcover) Me(context.Context) (hardcover.User, error) {
@@ -79,6 +83,19 @@ func (f *fakeHardcover) FindAudioEdition(_ context.Context, isbn, asin string) (
 		}
 	}
 	return nil, nil
+}
+
+func (f *fakeHardcover) SearchBooks(_ context.Context, query string, _ int) ([]int, error) {
+	f.searches = append(f.searches, query)
+	return f.search[query], nil
+}
+
+func (f *fakeHardcover) CatalogBooks(_ context.Context, ids []int) ([]hardcover.CatalogBook, error) {
+	var books []hardcover.CatalogBook
+	for _, id := range ids {
+		books = append(books, f.catalog[id])
+	}
+	return books, nil
 }
 
 func (f *fakeHardcover) UserBook(_ context.Context, _, bookID int) (*hardcover.UserBook, error) {
@@ -328,6 +345,81 @@ func TestRunAutoStart(t *testing.T) {
 	}
 	if want := (hardcover.ReadUpdate{EditionID: 20, ProgressSeconds: 70}); hc.updates[202] != want || len(hc.updates) != 1 {
 		t.Errorf("updated reads %v, want %+v for read 202", hc.updates, want)
+	}
+}
+
+func TestRunAutoStartByTitle(t *testing.T) {
+	now := time.UnixMilli(ms("2026-10-21"))
+	recent := now.Add(-time.Hour).UnixMilli()
+	abs := &fakeABS{
+		progress: []audiobookshelf.MediaProgress{
+			// No ISBN or ASIN: found by title and author.
+			{LibraryItemID: "czech", MediaItemType: "book", CurrentTime: 60, LastUpdate: recent},
+			// A translation: the book's title is the original, its Czech audio edition matches.
+			{LibraryItemID: "translated", MediaItemType: "book", CurrentTime: 70, LastUpdate: recent},
+			// On Hardcover, but only in print.
+			{LibraryItemID: "print", MediaItemType: "book", CurrentTime: 80, LastUpdate: recent},
+			// No author to search by.
+			{LibraryItemID: "anonymous", MediaItemType: "book", CurrentTime: 90, LastUpdate: recent},
+		},
+		books: map[string]audiobookshelf.Book{
+			"czech":      {Title: "Aristokratka v ohrožení", Authors: []string{"Evžen Boček"}},
+			"translated": {Title: "Noční hlídka", Authors: []string{"Sergej Lukjaněnko"}},
+			"print":      {Title: "Jen tištěná", Authors: []string{"Autor"}},
+			"anonymous":  {Title: "Bez autora"},
+		},
+	}
+	hc := &fakeHardcover{
+		search: map[string][]int{
+			"Aristokratka v ohrožení Evžen Boček": {9, 1},
+			"Noční hlídka Sergej Lukjaněnko":      {2},
+			"Jen tištěná Autor":                   {3},
+		},
+		catalog: map[int]hardcover.CatalogBook{
+			// Same title, another author: skipped.
+			9: {ID: 9, Title: "Aristokratka v ohrožení", Authors: []string{"Someone Else"},
+				AudioEditions: []hardcover.Edition{{ID: 90}}},
+			1: {ID: 1, Title: "Aristokratka v ohrožení", Authors: []string{"Evžen Boček"},
+				AudioEditions: []hardcover.Edition{{ID: 10, Title: "Aristokratka v ohrožení"}}},
+			2: {ID: 2, Title: "Night Watch", Authors: []string{"Sergej Lukjaněnko"},
+				AudioEditions: []hardcover.Edition{{ID: 20, BookID: 2, Title: "Night Watch"}, {ID: 21, BookID: 2, Title: "Noční hlídka"}}},
+			3: {ID: 3, Title: "Jen tištěná", Authors: []string{"Autor"}},
+		},
+		updates:     map[int]hardcover.ReadUpdate{},
+		insertedFor: map[int]hardcover.ReadUpdate{},
+	}
+
+	s := New(abs, hc, discard(), Options{AutoStart: true})
+	s.now = func() time.Time { return now }
+	if err := s.Run(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+
+	if !slices.Equal(hc.added, []int{1, 2}) {
+		t.Errorf("added books %v, want [1 2]", hc.added)
+	}
+	if hc.insertedFor[1001].EditionID != 10 || hc.insertedFor[1002].EditionID != 21 {
+		t.Errorf("inserted reads %v, want edition 10 for book 1 and the Czech edition 21 for book 2", hc.insertedFor)
+	}
+	if len(hc.searches) != 3 {
+		t.Errorf("searched %q, want 3 searches and none without an author", hc.searches)
+	}
+
+	// Books that couldn't be started aren't looked up again the same day.
+	hc.searches = nil
+	if err := s.Run(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if slices.Contains(hc.searches, "Jen tištěná Autor") {
+		t.Errorf("searched again for %q", hc.searches)
+	}
+	s.now = func() time.Time { return now.Add(25 * time.Hour) }
+	abs.progress[2].LastUpdate = now.Add(24 * time.Hour).UnixMilli()
+	if err := s.Run(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if !slices.Contains(hc.searches, "Jen tištěná Autor") {
+		t.Errorf("searched %q a day later, want the print-only book retried", hc.searches)
 	}
 }
 

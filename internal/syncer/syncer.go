@@ -24,6 +24,11 @@ const (
 	// Only books listened to within this window are started on Hardcover, so
 	// abandoned books left in progress on Audiobookshelf aren't.
 	autoStartRecency = 14 * 24 * time.Hour
+	// A book that couldn't be started on Hardcover isn't tried again for this long,
+	// so it isn't looked up after every listen.
+	autoStartRetry = 24 * time.Hour
+	// How many Hardcover search results are checked when starting a book by title.
+	searchResults = 10
 	// Progress is scaled to the Hardcover edition's length when the lengths differ
 	// by more than this fraction, so the percentage on Hardcover is right.
 	durationTolerance = 0.05
@@ -44,6 +49,8 @@ type Hardcover interface {
 
 	// Used to start books on Hardcover.
 	FindAudioEdition(ctx context.Context, isbn, asin string) (*hardcover.Edition, error)
+	SearchBooks(ctx context.Context, query string, limit int) ([]int, error)
+	CatalogBooks(ctx context.Context, ids []int) ([]hardcover.CatalogBook, error)
 	UserBook(ctx context.Context, userID, bookID int) (*hardcover.UserBook, error)
 	AddCurrentlyReading(ctx context.Context, bookID, editionID int) (int, error)
 	StartReading(ctx context.Context, userBookID, editionID int) error
@@ -192,13 +199,25 @@ func (s *Syncer) syncBook(ctx context.Context, progress audiobookshelf.MediaProg
 		log.Debug("finished book is not currently reading on Hardcover")
 		return skipped
 	}
-	if audiobook == nil && s.autoStart && progress.LastUpdate >= s.now().Add(-autoStartRecency).UnixMilli() {
-		audiobook, err = s.startReading(ctx, log, book, r.userID)
-		if err != nil {
-			log.Error("starting book on Hardcover failed", "error", err)
-			return failed
+	if audiobook == nil && s.autoStart {
+		switch {
+		case progress.LastUpdate < s.now().Add(-autoStartRecency).UnixMilli():
+			log.Debug("not starting book on Hardcover: not listened to recently")
+		case last.AutoStartSkippedAt > s.now().Add(-autoStartRetry).UnixMilli():
+			log.Debug("not starting book on Hardcover: it couldn't be started within the last day")
+		default:
+			audiobook, err = s.startReading(ctx, log, book, r.userID)
+			if err != nil {
+				log.Error("starting book on Hardcover failed", "error", err)
+				return failed
+			}
+			if audiobook == nil {
+				entry := s.state.Books[progress.LibraryItemID]
+				entry.AutoStartSkippedAt = s.now().UnixMilli()
+				s.state.Books[progress.LibraryItemID] = entry
+			}
+			matchedBy = "started on Hardcover"
 		}
-		matchedBy = "ISBN or ASIN, started on Hardcover"
 	}
 	if audiobook == nil {
 		log.Warn("no matching audiobook currently reading on Hardcover")
@@ -282,24 +301,13 @@ func (s *Syncer) remember(libraryItemID string, userBookID, seconds int) {
 	s.state.Books[libraryItemID] = entry
 }
 
-// startReading puts a book on Hardcover as Currently Reading in the audiobook
-// edition with its ISBN or ASIN. It returns nil, with the reason logged, when
-// there is no such edition or the book has a status that shouldn't change.
+// startReading puts a book on Hardcover as Currently Reading in its audiobook
+// edition. It returns nil, with the reason logged, when there is no such
+// edition or the book has a status that shouldn't change.
 func (s *Syncer) startReading(ctx context.Context, log *slog.Logger, book audiobookshelf.Book, userID int) (*hardcover.Audiobook, error) {
-	isbn := normalizeISBN(book.ISBN)
-	asin := strings.ToUpper(strings.TrimSpace(book.ASIN))
-	if isbn == "" && asin == "" {
-		log.Debug("book has no ISBN or ASIN to find it on Hardcover")
-		return nil, nil
-	}
-
-	edition, err := s.hc.FindAudioEdition(ctx, isbn, asin)
-	if err != nil {
-		return nil, fmt.Errorf("finding audiobook edition: %w", err)
-	}
-	if edition == nil {
-		log.Info("no audiobook edition on Hardcover with this ISBN or ASIN", "isbn", isbn, "asin", asin)
-		return nil, nil
+	edition, err := s.findAudioEdition(ctx, log, book)
+	if err != nil || edition == nil {
+		return nil, err
 	}
 	log = log.With("editionId", edition.ID)
 
@@ -330,7 +338,7 @@ func (s *Syncer) startReading(ctx context.Context, log *slog.Logger, book audiob
 		}
 	default:
 		// Read, paused, did not finish or ignored: the user decided, so leave it.
-		log.Info("book has another status on Hardcover, leaving it unchanged", "statusId", userBook.StatusID)
+		log.Info("not starting book on Hardcover: it has another status there", "statusId", userBook.StatusID)
 		return nil, nil
 	}
 
@@ -340,6 +348,98 @@ func (s *Syncer) startReading(ctx context.Context, log *slog.Logger, book audiob
 		Title:        edition.Title,
 		AudioSeconds: edition.AudioSeconds,
 	}, nil
+}
+
+// findAudioEdition looks up a book's audiobook edition on Hardcover by ISBN or
+// ASIN, then by searching for its title and author. It returns nil, with the
+// reason logged, when there is none.
+func (s *Syncer) findAudioEdition(ctx context.Context, log *slog.Logger, book audiobookshelf.Book) (*hardcover.Edition, error) {
+	isbn := normalizeISBN(book.ISBN)
+	asin := strings.ToUpper(strings.TrimSpace(book.ASIN))
+	if isbn != "" || asin != "" {
+		edition, err := s.hc.FindAudioEdition(ctx, isbn, asin)
+		if err != nil {
+			return nil, fmt.Errorf("finding audiobook edition: %w", err)
+		}
+		if edition != nil {
+			log.Debug("found audiobook edition on Hardcover", "by", "ISBN or ASIN")
+			return edition, nil
+		}
+	}
+
+	if len(book.Authors) == 0 {
+		log.Info("not starting book on Hardcover: no audiobook edition with its ISBN or ASIN, and no author to search by",
+			"isbn", isbn, "asin", asin)
+		return nil, nil
+	}
+
+	query := book.Title + " " + book.Authors[0]
+	ids, err := s.hc.SearchBooks(ctx, query, searchResults)
+	if err != nil {
+		return nil, fmt.Errorf("searching Hardcover: %w", err)
+	}
+	candidates, err := s.hc.CatalogBooks(ctx, ids)
+	if err != nil {
+		return nil, fmt.Errorf("fetching search results from Hardcover: %w", err)
+	}
+
+	var withoutAudio *hardcover.CatalogBook
+	for i, candidate := range candidates {
+		if !sharesAuthor(book.Authors, candidate.Authors) || !catalogTitleMatches(book.Title, candidate) {
+			continue
+		}
+		if len(candidate.AudioEditions) == 0 {
+			if withoutAudio == nil {
+				withoutAudio = &candidates[i]
+			}
+			continue
+		}
+		edition := pickAudioEdition(book.Title, candidate)
+		log.Debug("found audiobook edition on Hardcover", "by", "title and author",
+			"hardcoverBookId", candidate.ID, "editionTitle", edition.Title)
+		return &edition, nil
+	}
+
+	if withoutAudio != nil {
+		log.Info("not starting book on Hardcover: the book is there but has no audiobook edition; add one on Hardcover",
+			"hardcoverBookId", withoutAudio.ID, "hardcoverTitle", withoutAudio.Title)
+		return nil, nil
+	}
+	log.Info("not starting book on Hardcover: not found by ISBN, ASIN, or title and author",
+		"isbn", isbn, "asin", asin, "search", query)
+	return nil, nil
+}
+
+// catalogTitleMatches reports whether a title matches a catalog book's title,
+// one of its alternative titles, or one of its audio editions' titles, which
+// may be in another language.
+func catalogTitleMatches(title string, book hardcover.CatalogBook) bool {
+	candidates := append([]string{book.Title}, book.AlternativeTitles...)
+	for _, edition := range book.AudioEditions {
+		candidates = append(candidates, edition.Title)
+	}
+	for _, candidate := range candidates {
+		if looseTitlesMatch(title, candidate) {
+			return true
+		}
+	}
+	return false
+}
+
+// pickAudioEdition returns the audio edition whose title matches, so a
+// translation gets its own edition, or else the most popular one.
+func pickAudioEdition(title string, book hardcover.CatalogBook) hardcover.Edition {
+	edition := book.AudioEditions[0]
+	for _, candidate := range book.AudioEditions {
+		if looseTitlesMatch(title, candidate.Title) {
+			edition = candidate
+			break
+		}
+	}
+	if edition.BookID == 0 {
+		edition.BookID = book.ID
+	}
+	return edition
 }
 
 func (r *run) currentlyReading(userBookID int) bool {

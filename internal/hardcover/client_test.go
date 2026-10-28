@@ -98,7 +98,7 @@ func TestFindAudioEdition(t *testing.T) {
 		t.Errorf("got %+v, want %+v", edition, want)
 	}
 	where := (*last)["variables"].(map[string]any)["where"].(map[string]any)
-	if _, ok := where["isbn_13"]; !ok || where["asin"] != nil || where["audio_seconds"] == nil {
+	if _, ok := where["isbn_13"]; !ok || where["asin"] != nil || where["_or"] == nil {
 		t.Errorf("searched with %v, want ISBN-13 and audio editions only", where)
 	}
 }
@@ -137,5 +137,44 @@ func TestUserBookNotOnShelf(t *testing.T) {
 	userBook, err := client.UserBook(t.Context(), 7, 1)
 	if err != nil || userBook != nil {
 		t.Errorf("got %+v, %v; want nil", userBook, err)
+	}
+}
+
+func TestSearchBooks(t *testing.T) {
+	for _, response := range []string{
+		`{"data":{"search":{"ids":[3,1]}}}`,
+		`{"data":{"search":{"ids":[],"results":{"hits":[{"document":{"id":"3"}},{"document":{"id":"1"}}]}}}}`,
+	} {
+		client, last := serve(t, response)
+		ids, err := client.SearchBooks(t.Context(), "Dune Frank Herbert", 10)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !reflect.DeepEqual(ids, []int{3, 1}) {
+			t.Errorf("got %v from %s, want [3 1]", ids, response)
+		}
+		if got := (*last)["variables"].(map[string]any)["query"]; got != "Dune Frank Herbert" {
+			t.Errorf("searched for %v", got)
+		}
+	}
+}
+
+func TestCatalogBooks(t *testing.T) {
+	client, _ := serve(t, `{"data":{"books":[
+		{"id":1,"title":"Night Watch","alternative_titles":["Ночной дозор"],"contributions":[{"author":{"name":"Sergei Lukyanenko"}}],
+			"editions":[{"id":10,"book_id":1,"title":"Noční hlídka","audio_seconds":50000}]},
+		{"id":3,"title":"Print only","alternative_titles":null,"contributions":[],"editions":[]}
+	]}}`)
+	books, err := client.CatalogBooks(t.Context(), []int{3, 2, 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := []CatalogBook{
+		{ID: 3, Title: "Print only", AudioEditions: []Edition{}},
+		{ID: 1, Title: "Night Watch", AlternativeTitles: []string{"Ночной дозор"}, Authors: []string{"Sergei Lukyanenko"},
+			AudioEditions: []Edition{{ID: 10, BookID: 1, Title: "Noční hlídka", AudioSeconds: 50000}}},
+	}
+	if !reflect.DeepEqual(books, want) {
+		t.Errorf("got %+v, want %+v in search order", books, want)
 	}
 }
